@@ -19,12 +19,13 @@ main {
 }
 
 .key {
+    float: left;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     cursor: pointer;
     background-color: #fff;
-    width: 10%;
+    width: 5%;
     height: 100px;
     border: 3px solid #848484;
     transition: all .2s ease-in;
@@ -34,6 +35,20 @@ main {
     -o-transition: all .2s ease-in;
 }
 
+.black {
+    align-items: center;
+    position: absolute;
+    color: #fff;
+    left: 3%;
+    width: 5%;
+    height: 50px;
+    background-color: #000;
+}
+
 .key:hover {
-    opacity: .5;
+    background-color: #848484;
+}
+
+.black:hover {
+    background-color: rgb(36, 36, 36);
 }
