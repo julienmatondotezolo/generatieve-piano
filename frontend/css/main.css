@@ -47,6 +47,7 @@ main {
 
 .key:hover {
     background-color: #848484;
+    border-color: rgb(240, 4, 127);
 }
 
 .black:hover {
