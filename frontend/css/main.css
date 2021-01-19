@@ -23,7 +23,7 @@ main {
 .note-block {
     position: absolute;
     left: 50%;
-    bottom: 0%;
+    bottom: 100%;
     width: 20px;
     height: 20px;
     opacity: 1.0;
@@ -35,6 +35,10 @@ main {
     0% {
         display: block;
         bottom: 100px;
+    }
+
+    50% {
+        opacity: 0.0;
     }
 
     100% {
@@ -54,6 +58,11 @@ main {
     border-image-slice: 1;
     background-color: rgb(201, 201, 201);
     z-index: 999;
+    transition: al .3s ease-in-out;
+    -webkit-transition: al .3s ease-in-out;
+    -moz-transition: al .3s ease-in-out;
+    -ms-transition: al .3s ease-in-out;
+    -o-transition: al .3s ease-in-out;
 }
 
 /*/////////////    KEYS   ////////////////*/
