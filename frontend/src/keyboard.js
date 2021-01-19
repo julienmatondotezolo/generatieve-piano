@@ -2,17 +2,19 @@ console.log('Keyboard loaded')
 
 initKeyboard()
 
+/*/////////////    VARIABLES   ////////////////*/
+let sec = 0;
+
 /*/////////////    CLICK FUNCTIONS ON KEY   ////////////////*/
 
 $(".key").mouseup(function () {
-    console.log('OFF')
+    sec = 0;
+    clearInterval(window.myTimer);
     changeKeyStatus($(this).attr('data-active'), this)
 }).mousedown(function () {
-    console.log('ON')
-
     addColorToKey(this)
     changeKeyStatus($(this).attr('data-active'), this)
-    generateNotes(this, $(this).position().left, $(this).width())
+    window.myTimer = setInterval(createNote, 25, $(this).width(), $(this).position().left);
 });
 
 /*/////////////    INITIALIZE KEYBOARD   ////////////////*/
@@ -108,6 +110,18 @@ function generateNotes(element, positionLeft, width) {
     // }
 
     // remove notes
+    setTimeout(function () {
+        $(`.note-block:nth-child(1)`).remove();
+    }, 5000);
+}
+
+function createNote(width, positionLeft) {
+    // console.log(++sec + '0')
+    // $(`.note-block:nth-child(1)`).remove();
+    $('.notes').append(`
+        <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${++sec}0px; width: ${width}px"></div>
+    `);
+
     setTimeout(function () {
         $(`.note-block:nth-child(1)`).remove();
     }, 5000);
