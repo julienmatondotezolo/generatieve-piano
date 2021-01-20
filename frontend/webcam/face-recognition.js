@@ -59,7 +59,10 @@ window.onload = function () {
 
       if (typeof expressionsObject !== "object") {
         // loader(true);
-        $('.emotion-txt').text("No face detected")
+        $('.emotion-txt').text("No face detected").css('color', 'grey')
+        $('body').css({
+          'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, grey 100%)`
+        });
       } else {
         loader(false);
 
