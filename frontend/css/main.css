@@ -73,8 +73,8 @@ main {
     align-items: flex-end;
     justify-content: center;
     cursor: pointer;
-    color: #fff;
-    background-color: #000;
+    color: #181818;
+    background-color: #dddddd;
     width: 5%;
     height: 100px;
     border: 2px solid #c9c9c9;
@@ -89,21 +89,17 @@ main {
 .black {
     align-items: center;
     position: absolute;
-    color: #000;
+    color: rgb(255, 255, 255);
     left: 3%;
     width: 5%;
     height: 50px;
-    background-color: #fff;
+    background-color: #141414;
 }
 
 .key:hover {
-    color: #000;
+    color: rgb(255, 255, 255);
     background-color: #f0047f;
     border-color: rgb(240, 4, 127);
-}
-
-.black:hover {
-    background-color: rgb(139, 139, 139);
 }
 
 .colorBg {

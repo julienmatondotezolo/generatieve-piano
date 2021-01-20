@@ -5,6 +5,7 @@ initKeyboard()
 
 let sec = 0;
 let clicked = false;
+let keyboardColor;
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
@@ -122,12 +123,10 @@ function addColorToKey(element) {
 /*/////////////   GENERATE NOTES   ////////////////*/
 
 function createNote(width, positionLeft) {
-    // $('.notes').append(`
-    //     <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${++sec}0px; width: ${width}px"></div>
-    // `);
+    keyboardColor = $('.keyboard').attr('data-color');
 
     $('.notes').append(`
-        <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${5}0px; width: ${width}px"></div>
+        <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${5}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>
     `);
 
     setTimeout(function () {

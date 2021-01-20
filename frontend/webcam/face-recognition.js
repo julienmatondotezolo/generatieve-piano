@@ -57,9 +57,11 @@ window.onload = function () {
 
       let expressionsObject = detections[0];
 
+      console.log(typeof expressionsObject)
+
       if (typeof expressionsObject !== "object") {
         // loader(true);
-        $('.emotion-txt').text("No face detected").css('color', 'grey')
+        $('.emotion-txt').text("Searching face...").css('color', 'grey')
         $('body').css({
           'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, grey 100%)`
         });
@@ -85,7 +87,13 @@ window.onload = function () {
         $('body').css({
           'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, ${emotionToColor(emotion)} 100%)`
         });
+        $('.keyboard').attr('data-color', emotionToColor(emotion))
+        $('.keyboard').css({
+          borderColor: emotionToColor(emotion),
+          borderImage: 'none'
+        })
       }
+
     }, 100); //maybe change
   });
 
