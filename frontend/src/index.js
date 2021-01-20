@@ -1,23 +1,35 @@
 "use-strict"
+window.onload = () => {
 
+    let TWINKLE = {
+        notes: [{
+            pitch: 50,
+            startTime: 0.0,
+            endTime: 0.1
+        }, ],
+        totalTime: 1
+    };
+    const player = new mm.Player();
 
-window.onload = () =>{
-    //test
-    
+    let noteSeq = [];
+    noteSeq.push($(".white"));
+    console.log(noteSeq);
 
-     
-    // const genie = new mm.PianoGenie(CONSTANTS.GENIE_CHECKPOINT);
-    // console.log(genie);
-      const mvae = new mm.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/trio_4bar');
-      const player = new mm.Player();
-      console.log(player);
-      
-      $(".key").click(function() {
-        let key = $(this);
-        mvae.initialize().then(() => {
-            mvae.sample(2).then((samples) => player.start(samples[0]));
-          });
+    $(".white").click(function () {
+        let key = $(".white");
+        // console.log(key);
+
+        noteSeq.forEach(element => {
+            for (let i = 0; i < element; i++) {
+                TWINKLE.notes[0].pitch++;
+                console.log("runt");
+            }
+            TWINKLE.notes[0].pitch += 5;
+            console.log(TWINKLE.notes[0].pitch);
+            console.log(element);
+        });
+
+        player.start(TWINKLE);
         console.log(key.attr("data-note"));
-      });
-
+    });
 }
