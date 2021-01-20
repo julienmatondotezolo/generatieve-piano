@@ -1,9 +1,10 @@
 initKeyboard()
 
-/*/////////////    VARIABLES   ////////////////*/
+/*/////////////   VARIABLES   ////////////////*/
+
 let sec = 0;
 
-/*/////////////    CLICK FUNCTIONS ON KEY   ////////////////*/
+/*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
 $(".key").mouseup(function () {
     sec = 0;
@@ -14,13 +15,13 @@ $(".key").mouseup(function () {
     changeKeyStatus($(this).attr('data-active'), this)
 });
 
-/*/////////////    INITIALIZE KEYBOARD   ////////////////*/
+/*/////////////   INITIALIZE KEYBOARD   ////////////////*/
 
 function initKeyboard() {
     generateKeyboard()
 }
 
-/*/////////////    GENERATE KEYBOARD   ////////////////*/
+/*/////////////   GENERATE KEYBOARD   ////////////////*/
 
 function generateKeyboard() {
     $('.keyboard').empty();
@@ -49,7 +50,7 @@ function generateKeyboard() {
     console.log("%c" + keyboard ,"background: #f0047f;; color: #fff")
 }
 
-/*/////////////    GENERATE KEYS   ////////////////*/
+/*/////////////   GENERATE KEYS   ////////////////*/
 
 function generateKey(keyNote, keyLength) {
     $('.keyboard').append(`
@@ -76,7 +77,7 @@ function changeKeyStatus(keyStatus, element) {
     }
 }
 
-/*/////////////    RESPONSIVE KEY WITDH   ////////////////*/
+/*/////////////   RESPONSIVE KEY WITDH   ////////////////*/
 
 function keyWidth(keysLength) {
     let keyboardLength = $('.keyboard').width();
@@ -84,7 +85,7 @@ function keyWidth(keysLength) {
     return keyWidth
 }
 
-/*/////////////    CLICKED KEY FUNCTIONS   ////////////////*/
+/*/////////////   CLICKED KEY FUNCTIONS   ////////////////*/
 
 function addColorToKey(element) {
     $(element).addClass("colorBg");
@@ -95,7 +96,7 @@ function addColorToKey(element) {
     });
 }
 
-/*/////////////    GENERATE NOTES   ////////////////*/
+/*/////////////   GENERATE NOTES   ////////////////*/
 
 function createNote(width, positionLeft) {
     $('.notes').append(`
