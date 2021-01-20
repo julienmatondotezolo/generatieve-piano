@@ -1,5 +1,3 @@
-console.log('Keyboard loaded')
-
 initKeyboard()
 
 /*/////////////    VARIABLES   ////////////////*/
@@ -14,7 +12,6 @@ $(".key").mouseup(function () {
 }).mousedown(function () {
     addColorToKey(this)
     changeKeyStatus($(this).attr('data-active'), this)
-    window.myTimer = setInterval(createNote, 25, $(this).width(), $(this).position().left);
 });
 
 /*/////////////    INITIALIZE KEYBOARD   ////////////////*/
@@ -48,6 +45,8 @@ function generateKeyboard() {
     for (let i = 25; i < 30; i++) {
         $(`.key[data-note=b${i}]`).remove();
     }
+    let keyboard = " * Keyboard loaded * "
+    console.log("%c" + keyboard ,"background: #f0047f;; color: #fff")
 }
 
 /*/////////////    GENERATE KEYS   ////////////////*/
@@ -71,6 +70,7 @@ function generateKey(keyNote, keyLength) {
 function changeKeyStatus(keyStatus, element) {
     if (keyStatus == 'false') {
         keyStatus = $(element).attr('data-active', 'true')
+        window.myTimer = setInterval(createNote, 25, $(element).width(), $(element).position().left);
     } else {
         keyStatus = $(element).attr('data-active', 'false')
     }
@@ -97,27 +97,7 @@ function addColorToKey(element) {
 
 /*/////////////    GENERATE NOTES   ////////////////*/
 
-function generateNotes(element, positionLeft, width) {
-    $('.notes').append(`
-        <div class="note-block colorBg" data-note="${ $(element).attr('data-note')} " style="left: ${positionLeft}px; width: ${width}px;"></div>
-    `);
-
-    // If key active add heigth
-    // if ($(element).attr('data-active') == 'true') {
-    //     addHeightToNote(true, element, positionLeft, width)
-    // } else {
-    //     addHeightToNote(false, element, positionLeft, width)
-    // }
-
-    // remove notes
-    setTimeout(function () {
-        $(`.note-block:nth-child(1)`).remove();
-    }, 5000);
-}
-
 function createNote(width, positionLeft) {
-    // console.log(++sec + '0')
-    // $(`.note-block:nth-child(1)`).remove();
     $('.notes').append(`
         <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${++sec}0px; width: ${width}px"></div>
     `);
@@ -125,21 +105,4 @@ function createNote(width, positionLeft) {
     setTimeout(function () {
         $(`.note-block:nth-child(1)`).remove();
     }, 5000);
-}
-
-function addHeightToNote(status, noteElement, positionLeft, width) {
-    let sec = 10;
-    let timer = setInterval(myTimer, 1000);
-
-    if (status = true) {
-        timer
-    } else {
-        clearInterval(timer)
-    }
-
-    function myTimer() {
-        $(`.note-block:nth-child(1)`).remove();
-        $('.notes').append(`<div class="note-block colorBg" data-note="${ $(noteElement).attr('data-note')} " style="left: ${positionLeft}px; width: ${width}px; height: ${ ++sec*10 }px"></div>`);
-    }
-
 }
