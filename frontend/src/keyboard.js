@@ -72,11 +72,11 @@ function generateKeyboard() {
 function generateKey(keyNote, keyLength) {
     $('.keyboard').append(`
 
-        <div class="key white" data-note="w${keyNote}" data-active="false">
+        <div class="key white unselectable" data-note="w${keyNote}" data-active="false">
             <p>W${keyNote}</p>
         </div>
 
-        <div class="key black" data-note="b${keyNote}" data-active="false" style="left: ${1 + keyNote * 4}%">
+        <div class="key black unselectable" data-note="b${keyNote}" data-active="false" style="left: ${1 + keyNote * 4}%">
             <p>B${keyNote}</p>
          </div>
     `);
