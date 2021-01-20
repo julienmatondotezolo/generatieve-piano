@@ -1,3 +1,4 @@
+initWebcam()
 initKeyboard()
 
 /*/////////////   VARIABLES   ////////////////*/
@@ -24,13 +25,19 @@ $(".key").mouseup(function () {
             addColorToKey(this)
             // window.myTimerOnMove = setInterval(createNote, 25, $(this).width(), $(this).position().left);
             createNote($(this).width(), $(this).position().left)
-            console.log('Entered key: ', $(this).attr('data-note'))
         }
     }).mouseleave(function () {
         // clearInterval(window.myTimerOnMove);
-        console.log('Left key: ', $(this).attr('data-note'))
     })
 });
+
+function initWebcam() {
+    $.get("webcam/webcam.html", function (content) {
+        // console.log( 'Webcam DATA HTML', content )
+        $('main').append(content);
+    });
+    console.log('Webcam is loaded.')
+}
 
 /*/////////////   INITIALIZE KEYBOARD   ////////////////*/
 

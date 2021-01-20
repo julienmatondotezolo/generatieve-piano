@@ -44,7 +44,7 @@ body {
 
 /*/////////////   TEXT  ////////////////*/
 
-@font-face {
+/* @font-face {
     font-family: 'Gotham Pro';
     src: url('../font/gotham-pro/GothaProReg.woff');
 }
@@ -52,7 +52,7 @@ body {
 @font-face {
     font-family: 'Gotham Pro Medium';
     src: url('../font/gotham-pro/GothaProMed.woff');
-}
+} */
 
 h1 {
     font-size: 3.5em;

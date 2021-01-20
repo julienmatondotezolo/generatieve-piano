@@ -134,6 +134,11 @@ main {
     color: #fff;
 }
 
+canvas {
+    position: absolute;
+    z-index: 999;
+}
+
 #video {
     position: absolute;
     left: 50%;
