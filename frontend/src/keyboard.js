@@ -21,6 +21,7 @@ $(".key").mouseup(function () {
     $('.key').mouseenter(function (e) {
         // console.log('clicked', $(".key:hover").length != 0 && clicked)
         if ($(".key:hover").length != 0 && clicked) {
+            addColorToKey(this)
             // window.myTimerOnMove = setInterval(createNote, 25, $(this).width(), $(this).position().left);
             createNote($(this).width(), $(this).position().left)
             console.log('Entered key: ', $(this).attr('data-note'))
