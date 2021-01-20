@@ -57,8 +57,6 @@ window.onload = function () {
 
       let expressionsObject = detections[0];
 
-      console.log(typeof expressionsObject)
-
       if (typeof expressionsObject !== "object") {
         // loader(true);
         $('.emotion-txt').text("Searching face...").css('color', 'grey')
