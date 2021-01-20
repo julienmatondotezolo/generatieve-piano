@@ -15,7 +15,7 @@ window.onload = () =>{
       $(".key").click(function() {
         let key = $(this);
         mvae.initialize().then(() => {
-            mvae.sample(2).then((samples) => player.start(samples[element]));
+            mvae.sample(2).then((samples) => player.start(samples[0]));
           });
         console.log(key.attr("data-note"));
       });
