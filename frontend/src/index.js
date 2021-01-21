@@ -1,68 +1,90 @@
-"use-strict"
+"use strict";
 
-console.log("is running")
-let TWINKLE = {
-    notes: [{
-        pitch: 50,
-        startTime: 0.0,
-        endTime: 0.1
-    }, ],
-    notesB: [{
-        pitch: 70,
-    }, ],
-    totalTime: 1
-};
-
-const player = new mm.Player();
-
-let noteSeq = [];
-noteSeq.push($(".white"));
-console.log(noteSeq);
-
-let noteSeqBlack = [];
-noteSeqBlack.push($(".black"));
-console.log(noteSeqBlack);
-
-    $(".white").click(function () {
-        playNotes();
-        
-    });
-
-console.log(document.getElementsByTagName("data-note"));
 
 let clicked = false;
+let players = new mm.Player();
+let noteSeq = [];
 
-$(".key").mouseup(function () {
+ $(".key").click(function() {
+    let keyData = $(this).attr('data-note');
+    playNotes(keyData);
+}); 
+
+
+$(".key").mouseup(function() {
     clicked = false;
-    console.log('clicked: ', clicked)
-}).mousedown(function () {
-    clicked = true;
-    console.log('clicked: ', clicked)
-    $('.key').mouseenter(function (e) {
-        if ($(".key:hover").length != 0 && clicked) {
-            console.log('Hold: ', true)
-            playNotes();
-        }
-    }).mouseleave(function () {
-        console.log('Hold: ', false)
-    })
 
-    
+}).mousedown(function() {
+    clicked = true;
+    let keyData = $(this).attr('data-note');
+            playNotes(keyData);
+
+    $('.key').mouseenter(function(e) {
+        if ($(".key:hover").length !== 0 && clicked) {
+
+            let keyData = $(this).attr('data-note');
+            playNotes(keyData);
+            // holdNote();
+        }
+    }).mouseleave(function() {
+
+        // resetNote();
+    });
 });
 
-function playNotes(){
-    player.stop(TWINKLE);
-        let key = $(".white");
-        
-        noteSeq.forEach(element => {
-            for (let i = 0; i < element; i++) {
-                TWINKLE.notes[0].pitch++;
-                console.log("runt");
-            }
-            TWINKLE.notes[0].pitch += 2;
-            console.log(TWINKLE.notes[0].pitch);
-            console.log(element);
-        });
-        player.start(TWINKLE);
-    console.log(key.attr("data-note"));
+let counter = 0;
+
+function playNotes(keyData) {
+
+    let keyNumber;
+
+
+    let TWINKLE = {
+
+        notes: [{
+            pitch: 50,
+            startTime: 0.0,
+            endTime: 0.1
+        }],
+    };
+
+
+    if (keyData.indexOf('w') > -1) {
+
+        let newKeyData = keyData.replace('w', '');
+        console.log(newKeyData);
+        TWINKLE.notes[0].pitch = 50 + parseInt(newKeyData);
+        console.log("white");
+
+
+    } else {
+
+        let newKeyData = keyData.replace('b', '');
+        console.log(newKeyData);
+        TWINKLE.notes[0].pitch = 70 + parseInt(newKeyData);
+
+        keyData.replace('b', '');
+        console.log('black');
+    }
+
+
+
+    if (counter >= 1) {
+        players.stop(TWINKLE);
+    }
+
+    counter++;
+
+
+    players.start(TWINKLE);
+
 }
+
+/* function holdNote() {
+    TWINKLE.notes[0].endTime += 0.1;
+    //console.log(TWINKLE.notes[0].endTime += 1);
+}
+
+function resetNote() {
+    TWINKLE.notes[0].endTime = 0.1;
+} */
