@@ -52,8 +52,8 @@ window.onload = function () {
       canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 
       faceapi.draw.drawDetections(canvas, resizedDetections);
-      faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-      faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+      // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+      // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
 
       let expressionsObject = detections[0];
 
