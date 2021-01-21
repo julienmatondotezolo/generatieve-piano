@@ -1,5 +1,7 @@
 "use-strict"
 window.onload = () => {
+    
+    console.log("test");
 
     let TWINKLE = {
         notes: [{
