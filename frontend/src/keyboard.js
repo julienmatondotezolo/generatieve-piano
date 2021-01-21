@@ -1,9 +1,11 @@
+initWebcam()
 initKeyboard()
 
 /*/////////////   VARIABLES   ////////////////*/
 
 let sec = 0;
 let clicked = false;
+let keyboardColor;
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
@@ -24,13 +26,19 @@ $(".key").mouseup(function () {
             addColorToKey(this)
             // window.myTimerOnMove = setInterval(createNote, 25, $(this).width(), $(this).position().left);
             createNote($(this).width(), $(this).position().left)
-            console.log('Entered key: ', $(this).attr('data-note'))
         }
     }).mouseleave(function () {
         // clearInterval(window.myTimerOnMove);
-        console.log('Left key: ', $(this).attr('data-note'))
     })
 });
+
+function initWebcam() {
+    $.get("webcam/webcam.html", function (content) {
+        // console.log( 'Webcam DATA HTML', content )
+        $('main').append(content);
+    });
+    console.log('Webcam is loaded.')
+}
 
 /*/////////////   INITIALIZE KEYBOARD   ////////////////*/
 
@@ -72,11 +80,11 @@ function generateKeyboard() {
 function generateKey(keyNote, keyLength) {
     $('.keyboard').append(`
 
-        <div class="key white" data-note="w${keyNote}" data-active="false">
+        <div class="key white unselectable" data-note="w${keyNote}" data-active="false">
             <p>W${keyNote}</p>
         </div>
 
-        <div class="key black" data-note="b${keyNote}" data-active="false" style="left: ${1 + keyNote * 4}%">
+        <div class="key black unselectable" data-note="b${keyNote}" data-active="false" style="left: ${1 + keyNote * 4}%">
             <p>B${keyNote}</p>
          </div>
     `);
@@ -115,12 +123,10 @@ function addColorToKey(element) {
 /*/////////////   GENERATE NOTES   ////////////////*/
 
 function createNote(width, positionLeft) {
-    // $('.notes').append(`
-    //     <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${++sec}0px; width: ${width}px"></div>
-    // `);
+    keyboardColor = $('.keyboard').attr('data-color');
 
     $('.notes').append(`
-        <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${5}0px; width: ${width}px"></div>
+        <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${5}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>
     `);
 
     setTimeout(function () {
