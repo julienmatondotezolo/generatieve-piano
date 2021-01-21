@@ -3,16 +3,33 @@ initKeyboard()
 /*/////////////   VARIABLES   ////////////////*/
 
 let sec = 0;
+let clicked = false;
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
 $(".key").mouseup(function () {
+    clicked = false;
     sec = 0;
     clearInterval(window.myTimer);
     changeKeyStatus($(this).attr('data-active'), this)
 }).mousedown(function () {
+    clicked = true;
     addColorToKey(this)
     changeKeyStatus($(this).attr('data-active'), this)
+    window.myTimer = setInterval(createNote, 25, $(this).width(), $(this).position().left);
+
+    $('.key').mouseenter(function (e) {
+        // console.log('clicked', $(".key:hover").length != 0 && clicked)
+        if ($(".key:hover").length != 0 && clicked) {
+            addColorToKey(this)
+            // window.myTimerOnMove = setInterval(createNote, 25, $(this).width(), $(this).position().left);
+            createNote($(this).width(), $(this).position().left)
+            console.log('Entered key: ', $(this).attr('data-note'))
+        }
+    }).mouseleave(function () {
+        // clearInterval(window.myTimerOnMove);
+        console.log('Left key: ', $(this).attr('data-note'))
+    })
 });
 
 /*/////////////   INITIALIZE KEYBOARD   ////////////////*/
@@ -47,7 +64,7 @@ function generateKeyboard() {
         $(`.key[data-note=b${i}]`).remove();
     }
     let keyboard = " * Keyboard loaded * "
-    console.log("%c" + keyboard ,"background: #f0047f;; color: #fff")
+    console.log("%c" + keyboard, "background: #f0047f;; color: #fff")
 }
 
 /*/////////////   GENERATE KEYS   ////////////////*/
@@ -71,7 +88,6 @@ function generateKey(keyNote, keyLength) {
 function changeKeyStatus(keyStatus, element) {
     if (keyStatus == 'false') {
         keyStatus = $(element).attr('data-active', 'true')
-        window.myTimer = setInterval(createNote, 25, $(element).width(), $(element).position().left);
     } else {
         keyStatus = $(element).attr('data-active', 'false')
     }
@@ -99,8 +115,12 @@ function addColorToKey(element) {
 /*/////////////   GENERATE NOTES   ////////////////*/
 
 function createNote(width, positionLeft) {
+    // $('.notes').append(`
+    //     <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${++sec}0px; width: ${width}px"></div>
+    // `);
+
     $('.notes').append(`
-        <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${++sec}0px; width: ${width}px"></div>
+        <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${5}0px; width: ${width}px"></div>
     `);
 
     setTimeout(function () {
