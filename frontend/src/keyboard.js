@@ -1,11 +1,16 @@
+import {
+    playNotes
+} from './magenta.js';
+
 initWebcam()
 initKeyboard()
 
 /*/////////////   VARIABLES   ////////////////*/
 
-let sec = 0;
 let clicked = false;
+let sec = 0;
 let keyboardColor;
+let keyData;
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
@@ -16,21 +21,41 @@ $(".key").mouseup(function () {
     changeKeyStatus($(this).attr('data-active'), this)
 }).mousedown(function () {
     clicked = true;
-    addColorToKey(this)
+
+    keyData = $(this).attr('data-note');
+    playNotes(keyData);
+
+    keyboardColor = $('.keyboard').attr('data-color');
+    addColorToKey(this, keyboardColor)
     changeKeyStatus($(this).attr('data-active'), this)
-    window.myTimer = setInterval(createNote, 25, $(this).width(), $(this).position().left);
+    // window.myTimer = setInterval(createNote, 25, $(this).width(), $(this).position().left)
+    createNote($(this).width(), $(this).position().left)
 
     $('.key').mouseenter(function (e) {
-        // console.log('clicked', $(".key:hover").length != 0 && clicked)
         if ($(".key:hover").length != 0 && clicked) {
-            addColorToKey(this)
-            // window.myTimerOnMove = setInterval(createNote, 25, $(this).width(), $(this).position().left);
+
+            keyData = $(this).attr('data-note');
+            playNotes(keyData);
+
+            keyboardColor = $('.keyboard').attr('data-color');
+            addColorToKey(this, keyboardColor)
             createNote($(this).width(), $(this).position().left)
         }
     }).mouseleave(function () {
         // clearInterval(window.myTimerOnMove);
     })
 });
+
+$(".key").hover(function () {
+    // over
+    keyboardColor = $('.keyboard').attr('data-color');
+    $(this).css('background-color', keyboardColor)
+}, function () {
+    // out
+    $(this).css('background-color', '')
+});
+
+/*/////////////   INITIALIZE WEBCAM   ////////////////*/
 
 function initWebcam() {
     $.get("webcam/webcam.html", function (content) {
@@ -72,7 +97,7 @@ function generateKeyboard() {
         $(`.key[data-note=b${i}]`).remove();
     }
     let keyboard = " * Keyboard loaded * "
-    console.log("%c" + keyboard, "background: #f0047f;; color: #fff")
+    console.log("%c" + keyboard, "background: #f0047f; color: #fff")
 }
 
 /*/////////////   GENERATE KEYS   ////////////////*/
@@ -111,11 +136,12 @@ function keyWidth(keysLength) {
 
 /*/////////////   CLICKED KEY FUNCTIONS   ////////////////*/
 
-function addColorToKey(element) {
-    $(element).addClass("colorBg");
+function addColorToKey(element, color) {
+    $(element).css('background-color', color)
     $(element).mouseout(function () {
         setTimeout(function () {
             $(element).removeClass("colorBg");
+            $(element).css('background-color', 'keyboardColor')
         }, 1000);
     });
 }
@@ -126,7 +152,7 @@ function createNote(width, positionLeft) {
     keyboardColor = $('.keyboard').attr('data-color');
 
     $('.notes').append(`
-        <div class="note-block colorBg" style="left: ${positionLeft}px; height: ${5}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>
+        <div class="note-block" style="left: ${positionLeft}px; height: ${5}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>
     `);
 
     setTimeout(function () {
