@@ -1,37 +1,9 @@
 "use strict";
 
-let clicked = false;
 let players = new mm.Player();
-let noteSeq = [];
-let counter = 0;
 let newKeyData;
 
-$(".key").click(function () {
-    let keyData = $(this).attr('data-note');
-    playNotes(keyData);
-});
-
-$(".key").mouseup(function () {
-    clicked = false;
-
-}).mousedown(function () {
-    clicked = true;
-    let keyData = $(this).attr('data-note');
-    playNotes(keyData);
-
-    $('.key').mouseenter(function (e) {
-        if ($(".key:hover").length !== 0 && clicked) {
-            let keyData = $(this).attr('data-note');
-            playNotes(keyData);
-            // holdNote();
-        }
-    }).mouseleave(function () {
-        // resetNote();
-    });
-
-});
-
-function playNotes(keyData) {
+export function playNotes(keyData) {
 
     let TWINKLE = {
 
@@ -51,11 +23,11 @@ function playNotes(keyData) {
         keyData.replace('b', '');
     }
 
-    if (counter >= 1) {
+    if (players) {
         players.stop(TWINKLE);
+    } else {
+        players.resume()
     }
-
-    counter++;
 
     players.start(TWINKLE);
 }

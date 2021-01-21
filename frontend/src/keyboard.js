@@ -1,11 +1,16 @@
+import {
+    playNotes
+} from './magenta.js';
+
 initWebcam()
 initKeyboard()
 
 /*/////////////   VARIABLES   ////////////////*/
 
-let sec = 0;
 let clicked = false;
+let sec = 0;
 let keyboardColor;
+let keyData;
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
@@ -16,6 +21,10 @@ $(".key").mouseup(function () {
     changeKeyStatus($(this).attr('data-active'), this)
 }).mousedown(function () {
     clicked = true;
+
+    keyData = $(this).attr('data-note');
+    playNotes(keyData);
+
     keyboardColor = $('.keyboard').attr('data-color');
     addColorToKey(this, keyboardColor)
     changeKeyStatus($(this).attr('data-active'), this)
@@ -24,6 +33,10 @@ $(".key").mouseup(function () {
 
     $('.key').mouseenter(function (e) {
         if ($(".key:hover").length != 0 && clicked) {
+
+            keyData = $(this).attr('data-note');
+            playNotes(keyData);
+
             keyboardColor = $('.keyboard').attr('data-color');
             addColorToKey(this, keyboardColor)
             createNote($(this).width(), $(this).position().left)
@@ -146,4 +159,3 @@ function createNote(width, positionLeft) {
         $(`.note-block:nth-child(1)`).remove();
     }, 5000);
 }
-
