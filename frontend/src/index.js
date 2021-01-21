@@ -1,8 +1,6 @@
 "use-strict"
-window.onload = () => {
-    
-    console.log("test");
 
+    console.log("test")
     let TWINKLE = {
         notes: [{
             pitch: 50,
@@ -34,4 +32,3 @@ window.onload = () => {
         player.start(TWINKLE);
         console.log(key.attr("data-note"));
     });
-}
