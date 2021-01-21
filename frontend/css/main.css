@@ -23,18 +23,20 @@ main {
 .note-block {
     position: absolute;
     left: 50%;
-    bottom: 100%;
+    bottom: 10%;
     width: 20px;
     height: 20px;
     opacity: 1.0;
+    transform: translate(0, 0);
     animation: goUp 6s;
     -webkit-animation: goUp 6s;
+    background-color: grey;
 }
 
 @keyframes goUp {
     0% {
         display: block;
-        bottom: 100px;
+        transform: translate(0, 0);
     }
 
     50% {
@@ -42,7 +44,7 @@ main {
     }
 
     100% {
-        bottom: 100%;
+        transform: translate(0, -700px);
         opacity: 0.0;
     }
 }
@@ -79,11 +81,11 @@ main {
     height: 100px;
     border: 2px solid #c9c9c9;
     box-sizing: border-box;
-    transition: all .2s ease-in;
+    /* transition: all .2s ease-in;
     -webkit-transition: all .2s ease-in;
     -moz-transition: all .2s ease-in;
     -ms-transition: all .2s ease-in;
-    -o-transition: all .2s ease-in;
+    -o-transition: all .2s ease-in; */
 }
 
 .black {
@@ -94,12 +96,6 @@ main {
     width: 5%;
     height: 50px;
     background-color: #141414;
-}
-
-.key:hover {
-    color: rgb(255, 255, 255);
-    background-color: #f0047f;
-    border-color: rgb(240, 4, 127);
 }
 
 .colorBg {
