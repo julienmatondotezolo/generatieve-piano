@@ -9,7 +9,7 @@ const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
-const emotionMusic = require("./routes/emotion-music");
+const postman = require("./routes/postman");
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -26,17 +26,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
-
 io.on("connection", (socket) => {
   socket.on("sendEmotion", (msg) => {
     console.log("message: " + msg);
   });
 });
 
-app.use("/emotion-music", emotionMusic);
+app.use("/postman", postman);
 
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
