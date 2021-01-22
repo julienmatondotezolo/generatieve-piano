@@ -19,11 +19,11 @@ $(".key").mouseup(function () {
     sec = 0;
     clearInterval(window.myTimer);
     changeKeyStatus($(this).attr('data-active'), this)
-}).mousedown(function () {
+}).mousedown(async function () {
     clicked = true;
 
     keyData = $(this).attr('data-note');
-    playNotes(keyData);
+    await playNotes(keyData);
 
     keyboardColor = $('.keyboard').attr('data-color');
     addColorToKey(this, keyboardColor)
@@ -31,11 +31,11 @@ $(".key").mouseup(function () {
     // window.myTimer = setInterval(createNote, 25, $(this).width(), $(this).position().left)
     createNote($(this).width(), $(this).position().left)
 
-    $('.key').mouseenter(function (e) {
+    $('.key').mouseenter(async function (e) {
         if ($(".key:hover").length != 0 && clicked) {
 
             keyData = $(this).attr('data-note');
-            playNotes(keyData);
+            await playNotes(keyData);
 
             keyboardColor = $('.keyboard').attr('data-color');
             addColorToKey(this, keyboardColor)
