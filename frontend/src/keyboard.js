@@ -92,7 +92,13 @@ initKeyboard()
 
 document.querySelector('button').addEventListener('click', async () => {
     console.log('audio is ready')
-    await autoplayNotes(noteSeqData, '');
+    $.getJSON("src/response.json", async function (data, textStatus, jqXHR) {
+        keyboardColor = $('.keyboard').attr('data-color');
+        await autoplayNotes(data, keyboardColor);
+    });
+
+    // console.log(noteSeqData)
+    // await autoplayNotes(noteSeqData, '');
 })
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
@@ -289,7 +295,7 @@ async function autoplayNotes(noteSeq, keyboardColor) {
         notesArr.push(notes)
 
         setTimeout(() => {
-            addColorToKey(matchKey, '#f0047f', true, notes.startTime + 1000)
+            addColorToKey(matchKey, keyboardColor, true, notes.startTime + 1000)
             height = calculateHeight(notes.startTime * 10, notes.endTime * 10)
             createNote(matchKey.width(), matchKey.position().left, height)
         }, notes.startTime * 1000);
