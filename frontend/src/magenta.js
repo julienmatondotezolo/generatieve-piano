@@ -1,6 +1,7 @@
 "use strict";
 
 let players = new mm.Player();
+players = await new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus');
 let newKeyData;
 
 export function playNotes(keyData) {
