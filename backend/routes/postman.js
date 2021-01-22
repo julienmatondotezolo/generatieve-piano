@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-router.post("/", async (req, res) => {
-  console.log(req.body);
-  res.sendStatus(200);
-});
+router.post("/", async (req, res) => {});
 
 module.exports = router;

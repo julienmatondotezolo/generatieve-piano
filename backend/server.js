@@ -26,11 +26,15 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-io.on("connection", (socket) => {
+/* app.get("/postman", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+}); */
+
+/* io.on("connection", (socket) => {
   socket.on("sendEmotion", (msg) => {
     console.log("message: " + msg);
   });
-});
+}); */
 
 app.use("/postman", postman);
 
