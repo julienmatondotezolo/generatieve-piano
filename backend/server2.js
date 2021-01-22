@@ -1,10 +1,14 @@
 /*--------- Variables --------*/
-"use strict"
+/* global require */
+
+"use strict";
 
 const express = require("express");
 const bodyParser = require("body-parser");
 const http = require("http");
 const fs = require("fs");
+var path = require('path');
+const port = process.env.PORT || 3000;
 const mvae = require('@magenta/music/node/music_vae');
 const mmcore = require('@magenta/music/node/core');
 
@@ -25,14 +29,52 @@ app.get("/", (req, res) => {
 // ========== POST MIDI TO NOTES ==========  //
 app.post("/emotion-to-notes", async(req, res, next) => {
 
-    let emotion = req.body;
-    if (emotion.hasOwnProperty("emotion")) {
-        let notes = emotionsToNotes(req.body);
-        res.send(notes);
-    } else {
-        console.log('No emotions found');
-        res.send('No emotions found');
+    let emotionArr = req.body;
+
+
+    /* for (const objects of emotionArr) {
+
+         let objectLength = Object.(objects).length;
+         console.log(objectLength);
+
+     }*/
+
+    let mf = 1;
+    let m = 0;
+    let firstEmotion;
+    for (let i = 0; i < emotionArr.length; i++) {
+
+        for (let j = i; j < emotionArr.length; j++) {
+            if (emotionArr[i].emotion === emotionArr[j].emotion)
+                m++;
+
+            if (mf < m) {
+                mf = m;
+                firstEmotion = emotionArr[i].emotion;
+            }
+
+        }
+        m = 0;
+
     }
+    console.log(firstEmotion + " ( " + mf + " times ) ");
+
+
+    //   if (emotionArr.hasOwnProperty("emotion")) {
+    let notes = emotionsToNotes(firstEmotion);
+    res.send(notes);
+    // } else {
+    //   console.log('No emotions found');
+    //   res.send('No emotions found');
+    //}
+
+});
+
+
+app.get("/", (req, res) => {
+
+    res.sendFile(path.join(__dirname + '/index.html'));
+
 
 });
 
@@ -40,13 +82,18 @@ app.post("/emotion-to-notes", async(req, res, next) => {
 
 function emotionsToNotes(emotion) {
     let midiBuffer;
+    console.log(emotion);
     if (emotion) {
         midiBuffer = fs.readFileSync('midi/pirate.mid');
     }
     const notes = mmcore.midiToSequenceProto(midiBuffer);
-    console.log("Notes: ", notes);
+    //  console.log("Notes: ", notes);
+    console.log(notes);
     return notes;
 }
 
 
-app.listen(3000);
+app.listen(port, () => {
+    console.log(`
+            Example app listening at http://localhost:${port}`);
+});
