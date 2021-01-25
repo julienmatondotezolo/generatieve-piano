@@ -3,14 +3,21 @@
 
 "use strict";
 
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const http = require("http");
 const fs = require("fs");
+const cors = require('cors');
 var path = require('path');
 const port = process.env.PORT || 3000;
-const mvae = require('@magenta/music/node/music_vae');
 const mmcore = require('@magenta/music/node/core');
+const rnn = require('@magenta/music/node/music_rnn');
+const melodyRNN = new rnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn'); // Makes a melody from the input
+
+melodyRNN.initialize();
+
+
 
 const app = express();
 http.Server(app);
@@ -22,23 +29,54 @@ app.use(
     })
 );
 
+app.use(cors());
+
+
+
+app.listen(port, () => {
+    console.log(`
+            Example app listening at http://localhost:${port}`);
+});
+
 app.get("/", (req, res) => {
-    res.sendStatus(200).send(200);
+
+    res.sendFile(path.join(__dirname + '/index.html'));
+
+
 });
 
 // ========== POST MIDI TO NOTES ==========  //
 app.post("/emotion-to-notes", async(req, res, next) => {
 
     let emotionArr = req.body;
+    let firstEmotion = await extractEmotion(emotionArr);
+    let midiFile = chooseMidiFile(firstEmotion);
+
+    console.log(midiFile);
+    async function emotionsToNotes(emotion) {
+        let midiBuffer;
+
+        console.log(emotion);
+        if (emotion) {
+
+            midiBuffer = fs.readFileSync('midi/prrr.mid');
+        }
+        const notes = mmcore.midiToSequenceProto(midiBuffer);
+        const qns = mmcore.sequences.quantizeNoteSequence(notes, 2); // 2 == steps per quarter
+        melodyRNN.continueSequence(qns, 15, 6) // 15=notes // 6== temperature
+            .then(sample => {
+
+                res.send(sample);
+            });
+
+    }
+    await emotionsToNotes(firstEmotion);
 
 
-    /* for (const objects of emotionArr) {
+});
 
-         let objectLength = Object.(objects).length;
-         console.log(objectLength);
 
-     }*/
-
+function extractEmotion(emotionArr) {
     let mf = 1;
     let m = 0;
     let firstEmotion;
@@ -57,43 +95,39 @@ app.post("/emotion-to-notes", async(req, res, next) => {
         m = 0;
 
     }
-    console.log(firstEmotion + " ( " + mf + " times ) ");
 
-
-    //   if (emotionArr.hasOwnProperty("emotion")) {
-    let notes = emotionsToNotes(firstEmotion);
-    res.send(notes);
-    // } else {
-    //   console.log('No emotions found');
-    //   res.send('No emotions found');
-    //}
-
-});
-
-
-app.get("/", (req, res) => {
-
-    res.sendFile(path.join(__dirname + '/index.html'));
-
-
-});
-
-
-
-function emotionsToNotes(emotion) {
-    let midiBuffer;
-    console.log(emotion);
-    if (emotion) {
-        midiBuffer = fs.readFileSync('midi/pirate.mid');
-    }
-    const notes = mmcore.midiToSequenceProto(midiBuffer);
-    //  console.log("Notes: ", notes);
-    console.log(notes);
-    return notes;
+    return firstEmotion;
 }
 
 
-app.listen(port, () => {
-    console.log(`
-            Example app listening at http://localhost:${port}`);
-});
+
+function chooseMidiFile(firstEmotion) {
+
+    let x = Math.floor(Math.random() * 5) + 1;
+    let midiFile;
+    switch (firstEmotion) {
+        case "happy":
+            midiFile = 'midi/happy/' + x + '.mid';
+            break;
+        case "angry":
+            midiFile = 'midi/angry/' + x + '.mid';
+            break;
+        case "sad":
+            midiFile = 'midi/sad/' + x + '.mid';
+            break;
+        case "surprised":
+            midiFile = 'midi/surprised/' + x + '.mid';
+            break;
+        case "neutral":
+            midiFile = 'midi/neutral/' + x + '.mid';
+            break;
+        case "fearful":
+            midiFile = 'midi/fearful/' + x + '.mid';
+            break;
+        case "disgusted":
+            midiFile = 'midi/disgusted/' + x + '.mid';
+            break;
+    }
+
+    return midiFile;
+}
