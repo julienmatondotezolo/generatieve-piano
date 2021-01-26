@@ -127,31 +127,48 @@ document.querySelector('button').addEventListener('click', async () => {
     //     keyboardColor = $('.keyboard').attr('data-color');
     //     await autoplayNotes(data, keyboardColor);
     // });
-    sendEmotion(notesArrObj)
+    await sendEmotion(notesArrObj)
     // console.log(noteSeqData)
     // await autoplayNotes(noteSeqData, '');
 })
 
-function sendEmotion(emotionArr) {
-    $.ajax({
-        type: "POST",
-        url: "https://paino-fp3.herokuapp.com/emotion-to-notes",
-        data: JSON.stringify(emotionArr),
-        dataType: "json",
-        beforeSend: function () {
-            changeBtn('loading...')
+async function sendEmotion(emotionArr) {
+    changeBtn('loading...')
+    const rawResponse = await fetch('https://paino-fp3.herokuapp.com/emotion-to-notes', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
         },
-        success: async function (dataPitchNotes) {
-            changeBtn('This website using sound.')
-            keyboardColor = $('.keyboard').attr('data-color');
-            await autoplayNotes(dataPitchNotes, keyboardColor);
-        },
-        error: function (error) {
-            console.log(error)
-            changeBtn('failed.')
-        }
+        body: JSON.stringify(emotionArr)
     });
+
+    const dataPitchNotes = await rawResponse.json();
+    keyboardColor = $('.keyboard').attr('data-color');
+    await autoplayNotes(dataPitchNotes, keyboardColor);
+    changeBtn('This website using sound.')
 }
+
+// function sendEmotion(emotionArr) {
+//     $.ajax({
+//         type: "POST",
+//         url: "https://paino-fp3.herokuapp.com/emotion-to-notes",
+//         data: JSON.stringify(emotionArr),
+//         dataType: "json",
+//         beforeSend: function () {
+//             changeBtn('loading...')
+//         },
+//         success: async function (dataPitchNotes) {
+//             changeBtn('This website using sound.')
+//             keyboardColor = $('.keyboard').attr('data-color');
+//             await autoplayNotes(dataPitchNotes, keyboardColor);
+//         },
+//         error: function (error) {
+//             console.log(error)
+//             changeBtn('failed.')
+//         }
+//     });
+// }
 
 function changeBtn(text) {
     $('button').text(text)
@@ -343,14 +360,17 @@ async function autoplayNotes(noteSeq, keyboardColor) {
 
     let notesArr = []
     let height;
+    let newKeyData;
+
 
     for (const notes of await noteSeq.notes) {
         let matchKey = $(".keyboard").find(`.key[data-note='w${notes.pitch}']`)
         keyData = matchKey.attr('data-note');
 
+        newKeyData = keyData ? matchKey.attr('data-note') : 'w75';
+        let matchKeyPosition = keyData ? matchKey.position().left : 75;
+        
         notesArr.push(notes)
-
-        let matchKeyPosition = matchKey ? matchKey.position().left : 60;
 
         setTimeout(() => {
             addColorToKey(matchKey, keyboardColor, true, notes.startTime + 1000)
@@ -359,6 +379,6 @@ async function autoplayNotes(noteSeq, keyboardColor) {
         }, notes.startTime * 1000);
     }
 
-    await playNotes(keyData, notesArr);
+    await playNotes(newKeyData, notesArr);
 
 }
