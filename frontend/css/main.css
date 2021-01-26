@@ -9,56 +9,6 @@ main {
     overflow: hidden;
 }
 
-/*/////////////    NOTES   ////////////////*/
-
-.notes {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 333;
-}
-
-/*/////////////    COLOR BLOCK   ////////////////*/
-
-.note-block {
-    position: absolute;
-    left: 50%;
-    bottom: 10%;
-    width: 20px;
-    height: 20px;
-    opacity: 1.0;
-    transform: translate(0, 0);
-    animation: goUp 6s;
-    -webkit-animation: goUp 6s;
-    background-color: grey;
-}
-
-@keyframes goUp {
-    0% {
-        display: block;
-        transform: translate(0, 0);
-    }
-
-    50% {
-        opacity: 0.0;
-    }
-
-    100% {
-        transform: translate(0, -700px);
-        opacity: 0.0;
-    }
-}
-
-.colorBg {
-    background-color: #f0047f !important;
-    transition: .5s all ease-in;
-    -webkit-transition: .5s all ease-in;
-    -moz-transition: .5s all ease-in;
-    -ms-transition: .5s all ease-in;
-    -o-transition: .5s all ease-in;
-}
-
 /*/////////////    FACE RECOGNITION    ////////////////*/
 
 .face-recognition-wrap {

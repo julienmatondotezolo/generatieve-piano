@@ -7,7 +7,7 @@ import {
 /*/////////////   VARIABLES   ////////////////*/
 
 let clicked = false;
-let sec = 0;
+let count = 5;
 let keyboardColor;
 let keyData;
 
@@ -155,45 +155,58 @@ function changeBtn(text) {
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
+$(".key").hover(function () {
+    // over
+    keyboardColor = $('.keyboard').attr('data-color');
+    keyboardColor = keyboardColor ? keyboardColor : '#e6e6e6'
+    $(this).css('background-color', keyboardColor)
+}, function () {
+    // out
+    $(this).css('background-color', '')
+});
+
 $(".key").mouseup(function () {
     clicked = false;
-    sec = 0;
+    count = 5;
     clearInterval(window.myTimer);
     changeKeyStatus($(this).attr('data-active'), this)
+    console.log('Mouse: ', '')
 }).mousedown(function () {
     clicked = true;
-
     keyData = $(this).attr('data-note');
-    playNotes(keyData);
+    // playNotes(keyData);
 
     keyboardColor = $('.keyboard').attr('data-color');
     addColorToKey(this, keyboardColor, false)
     changeKeyStatus($(this).attr('data-active'), this)
-    // window.myTimer = setInterval(createNote, 25, $(this).width(), $(this).position().left)
-    createNote($(this).width(), $(this).position().left)
+    
+    createNote($(this), $(this).attr('data-note'))
+    window.myTimer = setInterval(addLengthToNotes, 50, $(this).attr('data-note'))
+    console.log('Mouse: ', 'clicked')
 
     $('.key').mouseenter(function (e) {
         if ($(".key:hover").length != 0 && clicked) {
 
             keyData = $(this).attr('data-note');
-            playNotes(keyData);
+            // playNotes(keyData);
 
             keyboardColor = $('.keyboard').attr('data-color');
             addColorToKey(this, keyboardColor, false)
-            createNote($(this).width(), $(this).position().left)
-        }
-    }).mouseleave(function () {
-        // clearInterval(window.myTimerOnMove);
-    })
-});
 
-$(".key").hover(function () {
-    // over
-    keyboardColor = $('.keyboard').attr('data-color');
-    $(this).css('background-color', keyboardColor)
-}, function () {
-    // out
-    $(this).css('background-color', '')
+            createNote($(this), $(this).attr('data-note'))
+        
+            console.log('Mouse: ', 'clicked + moving in element')
+        } else {
+            console.log('Mouse: ', 'Not clicked')
+        }
+    })
+
+    $('.key').mouseleave(function () {
+        count = 5;
+        clearInterval(window.myTimerOnMove);
+        console.log('Mouse: ', 'clicked + moving out')
+    })
+
 });
 
 /*/////////////   INITIALIZE WEBCAM   ////////////////*/
@@ -233,19 +246,29 @@ function generateKeyboard() {
 
 function generateKey(keyNote, keyLength, iteration) {
     $('.white-keys').append(`
-         <div class="key white-key unselectable" data-note="w${47 + keyNote}" data-active="false">
-            <p>W${keyNote}</p>
+         <div class="key white-key unselectable" data-note="w${48 + keyNote}" data-active="false">
+            <p>${48 + keyNote}</p>
         </div>
     `);
     $('.black-keys').append(`
         <span class="cluster clus2" style="width: ${keyWidth(22)}%;">
-            <div class="key black-key unselectable" data-note="b${48 + keyNote}" data-active="false"></div>
-            <div class="key black-key unselectable" data-note="b${50 + keyNote}" data-active="false"></div>
+            <div class="key black-key unselectable" data-note="b${48 + keyNote}" data-active="false">
+                <p>${48 + keyNote}</p>
+            </div>
+            <div class="key black-key unselectable" data-note="b${50 + keyNote}" data-active="false">
+                <p>${50 + keyNote}</p>
+            </div>
         </span>
         <span class="cluster clus3" style="width: ${keyWidth(13)}%;">
-            <div class="key black-key unselectable" data-note="b${53 + keyNote}" data-active="false"></div>
-            <div class="key black-key unselectable" data-note="b${55 + keyNote}" data-active="false"></div>
-            <div class="key black-key unselectable" data-note="b${57 + keyNote}" data-active="false"></div>
+            <div class="key black-key unselectable" data-note="b${53 + keyNote}" data-active="false">
+                <p>${53 + keyNote}</p>
+            </div>
+            <div class="key black-key unselectable" data-note="b${55 + keyNote}" data-active="false">
+                <p>${55 + keyNote}</p>
+            </div>
+            <div class="key black-key unselectable" data-note="b${57 + keyNote}" data-active="false">
+                <p>${57 + keyNote}</p>
+            </div>
         </span>
     `);
 
@@ -315,23 +338,23 @@ function addColorToKey(element, color, autoplay, endTime) {
 
 /*/////////////   GENERATE NOTES   ////////////////*/
 
-function createNote(width, positionLeft, height) {
+function createNote(element, note, height) {
     keyboardColor = $('.keyboard').attr('data-color');
-    let keyHeight;
-
-    if (height) {
-        keyHeight = height;
-    } else {
-        keyHeight = 5;
-    }
+    let width = element.width()
+    let positionLeft = element.offset().left
+    let keyHeight = height ? height : 5;
 
     $('.notes').append(`
-        <div class="note-block" style="left: ${positionLeft}px; height: ${keyHeight}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>
+        <div class="note-block" data-note="${note}" style="left: ${positionLeft}px; height: ${keyHeight}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>
     `);
 
     setTimeout(function () {
         $(`.note-block:nth-child(1)`).remove();
     }, 5000);
+}
+
+function addLengthToNotes(noteId) {
+    $(`.note-block[data-note=${noteId}]`).css('height', (count++) + '0px');
 }
 
 function calculateHeight(start, end) {
@@ -344,7 +367,6 @@ async function autoplayNotes(noteSeq, keyboardColor) {
     let notesArr = []
     let height;
     let newKeyData;
-
 
     for (const notes of await noteSeq.notes) {
         let matchKey = $(".keyboard").find(`.key[data-note='w${notes.pitch}']`)

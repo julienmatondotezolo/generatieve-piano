@@ -16,20 +16,21 @@
 
 #piano {
 	position: relative;
-	width: 99%;
+	width: 98%;
 	height: 100px;
 	margin: auto;
 }
 
 #piano .keys {
+	cursor: pointer;
 	position: relative;
 	top: -10%;
 	width: 100%;
-	height: 100%;
+	height: 110%;
 	margin: auto;
 	overflow: hidden;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
 	box-shadow: 0px 0px 5px 0px #000000;
 }
 
@@ -39,6 +40,7 @@
 	height: 100%;
 	background: white;
 	display: inline-block;
+	text-align: center;
 	/* margin-right: -2px; */
 }
 
@@ -98,14 +100,71 @@
     margin-right: 0;
 }
 
-#piano .cluster:nth-child(1) .black-key:nth-child(1){
-    float: left;
-}
-
 #piano .cluster .black-key:last-child {
     margin: 0 !important;
 }
 
-#piano .white-key:hover {
-	background: #E6E6E6;
+/*/////////////    NOTES   ////////////////*/
+
+.notes {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 333;
+}
+
+/*/////////////    COLOR BLOCK   ////////////////*/
+
+.note-block {
+	position: absolute;
+	left: 50%;
+	bottom: 10%;
+	width: 20px;
+	height: 20px;
+	opacity: 1.0;
+	transform: translate(0, 0);
+	transform-origin: top;
+	transition: all .2s;
+	animation: goUp 6s;
+	border-radius: 30px;
+	-webkit-animation: goUp 6s;
+	background-color: grey;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	-ms-border-radius: 30px;
+	-o-border-radius: 30px;
+	-webkit-transition: all .2s;
+	-moz-transition: all .2s;
+	-ms-transition: all .2s;
+	-o-transition: all .2s;
+}
+
+@keyframes goUp {
+    0% {
+        display: block;
+        transform: translate(0, 0);
+    }
+
+    50% {
+        opacity: 1.0;
+    }
+
+    100% {
+        opacity: 0.0;
+        transform: translate(0, -700px);
+        -webkit-transform: translate(0, -700px);
+        -moz-transform: translate(0, -700px);
+        -ms-transform: translate(0, -700px);
+        -o-transform: translate(0, -700px);
+}
+}
+
+.colorBg {
+    background-color: #f0047f !important;
+    transition: .5s all ease-in;
+    -webkit-transition: .5s all ease-in;
+    -moz-transition: .5s all ease-in;
+    -ms-transition: .5s all ease-in;
+    -o-transition: .5s all ease-in;
 }
