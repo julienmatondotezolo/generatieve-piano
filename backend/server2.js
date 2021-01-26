@@ -16,9 +16,6 @@ const rnn = require('@magenta/music/node/music_rnn');
 const melodyRNN = new rnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn'); // Makes a melody from the input
 
 melodyRNN.initialize();
-
-
-
 const app = express();
 http.Server(app);
 
@@ -57,16 +54,30 @@ app.post("/emotion-to-notes", async(req, res, next) => {
         let midiBuffer;
 
         console.log(emotion);
-        if (emotion) {
-
-            midiBuffer = fs.readFileSync('midi/prrr.mid');
-        }
+        //  if (emotion) {
+        midiBuffer = fs.readFileSync(midiFile);
+        // }
         const notes = mmcore.midiToSequenceProto(midiBuffer);
         const qns = mmcore.sequences.quantizeNoteSequence(notes, 2); // 2 == steps per quarter
         melodyRNN.continueSequence(qns, 15, 6) // 15=notes // 6== temperature
             .then(sample => {
+                console.log("yello");
+                let newArray = [];
 
-                res.send(sample);
+                sample.notes.forEach(element => {
+                    let newObject = {
+                        pitch: element.pitch,
+                        startTime: element.quantizedEndStep * 0.3,
+                        endTime: element.quantizedEndStep * 0.3 + 0.3,
+                    };
+                    newArray.push(newObject);
+                });
+
+                res.send({
+                    newArray,
+                    firstEmotion
+
+                });
             });
 
     }
@@ -76,7 +87,7 @@ app.post("/emotion-to-notes", async(req, res, next) => {
 });
 
 
-function extractEmotion(emotionArr) {
+async function extractEmotion(emotionArr) {
     let mf = 1;
     let m = 0;
     let firstEmotion;
@@ -98,8 +109,6 @@ function extractEmotion(emotionArr) {
 
     return firstEmotion;
 }
-
-
 
 function chooseMidiFile(firstEmotion) {
 
@@ -127,6 +136,9 @@ function chooseMidiFile(firstEmotion) {
         case "disgusted":
             midiFile = 'midi/disgusted/' + x + '.mid';
             break;
+        default:
+            midiFile = 'midi/neutral/' + x + '.mid';
+
     }
 
     return midiFile;
