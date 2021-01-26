@@ -88,8 +88,6 @@ window.onload = function () {
         emotionObj.emotion = emotionVal
         trackedEmotionsArr.push(emotionObj);
 
-        console.log(emotionObj)
-
         $('.emotion-txt').text(`You are ${emotionVal}`).css('color', emotionToColor(emotionVal))
 
         $('body').css({

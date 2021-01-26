@@ -1,0 +1,85 @@
+html, body {
+	background-color: black;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	overflow-y: hidden;
+}
+
+#piano {
+	width: 100%;
+	overflow-y: hidden;
+	overflow-x: scroll;
+	height: 240px;
+	margin: auto;
+}
+
+#piano .keys {
+	width: 1460px;
+	height: 100%;
+	margin: auto;
+	position: relative;
+}
+
+#piano .key {
+	width: 40px;
+	height: calc(100% - 54px);
+	background: white;
+	border-right: 4px solid #000000;
+	border-bottom: 4px solid #000000;
+	display: inline-block;
+	margin-right: -2px;
+}
+
+#piano .black-key {
+	background: #202020;
+	width: 30px;
+	height: 110px;
+	vertical-align: top;
+	z-index: 999;
+	margin-right: 10px;
+	border-right: 4px solid #000000;
+	border-bottom: 4px solid #000000;
+}
+
+#piano .white-keys {
+	border-top: 50px solid rgb(0, 0, 0);
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	height: 100%;
+	left: 0;
+}
+
+#piano .black-keys {
+	display: inline-block;
+	position: absolute;
+	top: 50px;
+	left: 25px;
+}
+
+#piano .cluster {
+	margin-right: 41px;
+}
+
+#piano .white-key:hover {
+	background: rgb(216, 216, 216);
+}
+
+#piano .white-key:active, #piano .white-key.active {
+	/* background: linear-gradient(180deg, white, rgba(255, 0, 0, 0.384)); */
+	background: rgb(0, 217, 255);
+}
+
+#piano .black-key:active, #piano .black-key.active {
+	/* background: linear-gradient(180deg, #404040, #a5a5a5); */
+	background: orange;
+}
+
+#piano .white-key.other-active {
+	background: linear-gradient(180deg, white, rgba(0, 0, 0, 0.2));
+}
+
+#piano .black-key.active {
+	background: linear-gradient(0deg, #404040, rgba(0, 25, 0, 1));
+}

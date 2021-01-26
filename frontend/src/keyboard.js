@@ -11,6 +11,37 @@ let sec = 0;
 let keyboardColor;
 let keyData;
 
+let notesArrObj = [
+    {
+        emotion: "sad",
+        level: 0.6376954913139343
+    }, {
+        emotion: "sad",
+        level: 0.6376954913139343
+    }, {
+        emotion: "sad",
+        level: 0.6376954913139343
+    }, {
+        emotion: "sad",
+        level: 0.997367799282074
+    }, {
+        emotion: "happy",
+        level: 0.6776954913139343
+    }, {
+        emotion: "sad",
+        level: 0.8976954913139343
+    }, {
+        emotion: "surprised",
+        level: 1
+    }, {
+        emotion: "sad",
+        level: 0.9978705644607544
+    }, {
+        emotion: "happy",
+        level: 0.5648226141929626
+    }
+]
+
 let noteSeqData = {
     notes: [{
             pitch: 60,
@@ -92,14 +123,39 @@ initKeyboard()
 
 document.querySelector('button').addEventListener('click', async () => {
     console.log('audio is ready')
-    $.getJSON("src/response.json", async function (data, textStatus, jqXHR) {
-        keyboardColor = $('.keyboard').attr('data-color');
-        await autoplayNotes(data, keyboardColor);
-    });
-
+    // $.getJSON("src/midi-backend.json", async function (data, textStatus, jqXHR) {
+    //     keyboardColor = $('.keyboard').attr('data-color');
+    //     await autoplayNotes(data, keyboardColor);
+    // });
+    sendEmotion(notesArrObj)
     // console.log(noteSeqData)
     // await autoplayNotes(noteSeqData, '');
 })
+
+function sendEmotion(emotionArr) {
+    $.ajax({
+        type: "POST",
+        url: "https://paino-fp3.herokuapp.com/emotion-to-notes",
+        data: JSON.stringify(emotionArr),
+        dataType: "json",
+        beforeSend: function () {
+            changeBtn('loading...')
+        },
+        success: async function (dataPitchNotes) {
+            changeBtn('This website using sound.')
+            keyboardColor = $('.keyboard').attr('data-color');
+            await autoplayNotes(dataPitchNotes, keyboardColor);
+        },
+        error: function (error) {
+            console.log(error)
+            changeBtn('failed.')
+        }
+    });
+}
+
+function changeBtn(text) {
+    $('button').text(text)
+}
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
@@ -294,10 +350,12 @@ async function autoplayNotes(noteSeq, keyboardColor) {
 
         notesArr.push(notes)
 
+        let matchKeyPosition = matchKey ? matchKey.position().left : 60;
+
         setTimeout(() => {
             addColorToKey(matchKey, keyboardColor, true, notes.startTime + 1000)
             height = calculateHeight(notes.startTime * 10, notes.endTime * 10)
-            createNote(matchKey.width(), matchKey.position().left, height)
+            createNote(matchKey.width(), matchKeyPosition, height)
         }, notes.startTime * 1000);
     }
 
