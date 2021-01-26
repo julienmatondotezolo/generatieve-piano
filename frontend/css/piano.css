@@ -1,16 +1,36 @@
+.keyboard {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-top: 15px solid rgb(240, 4, 127);
+    border-image: linear-gradient(90deg, rgba(240, 4, 127, 1) 0%, rgba(255, 0, 80, 1) 100%);
+    border-image-slice: 1;
+    background-color: #1A1A1A;
+    z-index: 999;
+    transition: al .3s ease-in-out;
+    -webkit-transition: al .3s ease-in-out;
+    -moz-transition: al .3s ease-in-out;
+    -ms-transition: al .3s ease-in-out;
+    -o-transition: al .3s ease-in-out;
+}
+
 #piano {
-	width: 100%;
-	overflow-y: hidden;
-	overflow-x: scroll;
-	height: 150px;
+	position: relative;
+	width: 99%;
+	height: 100px;
 	margin: auto;
 }
 
 #piano .keys {
+	position: relative;
+	top: -10%;
 	width: 100%;
 	height: 100%;
 	margin: auto;
-	position: relative;
+	overflow: hidden;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	box-shadow: 0px 0px 5px 0px #000000;
 }
 
 #piano .key {
@@ -23,23 +43,31 @@
 }
 
 #piano .white-key{
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	border-right: 4px solid #dadada;
-	border-bottom: 4px solid #dadada;
+	border-left: 2px solid #E6E6E6;
+	border-right: 2px solid #E6E6E6;
 }
 
 #piano .black-key {
-	background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 84%, rgba(0,0,0,1) 100%);
-	width: 30px;
-	height: 80px;
+	/* width: 30px; */
+	/* margin-right: 14px; */
+	height: 100%;
 	vertical-align: top;
 	z-index: 999;
-	margin-right: 11px;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
-	border-right: 4px solid #00000000;
-	border-bottom: 4px solid #00000000;
+	color: rgb(255, 255, 255);
+	background: linear-gradient(180deg, #000000 0%, #3E3E3E 78%, #1C1C1C 85%, #000000 100%);
+	float: left;
+}
+
+.black {
+    align-items: center;
+    position: absolute;
+    color: rgb(255, 255, 255);
+    left: 3%;
+    width: 5%;
+    height: 50px;
+    background-color: #141414;
 }
 
 #piano .white-keys {
@@ -52,38 +80,32 @@
 }
 
 #piano .black-keys {
-	display: inline-block;
 	position: absolute;
-	width: 100%;
-	left: 27px;
+	width: 96%;
+	height: 60%;
+	left: 1.98%;
+	overflow: hidden;
 }
 
 #piano .cluster {
-	margin-right: 3.4%;
+	display: block;
+	margin-right: 4.3%;
+	height: 100%;
+	float: left;
 }
 
 #piano .cluster:last-child {
     margin-right: 0;
 }
 
+#piano .cluster:nth-child(1) .black-key:nth-child(1){
+    float: left;
+}
+
+#piano .cluster .black-key:last-child {
+    margin: 0 !important;
+}
+
 #piano .white-key:hover {
-	background: rgb(216, 216, 216);
-}
-
-#piano .white-key:active, #piano .white-key.active {
-	/* background: linear-gradient(180deg, white, rgba(255, 0, 0, 0.384)); */
-	background: rgb(0, 217, 255);
-}
-
-#piano .black-key:active, #piano .black-key.active {
-	/* background: linear-gradient(180deg, #404040, #a5a5a5); */
-	background: orange;
-}
-
-#piano .white-key.other-active {
-	background: linear-gradient(180deg, white, rgba(0, 0, 0, 0.2));
-}
-
-#piano .black-key.active {
-	background: linear-gradient(0deg, #404040, rgba(0, 25, 0, 1));
+	background: #E6E6E6;
 }

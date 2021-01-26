@@ -216,12 +216,13 @@ function initKeyboard() {
 
 function generateKeyboard() {
     $('.white-keys').empty();
+    $('.black-keys').empty();
 
     let keyLength = 35
 
     for (let i = 0; i < keyLength; i++) {
         let note = i;
-        generateKey(note, keyWidth(30), note)
+        generateKey(note, keyWidth(keyLength), note)
     }
 
     let keyboard = " * Keyboard loaded * "
@@ -232,29 +233,33 @@ function generateKeyboard() {
 
 function generateKey(keyNote, keyLength, iteration) {
     $('.white-keys').append(`
-         <div class="key white-key unselectable data-note="w${keyNote}" data-active="false">
+         <div class="key white-key unselectable" data-note="w${47 + keyNote}" data-active="false">
             <p>W${keyNote}</p>
         </div>
     `);
     $('.black-keys').append(`
-        <span class="cluster">
-            <div class="key black-key"></div>
-            <div class="key black-key"></div>
+        <span class="cluster clus2" style="width: ${keyWidth(22)}%;">
+            <div class="key black-key unselectable" data-note="b${48 + keyNote}" data-active="false"></div>
+            <div class="key black-key unselectable" data-note="b${50 + keyNote}" data-active="false"></div>
         </span>
-        <span class="cluster">
-            <div class="key black-key"></div>
-            <div class="key black-key"></div>
-            <div class="key black-key"></div>
+        <span class="cluster clus3" style="width: ${keyWidth(13)}%;">
+            <div class="key black-key unselectable" data-note="b${53 + keyNote}" data-active="false"></div>
+            <div class="key black-key unselectable" data-note="b${55 + keyNote}" data-active="false"></div>
+            <div class="key black-key unselectable" data-note="b${57 + keyNote}" data-active="false"></div>
         </span>
     `);
 
     $('.white-key').css({
         width: keyLength + '%'
     });
-    $('.black-key').css({
-        width: keyWidth(60) + '%'
+    $('.clus2 > .black-key').css({
+        width: keyWidth(3) + '%',
+        marginRight: keyWidth(3) + '%',
     });
-
+    $('.clus3 > .black-key').css({
+        width: keyWidth(5.075) + '%',
+        marginRight: keyWidth(5.075) + '%',
+    });
     $('.cluster').slice(10).remove();
 }
 
@@ -284,7 +289,7 @@ function getKeyNumber(key) {
 /*/////////////   RESPONSIVE KEY WITDH   ////////////////*/
 
 function keyWidth(keysLength) {
-    let keyboardLength = $('.keyboard').width();
+    let keyboardLength = $('.keys').width();
     let keyWidth = (100 / keysLength)
     return keyWidth
 }
