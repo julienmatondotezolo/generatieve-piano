@@ -1,65 +1,69 @@
-html, body {
-	background-color: black;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	overflow-y: hidden;
-}
-
 #piano {
 	width: 100%;
 	overflow-y: hidden;
 	overflow-x: scroll;
-	height: 240px;
+	height: 150px;
 	margin: auto;
 }
 
 #piano .keys {
-	width: 1460px;
+	width: 100%;
 	height: 100%;
 	margin: auto;
 	position: relative;
 }
 
 #piano .key {
+	box-sizing: border-box;
 	width: 40px;
-	height: calc(100% - 54px);
+	height: 100%;
 	background: white;
-	border-right: 4px solid #000000;
-	border-bottom: 4px solid #000000;
 	display: inline-block;
-	margin-right: -2px;
+	/* margin-right: -2px; */
+}
+
+#piano .white-key{
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-right: 4px solid #dadada;
+	border-bottom: 4px solid #dadada;
 }
 
 #piano .black-key {
-	background: #202020;
+	background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(33,33,33,1) 84%, rgba(0,0,0,1) 100%);
 	width: 30px;
-	height: 110px;
+	height: 80px;
 	vertical-align: top;
 	z-index: 999;
-	margin-right: 10px;
-	border-right: 4px solid #000000;
-	border-bottom: 4px solid #000000;
+	margin-right: 11px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-right: 4px solid #00000000;
+	border-bottom: 4px solid #00000000;
 }
 
 #piano .white-keys {
-	border-top: 50px solid rgb(0, 0, 0);
-	display: inline-block;
+	display: flex;
 	position: absolute;
 	top: 0;
 	height: 100%;
+	width: 100%;
 	left: 0;
 }
 
 #piano .black-keys {
 	display: inline-block;
 	position: absolute;
-	top: 50px;
-	left: 25px;
+	width: 100%;
+	left: 27px;
 }
 
 #piano .cluster {
-	margin-right: 41px;
+	margin-right: 3.4%;
+}
+
+#piano .cluster:last-child {
+    margin-right: 0;
 }
 
 #piano .white-key:hover {

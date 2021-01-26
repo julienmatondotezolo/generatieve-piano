@@ -149,27 +149,6 @@ async function sendEmotion(emotionArr) {
     changeBtn('This website using sound.')
 }
 
-// function sendEmotion(emotionArr) {
-//     $.ajax({
-//         type: "POST",
-//         url: "https://paino-fp3.herokuapp.com/emotion-to-notes",
-//         data: JSON.stringify(emotionArr),
-//         dataType: "json",
-//         beforeSend: function () {
-//             changeBtn('loading...')
-//         },
-//         success: async function (dataPitchNotes) {
-//             changeBtn('This website using sound.')
-//             keyboardColor = $('.keyboard').attr('data-color');
-//             await autoplayNotes(dataPitchNotes, keyboardColor);
-//         },
-//         error: function (error) {
-//             console.log(error)
-//             changeBtn('failed.')
-//         }
-//     });
-// }
-
 function changeBtn(text) {
     $('button').text(text)
 }
@@ -236,28 +215,15 @@ function initKeyboard() {
 /*/////////////   GENERATE KEYBOARD   ////////////////*/
 
 function generateKeyboard() {
-    $('.keyboard').empty();
+    $('.white-keys').empty();
 
-    let keyLength = 80
+    let keyLength = 35
 
-    for (let i = 50; i < keyLength; i++) {
+    for (let i = 0; i < keyLength; i++) {
         let note = i;
-        generateKey(note, keyWidth(30), i)
+        generateKey(note, keyWidth(30), note)
     }
 
-    // $(".key[data-note=b2]").remove();
-    // $(".key[data-note=b3]").remove();
-    // $(".key[data-note=b4]").remove();
-    // $(".key[data-note=b8]").remove();
-    // $(".key[data-note=b9]").remove();
-    // $(".key[data-note=b13]").remove();
-    // $(".key[data-note=b14]").remove();
-    // $(".key[data-note=b17]").remove();
-    // $(".key[data-note=b20]").remove();
-    // $(".key[data-note=b24]").remove();
-    // for (let i = 65; i < 70; i++) {
-    //     $(`.key[data-note=b${i}]`).remove();
-    // }
     let keyboard = " * Keyboard loaded * "
     console.log("%c" + keyboard, "background: #f0047f; color: #fff")
 }
@@ -265,19 +231,31 @@ function generateKeyboard() {
 /*/////////////   GENERATE KEYS   ////////////////*/
 
 function generateKey(keyNote, keyLength, iteration) {
-    $('.keyboard').append(`
-
-        <div class="key white unselectable" data-note="w${keyNote}" data-active="false">
+    $('.white-keys').append(`
+         <div class="key white-key unselectable data-note="w${keyNote}" data-active="false">
             <p>W${keyNote}</p>
         </div>
-
-        <div class="key black unselectable" data-note="b${keyNote}" data-active="false" style="margin-left: ${iteration + 20 * 3}px">
-            <p>B${keyNote}</p>
-         </div>
     `);
-    $('.key').css({
+    $('.black-keys').append(`
+        <span class="cluster">
+            <div class="key black-key"></div>
+            <div class="key black-key"></div>
+        </span>
+        <span class="cluster">
+            <div class="key black-key"></div>
+            <div class="key black-key"></div>
+            <div class="key black-key"></div>
+        </span>
+    `);
+
+    $('.white-key').css({
         width: keyLength + '%'
     });
+    $('.black-key').css({
+        width: keyWidth(60) + '%'
+    });
+
+    $('.cluster').slice(10).remove();
 }
 
 function changeKeyStatus(keyStatus, element) {
@@ -307,7 +285,7 @@ function getKeyNumber(key) {
 
 function keyWidth(keysLength) {
     let keyboardLength = $('.keyboard').width();
-    let keyWidth = 100 / keysLength
+    let keyWidth = (100 / keysLength)
     return keyWidth
 }
 
