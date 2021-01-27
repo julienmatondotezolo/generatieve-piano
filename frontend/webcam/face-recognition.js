@@ -2,7 +2,7 @@
 
 window.onload = function () {
 
-  let emotionObj = {
+  let emotionColorObj = {
     angry: 'red',
     disgusted: '#0eff00',
     fearful: '#9300ff',
@@ -11,6 +11,9 @@ window.onload = function () {
     sad: '#0065ff',
     surprised: '#ff0068',
   }
+
+  let trackedEmotionsArr = [];
+  let emotionObj = {};
 
   const video = document.getElementById("video");
 
@@ -42,7 +45,7 @@ window.onload = function () {
 
     faceapi.matchDimensions(canvas, displaySize);
 
-    setInterval(async () => {
+    let scanningFace = setInterval(async () => {
       const detections = await faceapi
         .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
         .withFaceLandmarks()
@@ -77,23 +80,34 @@ window.onload = function () {
           return b[1] - a[1];
         });
 
-        let emotion = emotionArr[0][0];
+        let emotionVal = emotionArr[0][0];
         let emotionLevel = emotionArr[0][1];
 
-        $('.emotion-txt').text(`You are ${emotion}`).css('color', emotionToColor(emotion))
+        emotionObj.level = emotionLevel;
+        emotionObj.emotion = emotionVal
+        trackedEmotionsArr.push(emotionObj);
+
+        $('.emotion-txt').text(`You are ${emotionVal}`).css('color', emotionToColor(emotionVal))
 
         $('body').css({
-          'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, ${emotionToColor(emotion)} 100%)`
+          'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, ${emotionToColor(emotionVal)} 100%)`
         });
-        $('.keyboard').attr('data-color', emotionToColor(emotion))
+        $('.keyboard').attr('data-color', emotionToColor(emotionVal))
         $('.keyboard').css({
-          borderColor: emotionToColor(emotion),
+          borderColor: emotionToColor(emotionVal),
           borderImage: 'none'
         })
       }
 
-    }, 100); //maybe change
+    }, 500);
+    //maybe change
+
+    setTimeout(async () => {
+      // clearInterval(await scanningFace);
+      console.log(trackedEmotionsArr)
+    }, 20000)
   });
+
 
   function loader(status) {
     if (status) {
@@ -110,10 +124,10 @@ window.onload = function () {
 
   function emotionToColor(emotion) {
 
-    for (const emotionToColor in emotionObj) {
+    for (const emotionToColor in emotionColorObj) {
 
       if (emotionToColor === emotion) {
-        return emotionObj[emotionToColor]
+        return emotionColorObj[emotionToColor]
       }
 
     }

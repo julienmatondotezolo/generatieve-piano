@@ -1,0 +1,88 @@
+{
+    "tempos": [
+        {
+            "qpm": 120
+        }
+    ],
+    "notes": [
+        {
+            "pitch": 67,
+            "startTime": "0",
+            "endTime": "1"
+        },
+        {
+            "pitch": 28,
+            "startTime": "1",
+            "endTime": "2"
+        },
+        {
+            "pitch": 69,
+            "startTime": "2",
+            "endTime": "3"
+        },
+        {
+            "pitch": 120,
+            "startTime": "3",
+            "endTime": "4"
+        },
+        {
+            "pitch": 43,
+            "startTime": "4",
+            "endTime": "5"
+        },
+        {
+            "pitch": 18,
+            "startTime": "5",
+            "endTime": "6"
+        },
+        {
+            "pitch": 76,
+            "startTime": "6",
+            "endTime": "7"
+        },
+        {
+            "pitch": 59,
+            "startTime": "7",
+            "endTime": "8"
+        },
+        {
+            "pitch": 84,
+            "startTime": "8",
+            "endTime": "9"
+        },
+        {
+            "pitch": 57,
+            "startTime": "9",
+            "endTime": "10"
+        },
+        {
+            "pitch": 51,
+            "startTime": "10",
+            "endTime": "11"
+        },
+        {
+            "pitch": 52,
+            "startTime": "11",
+            "endTime": "12"
+        },
+        {
+            "pitch": 39,
+            "startTime": "12",
+            "endTime": "13"
+        },
+        {
+            "pitch": 112,
+            "startTime": "13",
+            "endTime": "14"
+        },
+        {
+            "pitch": 16,
+            "startTime": "14",
+            "endTime": "15"
+        }
+    ],
+    "quantizationInfo": {
+        "stepsPerQuarter": 2
+    },
+    "totalQuantizedSteps": "15"
+}
