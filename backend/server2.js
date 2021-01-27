@@ -15,9 +15,9 @@ const mmcore = require('@magenta/music/node/core');
 const rnn = require('@magenta/music/node/music_rnn');
 const melodyRNN = new rnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn');
 const app = express();
+const server = require('http').Server(app);
 
 melodyRNN.initialize();
-http.Server(app);
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -40,6 +40,9 @@ app.listen(port, () => {
             Example app listening at http://localhost:${port}`);
 });
 
+
+
+
 app.get("/", (req, res) => {
 
     res.sendFile(path.join(__dirname + '/index.html'));
@@ -51,7 +54,6 @@ app.get("/", (req, res) => {
 
 
 // ========== POST EMOTIONS TO NOTES ==========  //
-
 app.post("/emotion-to-notes", async(req, res, next) => {
 
     let emotionArr = req.body;
