@@ -141,8 +141,14 @@ async function sendEmotion(emotionArr) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(emotionArr)
+    }).then((result) => {
+        console.log(result.json())
+    }).catch((err) => {
+        changeBtn('error')
+        console.log(err.body)
     });
 
+    console.log(await rawResponse)
     const dataPitchNotes = await rawResponse.json();
     keyboardColor = $('.keyboard').attr('data-color');
     await autoplayNotes(dataPitchNotes, keyboardColor);
@@ -232,11 +238,22 @@ function generateKeyboard() {
     $('.black-keys').empty();
 
     let keyLength = 35
+    let steps = 46;
+    let stepsBlack = 37;
+    let stepsBlackByTen = 0;
 
     for (let i = 0; i < keyLength; i++) {
-        let note = i;
-        generateKey(note, keyWidth(keyLength), note)
+        steps += 2
+        generateKey(i, keyLength, steps)
     }
+
+    for (let i = 0; i < 5; i++) {
+        stepsBlack += 2
+        stepsBlackByTen += 10
+        generateBlackKey(i, stepsBlackByTen, stepsBlack)
+    }
+
+    addNotesToKeys()
 
     let keyboard = " * Keyboard loaded * "
     console.log("%c" + keyboard, "background: #f0047f; color: #fff")
@@ -244,37 +261,41 @@ function generateKeyboard() {
 
 /*/////////////   GENERATE KEYS   ////////////////*/
 
-function generateKey(keyNote, keyLength, iteration) {
+function generateKey(keyNote, keyLength, steps) {
     $('.white-keys').append(`
-         <div class="key white-key unselectable" data-note="w${48 + keyNote}" data-active="false">
-            <p>${48 + keyNote}</p>
+         <div class="key white-key unselectable" data-note="w${steps}" data-active="false">
+            <p>${steps}</p>
         </div>
     `);
+
+    $('.white-key').css({
+        width: keyWidth(keyLength) + "%"
+    });
+}
+
+function generateBlackKey(keyNote, bigSteps, steps) {
     $('.black-keys').append(`
         <span class="cluster clus2" style="width: ${keyWidth(22)}%;">
-            <div class="key black-key unselectable" data-note="b${48 + keyNote}" data-active="false">
-                <p>${48 + keyNote}</p>
+            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+                <p>${bigSteps}</p>
             </div>
-            <div class="key black-key unselectable" data-note="b${50 + keyNote}" data-active="false">
-                <p>${50 + keyNote}</p>
+            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+                <p>${bigSteps}</p>
             </div>
         </span>
         <span class="cluster clus3" style="width: ${keyWidth(13)}%;">
-            <div class="key black-key unselectable" data-note="b${53 + keyNote}" data-active="false">
-                <p>${53 + keyNote}</p>
+            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+                <p>${bigSteps}</p>
             </div>
-            <div class="key black-key unselectable" data-note="b${55 + keyNote}" data-active="false">
-                <p>${55 + keyNote}</p>
+            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+                <p>${bigSteps}</p>
             </div>
-            <div class="key black-key unselectable" data-note="b${57 + keyNote}" data-active="false">
-                <p>${57 + keyNote}</p>
+            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+                <p>${bigSteps}</p>
             </div>
         </span>
     `);
 
-    $('.white-key').css({
-        width: keyLength + '%'
-    });
     $('.clus2 > .black-key').css({
         width: keyWidth(3) + '%',
         marginRight: keyWidth(3) + '%',
@@ -283,7 +304,30 @@ function generateKey(keyNote, keyLength, iteration) {
         width: keyWidth(5.075) + '%',
         marginRight: keyWidth(5.075) + '%',
     });
-    $('.cluster').slice(10).remove();
+    // $('.cluster').slice(10).remove();
+}
+
+function addNotesToKeys() {
+    let whiteKeys = $('.white-key')
+    let steps = 46;
+    let stepsBlack = 47;
+
+    for (let i = 1; i < whiteKeys.length + 1; i++) {
+        steps += 2
+        $(`.white-key:nth-child(${i}) p`).text(steps)
+    }
+
+    $('.black-key').each(function(i, e) {
+        stepsBlack += 2
+        $(this).attr('data-note', stepsBlack)
+        $(this).children('p').text(stepsBlack)
+    });
+
+    // $('.key').each(function(i, e) {
+    //     steps += 1
+    //     $(this).attr('data-note', steps)
+    //     $(this).children('p').text(steps)
+    // });
 }
 
 function changeKeyStatus(keyStatus, element) {
@@ -354,12 +398,7 @@ function createNote(element, note, height) {
 }
 
 function addLengthToNotes(noteId) {
-    $(`.note-block[data-note=${noteId}]`).css('height', (count++) + '0px');
-}
-
-function calculateHeight(start, end) {
-    let height = end - start;
-    return height;
+    $(`.note-block[data-note=${noteId}]:last-child`).css('height', (count++) + '0px');
 }
 
 async function autoplayNotes(noteSeq, keyboardColor) {

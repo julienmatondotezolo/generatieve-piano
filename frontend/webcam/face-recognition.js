@@ -10,7 +10,6 @@ window.onload = function () {
     neutral: 'grey',
     sad: '#0065ff',
     surprised: '#ff0068',
-    surprised: '#ff0068',
   }
 
   let trackedEmotionsArr = [];
