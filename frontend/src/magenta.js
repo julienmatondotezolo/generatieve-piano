@@ -1,18 +1,26 @@
 "use strict";
 
-let players = new mm.Player();
 let newKeyData;
+let players;
+
+// players = new mm.Player()
+soundFontPlayer()
+const music_vae = new mm.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
+
+async function soundFontPlayer() {
+    players = await new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus')
+}
 
 export async function playNotes(keyData, notesArr) {
-    players = await new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus');
-    
+    console.log('PLAYER STATUS: ', players.getPlayState())
+
     let MIDI;
     let pitchLevel = 30;
 
     if (notesArr) {
         MIDI = {
             notes: notesArr
-        };    
+        };
     } else {
         MIDI = {
             notes: [{
@@ -31,15 +39,12 @@ export async function playNotes(keyData, notesArr) {
         MIDI.notes[0].pitch = parseInt(newKeyData) - 20;
     }
 
-    if (players) {
-        players.stop(MIDI);
-        console.log('player: ', 'stopped')
-    } else {
-        players.resume()
-        console.log('player: ', 'resume')
+    if (players.isPlaying()) {
+        players.stop();
     }
 
-    players.start(MIDI);
+    players.start(MIDI)
+
 }
 
 /* function holdNote() {

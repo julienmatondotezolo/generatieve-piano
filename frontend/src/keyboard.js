@@ -123,13 +123,11 @@ initKeyboard()
 
 document.querySelector('button').addEventListener('click', async () => {
     console.log('audio is ready')
-    // $.getJSON("src/midi-backend.json", async function (data, textStatus, jqXHR) {
-    //     keyboardColor = $('.keyboard').attr('data-color');
-    //     await autoplayNotes(data, keyboardColor);
-    // });
-    await sendEmotion(notesArrObj)
-    // console.log(noteSeqData)
-    // await autoplayNotes(noteSeqData, '');
+    $.getJSON("src/response.json", async function (data, textStatus, jqXHR) {
+        keyboardColor = $('.keyboard').attr('data-color');
+        await autoplayNotes(data, keyboardColor);
+    });
+    // await sendEmotion(notesArrObj)
 })
 
 async function sendEmotion(emotionArr) {
@@ -164,11 +162,10 @@ function changeBtn(text) {
 $(".key").hover(function () {
     // over
     keyboardColor = $('.keyboard').attr('data-color');
-    keyboardColor = keyboardColor ? keyboardColor : '#e6e6e6'
-    $(this).css('background-color', keyboardColor)
+    addColorToKey(this, keyboardColor)
 }, function () {
     // out
-    $(this).css('background-color', '')
+    // $(this).css('background-color', '')
 });
 
 $(".key").mouseup(function () {
@@ -176,11 +173,10 @@ $(".key").mouseup(function () {
     count = 5;
     clearInterval(window.myTimer);
     changeKeyStatus($(this).attr('data-active'), this)
-    console.log('Mouse: ', '')
 }).mousedown(function () {
     clicked = true;
     keyData = $(this).attr('data-note');
-    // playNotes(keyData);
+    playNotes(keyData);
 
     keyboardColor = $('.keyboard').attr('data-color');
     addColorToKey(this, keyboardColor, false)
@@ -188,30 +184,26 @@ $(".key").mouseup(function () {
     
     createNote($(this), $(this).attr('data-note'))
     window.myTimer = setInterval(addLengthToNotes, 50, $(this).attr('data-note'))
-    console.log('Mouse: ', 'clicked')
 
-    $('.key').mouseenter(function (e) {
-        if ($(".key:hover").length != 0 && clicked) {
+    // $('.key').mouseenter(function (e) {
+    //     if ($(".key:hover").length != 0 && clicked) {
 
-            keyData = $(this).attr('data-note');
-            // playNotes(keyData);
+    //         keyData = $(this).attr('data-note');
+    //         playNotes(keyData);
 
-            keyboardColor = $('.keyboard').attr('data-color');
-            addColorToKey(this, keyboardColor, false)
+    //         keyboardColor = $('.keyboard').attr('data-color');
+    //         addColorToKey(this, keyboardColor, false)
 
-            createNote($(this), $(this).attr('data-note'))
-        
-            console.log('Mouse: ', 'clicked + moving in element')
-        } else {
-            console.log('Mouse: ', 'Not clicked')
-        }
-    })
+    //         createNote($(this), $(this).attr('data-note'))
+    //     } else {
+    //         // console.log('Mouse: ', 'Not clicked')
+    //     }
+    // })
 
-    $('.key').mouseleave(function () {
-        count = 5;
-        clearInterval(window.myTimerOnMove);
-        console.log('Mouse: ', 'clicked + moving out')
-    })
+    // $('.key').mouseleave(function () {
+    //     count = 5;
+    //     clearInterval(window.myTimerOnMove);
+    // })
 
 });
 
@@ -364,20 +356,20 @@ function keyWidth(keysLength) {
 /*/////////////   CLICKED KEY FUNCTIONS   ////////////////*/
 
 function addColorToKey(element, color, autoplay, endTime) {
-    $(element).css('background-color', color)
+    let keyboardColor = color ? color : '#e6e6e6';
+    $(element).css('background', `linear-gradient(180deg, ${keyboardColor} 0%, ${keyboardColor} 100%)`)
 
     if (autoplay) {
         setTimeout(function () {
-            $(element).css('background-color', '')
+            $(element).css('background', '')
         }, endTime);
     } else {
         $(element).mouseout(function () {
             setTimeout(function () {
-                $(element).css('background-color', '')
-            }, 1000);
+                $(element).css('background', '')
+            }, 100);
         });
     }
-
 }
 
 /*/////////////   GENERATE NOTES   ////////////////*/
@@ -406,23 +398,28 @@ async function autoplayNotes(noteSeq, keyboardColor) {
     let notesArr = []
     let height;
     let newKeyData;
+    let newKeyboardColor = keyboardColor ? keyboardColor : '#e6e6e6'
 
     for (const notes of await noteSeq.notes) {
-        let matchKey = $(".keyboard").find(`.key[data-note='w${notes.pitch}']`)
+        let matchKey = $(".keyboard").find(`.key[data-note='w${notes.pitch}']`);
         keyData = matchKey.attr('data-note');
 
         newKeyData = keyData ? matchKey.attr('data-note') : 'w75';
-        let matchKeyPosition = keyData ? matchKey.position().left : 75;
-        
+        let element = keyData ? $(`.key[data-note='w${notes.pitch}']`) : $(".key[data-note='75']");
+
         notesArr.push(notes)
 
         setTimeout(() => {
-            addColorToKey(matchKey, keyboardColor, true, notes.startTime + 1000)
+            addColorToKey(matchKey, newKeyboardColor, true, notes.startTime + 1000)
             height = calculateHeight(notes.startTime * 10, notes.endTime * 10)
-            createNote(matchKey.width(), matchKeyPosition, height)
+            createNote(element, keyData, height)
         }, notes.startTime * 1000);
     }
 
     await playNotes(newKeyData, notesArr);
 
+}
+
+function calculateHeight(startTime, endTime) {
+    return endTime - startTime
 }
