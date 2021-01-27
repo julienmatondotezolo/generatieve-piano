@@ -1,5 +1,7 @@
 @import url(reset.css);
 @import url(main.css);
+@import url(keyboard.css);
+@import url(piano.css);
 
 /*////////////////  COLORS  ///////////*/
 
@@ -18,7 +20,7 @@ body {
     box-sizing: border-box;
     float: left;
     background: #333;
-    background: linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, rgba(255,0,80,1) 100%);
+    background: linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 70%, rgba(255,0,80,1) 100%);
     background-size: cover;
 }
 
