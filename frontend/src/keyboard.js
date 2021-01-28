@@ -121,7 +121,7 @@ let noteSeqData = {
 initWebcam()
 initKeyboard()
 
-document.querySelector('button').addEventListener('click', async () => {
+document.querySelector('.ai-bot').addEventListener('click', async () => {
     console.log('audio is ready')
     $.getJSON("src/response.json", async function (data, textStatus, jqXHR) {
         keyboardColor = $('.keyboard').attr('data-color');
@@ -379,6 +379,8 @@ function createNote(element, note, height) {
     let width = element.width()
     let positionLeft = element.offset().left
     let keyHeight = height ? height : 5;
+    
+    $('#video').css('border', `${keyHeight} solid ${keyboardColor}`);
 
     $('.notes').append(`
         <div class="note-block" data-note="${note}" style="left: ${positionLeft}px; height: ${keyHeight}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>

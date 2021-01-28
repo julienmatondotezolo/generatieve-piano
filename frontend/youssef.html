@@ -23,12 +23,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.0/es6/music_vae.js"></script>
-    
-    <script type="module" src="src/socket.js"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
+    <script defer type="module" src="src/socket.js"></script>
 
     <script defer src="webcam/face-api.min.js"></script>
     <script defer src="webcam/face-recognition.js"></script>
     <script type="module" src="src/keyboard.js"></script>
+
 </head>
 
 <body>
@@ -41,6 +43,7 @@
 
     <main>
         <button>This website is using sound</button>
+        <button id="testButton">testbutton</button>
         <div class="notes">
             <!-- <div class="note-block"></div> -->
         </div>
