@@ -15,8 +15,9 @@ aside.info {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: end;
     position: absolute;
-    bottom: calc(100% - 50px);
+    top: calc(0% + 10px);
     left: 50%;
     width: calc(100% - 20px);
     transform: translate(-50%, 0);
@@ -28,10 +29,16 @@ aside.info {
     z-index: 9999;
 }
 
+.room {
+    display: flex;
+    flex-direction: column;
+}
+
 .user-content {
     display: inline-block;
     cursor: pointer;
     opacity: .5;
+    margin: 0 0 10px;
     transition: all .2s ease-out;
     -webkit-transition: all .2s ease-out;
     -moz-transition: all .2s ease-out;
@@ -99,7 +106,7 @@ aside.info {
     padding: 1.5em;
     position: absolute;
     left: 50%;
-    top: calc(100% - 250px);
+    top: calc(100% - 225px);
     transform: translate(-50%, 0);
     border-radius: 50px;
     background: rgb(0 0 0 / 50%);
@@ -145,47 +152,4 @@ aside.info {
 .icon-devices img {
     margin: auto;
     width: 40%;
-}
-
-/*/////////////    FACE RECOGNITION    ////////////////*/
-
-.face-recognition-wrap {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.emotion-content {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    z-index: 999;
-}
-
-.emotion-txt {
-    color: #fff;
-}
-
-canvas {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 999;
-}
-
-#video {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    /* opacity: 0.2;
-    filter: saturate(0.2); */
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
-    border-radius: 50%;
-    object-fit: cover;
 }
