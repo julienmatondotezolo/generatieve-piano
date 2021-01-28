@@ -1,11 +1,17 @@
 @import url(reset.css);
 @import url(main.css);
-@import url(keyboard.css);
+@import url(webcam.css);
 @import url(piano.css);
 
 /*////////////////  COLORS  ///////////*/
 
+.bg-green {
+    background-color: #00FF76 !important;
+}
 
+.bg-red {
+    background-color: #FF004E !important;
+}
 
 /*/////////////    BODY   ////////////////*/
 
@@ -325,8 +331,8 @@ button {
     text-align: center;
     font-weight: 700;
     border-radius: 30px;
-    color: white;
-    background: var(--red);
+    color: #484848;
+    background: #fff;
     text-decoration: none;
     -webkit-transition: 0.1s all ease-in;
     transition: 0.1s all ease-in;
@@ -342,8 +348,11 @@ button {
 }
 
 .btn:hover {
-    -webkit-transform: scale(1.05);
-    transform: scale(1.05);
+    -webkit-transform: scale(0.95);
+    transform: scale(0.95);
+    -moz-transform: scale(0.95);
+    -ms-transform: scale(0.95);
+    -o-transform: scale(0.95);
 }
 
 .btn-inverse {
