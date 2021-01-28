@@ -13,6 +13,10 @@
     width: 50%;
 }
 
+.remote-video {
+    display: none;
+}
+
 .emotion-content {
     position: absolute;
     top: 50%;
@@ -34,7 +38,7 @@ canvas {
     z-index: 999;
 }
 
-#video {
+#video, #remote-video {
     position: absolute;
     left: 50%;
     top: 50%;
