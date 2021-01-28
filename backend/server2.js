@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const http = require("http");
 const fs = require("fs");
 const cors = require('cors');
-// const tf = require('@tensorflow/tfjs-node'); // Uncomment for heroku && comment for localhost
+//const tf = require('@tensorflow/tfjs-node'); // Uncomment for heroku && comment for localhost
 const path = require('path');
 const port = process.env.PORT || 3000;
 const mmcore = require('@magenta/music/node/core');
@@ -16,6 +16,8 @@ const rnn = require('@magenta/music/node/music_rnn');
 const melodyRNN = new rnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn');
 const app = express();
 const server = require('http').Server(app);
+var note = require('midi-note')
+
 
 melodyRNN.initialize();
 
@@ -29,7 +31,9 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use(bodyParser.urlencoded({ extended: true, }));
+app.use(bodyParser.urlencoded({
+    extended: true,
+}));
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -55,7 +59,7 @@ app.get("/", (req, res) => {
 
 // ========== POST EMOTIONS TO NOTES ==========  //
 app.post("/emotion-to-notes", async(req, res, next) => {
-
+    console.log(req.body);
     let emotionArr = req.body;
     let firstEmotion = extractEmotion(emotionArr);
     let midiFile = chooseMidiFile(firstEmotion);
@@ -69,9 +73,14 @@ app.post("/emotion-to-notes", async(req, res, next) => {
         melodyRNN.continueSequence(qns, 15, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
             .then(sample => {
 
+                console.log(sample);
                 let object = createNotesObject(sample);
+                console.log(object);
 
-                res.send({ object, firstEmotion });
+                res.send({
+                    object,
+                    firstEmotion
+                });
             });
 
     }
@@ -82,21 +91,47 @@ app.post("/emotion-to-notes", async(req, res, next) => {
 
 function createNotesObject(item) { // Create a playable object with the generated  notes of the AI
 
+    console.log("hello");
     let notes = [];
+    let notesPitch = [];
+
 
     item.notes.forEach(element => {
-        let newObject = {
-            pitch: element.pitch,
-            startTime: element.quantizedEndStep * 0.3,
-            endTime: element.quantizedEndStep * 0.3 + 0.3,
-        };
-        notes.push(newObject);
+        if (element.pitch < 101 && element.pitch > 39) {
+
+            let pitch = {
+                pitch: element.pitch
+            };
+
+
+            var str = note(element.pitch);
+            let string;
+            let number;
+            if (note(element.pitch).length === 2) {
+                string = str.slice(0, 1);
+                number = str.slice(1, 2);
+            } else {
+                string = str.slice(0, 2);
+                number = str.slice(2, 3);
+
+            }
+            let newObject = {
+                'letter': string,
+                'number': number,
+                'endTime': 1,
+            };
+            notes.push(newObject);
+            notesPitch.push(pitch);
+        }
     });
 
-    let filteredNotes = notes.filter((element) => element.pitch < 124 && element.pitch > 7); // filter the notes that are unplayable
+    //  let filteredNotes = notes.filter((element) => element.pitch < 124 && element.pitch > 7); // filter the notes that are unplayable
 
 
-    return filteredNotes;
+    return {
+        notes,
+        notesPitch
+    };
 
 }
 
@@ -167,10 +202,8 @@ app.post("/notes-to-midi", async(req, res, next) => {
     console.log(notes);
 
 
-
-
     const qns = mmcore.sequences.quantizeNoteSequence(notes, 2); // 2 == steps per quarter
-    melodyRNN.continueSequence(qns, 15, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
+    melodyRNN.continueSequence(qns, 10, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
         .then(sample => {
 
             let object = createNotesObject(sample);
@@ -182,3 +215,25 @@ app.post("/notes-to-midi", async(req, res, next) => {
 
 
 });
+
+
+/* for (let index = 40; index <= 100; index++) {
+    var str = note(index);
+    let string;
+    let number;
+    if (note(index).length === 2) {
+        string = str.slice(0, 1);
+        number = str.slice(1, 2);
+    } else {
+        string = str.slice(0, 2);
+        number = str.slice(2, 3);
+
+    }
+    console.log(`
+             "${index}": {
+                 "letter": "${string}",
+                 "number": ${number}
+             },
+         `);
+
+} */

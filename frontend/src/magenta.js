@@ -3,16 +3,31 @@
 let newKeyData;
 let players;
 
+Synth instanceof AudioSynth; // true
+
+var testInstance = new AudioSynth;
+testInstance instanceof AudioSynth; // true
+
+testInstance === Synth; // true
+
+
+
+
 // players = new mm.Player()
-soundFontPlayer()
+soundFontPlayer();
 const music_vae = new mm.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
 
 async function soundFontPlayer() {
-    players = await new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus')
+    players = await new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus');
 }
 
+let notes;
+$.getJSON("src/keyNumbers.json", function(json) {
+    notes = json;
+});
+
 export async function playNotes(keyData, notesArr) {
-    console.log('PLAYER STATUS: ', players.getPlayState())
+    //  console.log('PLAYER STATUS: ', players.getPlayState());
 
     let MIDI;
     let pitchLevel = 30;
@@ -39,19 +54,58 @@ export async function playNotes(keyData, notesArr) {
         MIDI.notes[0].pitch = parseInt(newKeyData) - 20;
     }
 
-    if (players.isPlaying()) {
-        players.stop();
-    }
+    //  console.log(newKeyData);
+    //  console.log(notes[newKeyData]);
 
-    players.start(MIDI)
+    let piano = Synth.createInstrument('piano');
+
+    piano.play(notes[newKeyData].letter, notes[newKeyData].number, 2);
+
+
 
 }
 
-/* function holdNote() {
-    MIDI.notes[0].endTime += 0.1;
-    //console.log(MIDI.notes[0].endTime += 1);
+
+
+
+
+
+
+export function playNotes2(keyData, notesArr) {
+
+    Array.prototype.delayedForEach = function(callback, timeout, thisArg) {
+        var i = 0,
+            l = this.length,
+            self = this,
+            caller = function() {
+                callback.call(thisArg || self, self[i], i, self);
+                (++i < l) && setTimeout(caller, timeout);
+            };
+        caller();
+    }; //  https://gist.github.com/fernandosavio/6011834
+
+    let piano = Synth.createInstrument('piano');
+    notesArr.delayedForEach(function(key, index, array) {
+
+        piano.play(key.letter, key.number, 2);
+
+    }, 500);
+
 }
 
-function resetNote() {
-    MIDI.notes[0].endTime = 0.1;
-} */
+/*
+https://tonejs.github.io/
+https://tonejs.github.io/docs/14.7.77/Sampler.html
+https://www.javascripting.com/view/tone-js
+https://www.devbridge.com/articles/tonejs-coding-music-production-guide/
+https://stackoverflow.com/questions/55800651/tone-js-additive-synth
+https://dev.to/je_we/building-a-simple-piano-with-tone-js-and-nexusui-part-2-4bpp
+https://tonejs.github.io/docs/14.7.58/Synth
+https://stackoverflow.com/questions/18752925/html5-audio-getting-the-sound-of-piano
+
+http://newt.phys.unsw.edu.au/jw/notes.html
+https://devriffs.com/simple-tonejs-keyboard/
+https://paino-fp3.herokuapp.com/
+
+
+https://shannonpeng.com/projects/virtual-piano*/
