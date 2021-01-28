@@ -121,7 +121,7 @@ let noteSeqData = {
 initWebcam()
 initKeyboard()
 
-document.querySelector('.ai-bot').addEventListener('click', async () => {
+document.querySelector('.info-btn').addEventListener('click', async () => {
     console.log('audio is ready')
     $.getJSON("src/response.json", async function (data, textStatus, jqXHR) {
         keyboardColor = $('.keyboard').attr('data-color');
