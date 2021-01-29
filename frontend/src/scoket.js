@@ -44,7 +44,6 @@ $(".online-duet").click(function (e) {
         console.log("Leaving room...")
         exitOnlineDuet(roomId)
     }
-    disableBtn('.ai-bot', false)
 });
 
 /*/////////////   FUNCTION CREATE OR JOIN   ////////////////*/
@@ -195,7 +194,7 @@ function joinOnlineDuet(roomId) {
 function exitOnlineDuet(roomId) {
     $(`.user-content[data-user=${joinerPeerObj.userId}]`).remove()
 
-    // peer.disconnect();
+    peer.disconnect();
     peer.destroy();
 
     console.log("Left room with ID: " + roomId)
@@ -203,7 +202,7 @@ function exitOnlineDuet(roomId) {
     $(".online-duet").attr("data-connect", "false").removeClass("bg-red").addClass("bg-green").text("join online duet").css("color", "")
 
     let newUrl = document.location.href.split('?')[0];
-    // window.location = newUrl
+    window.location = newUrl
 }
 
 /*/////////////   RANDOM USER IMAGE   ////////////////*/
