@@ -130,41 +130,7 @@ document.querySelector('button').addEventListener('click', async() => {
         }); 
         
     */
-
-    sendEmotion(notesArrObj).then(data => {
-        console.log(data);
-        keyboardColor = $('.keyboard').attr('data-color');
-        autoplayNotes(data, keyboardColor);
-        changeBtn('This website using sound.');
-
-    });
 });
-
-
-
-async function sendEmotion(notesArrObj) {
-    changeBtn('loading...');
-    const rawResponse = await fetch('http://localhost:3000/emotion-to-notes/', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(notesArrObj)
-    });
-
-    if (rawResponse.status === 200) {
-        return await rawResponse.json();
-    } else {
-        console.log("error getting data!");
-    }
-
-}
-
-function changeBtn(text) {
-    $('button').text(text);
-}
-
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
 $(".key").hover(function() {
@@ -191,29 +157,36 @@ $(".key").mouseup(function() {
     changeKeyStatus($(this).attr('data-active'), this);
 
     createNote($(this), $(this).attr('data-note'));
-    sendUserNotes($(this).attr('data-note'));
     // console.log($(this).attr('data-note'));
     window.myTimer = setInterval(addLengthToNotes, 50, $(this).attr('data-note'));
+    let counter = 0;
+    $('.key').mouseenter(function(e) {
 
-    // $('.key').mouseenter(function (e) {
-    //     if ($(".key:hover").length != 0 && clicked) {
+        if (counter <= 1) {
 
-    //         keyData = $(this).attr('data-note');
-    //         playNotes(keyData);
 
-    //         keyboardColor = $('.keyboard').attr('data-color');
-    //         addColorToKey(this, keyboardColor, false)
+            if ($(".key:hover").length !== 0 && clicked) {
+                console.log("SLIDED");
 
-    //         createNote($(this), $(this).attr('data-note'))
-    //     } else {
-    //         // console.log('Mouse: ', 'Not clicked')
-    //     }
-    // })
+                counter = 0;
+                keyData = $(this).attr('data-note');
+                playNotes(keyData);
 
-    // $('.key').mouseleave(function () {
-    //     count = 5;
-    //     clearInterval(window.myTimerOnMove);
-    // })
+                keyboardColor = $('.keyboard').attr('data-color');
+                addColorToKey(this, keyboardColor, false)
+
+                createNote($(this), $(this).attr('data-note'))
+                clearInterval(window.myTimerOnMove);
+            } else {
+
+            }
+        }
+    });
+    $('.key').mouseleave(function() {
+        count = 5;
+        clearInterval(window.myTimerOnMove);
+    });
+
 
 });
 
@@ -441,7 +414,33 @@ function calculateHeight(startTime, endTime) {
 
 
 
+let checkMode = $('.keyboard').attr("data-mode");
 let notes = [];
+
+
+if (checkMode) {
+
+    $(".key").mousedown(function() {
+        sendUserNotes($(this).attr('data-note'));
+    });
+
+    setInterval(() => {
+        console.log("item");
+        if (notes.length > 1) {
+
+            sendUserNotesToAI(notes).then(data => {
+                console.log(data);
+                keyboardColor = $('.keyboard').attr('data-color');
+                autoplayNotes(data, keyboardColor);
+            });
+            notes = [];
+        }
+
+    }, 5000);
+} else {
+    // BOT IS NOT ACTIVE;
+}
+
 
 
 function sendUserNotes(noteNumber) {
@@ -450,32 +449,10 @@ function sendUserNotes(noteNumber) {
 
     };
     notes.push(object);
-
 }
-
-setInterval(() => {
-
-
-    console.log("item");
-    if (notes.length > 0) {
-
-        sendUserNotesToAI(notes).then(data => {
-            console.log(data);
-            keyboardColor = $('.keyboard').attr('data-color');
-            autoplayNotes(data, keyboardColor);
-            changeBtn('This website using sound.');
-
-        });
-        notes = [];
-
-    }
-
-}, 5000);
-
 
 
 async function sendUserNotesToAI(notes) {
-    changeBtn('loading...');
     const rawResponse = await fetch('http://localhost:3000/notes-to-midi', {
         method: 'POST',
         headers: {
