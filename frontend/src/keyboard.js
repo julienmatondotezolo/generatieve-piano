@@ -12,6 +12,8 @@ let count = 5;
 let keyboardColor;
 let keyData;
 let checkMode;
+let notes = [];
+window.keyBoardTIMER;
 
 let notesArrObj = [{
     emotion: "sad",
@@ -117,22 +119,14 @@ let noteSeqData = {
     ]
 };
 
-/*/////////////   FUNCTION INITIALISATIONS   ////////////////*/
 let whiteNumber = [40, 42, 44, 45, 47, 49, 51, 52, 54, 56, 57, 59, 61, 63, 64, 66, 68, 69, 71, 73, 75, 76, 78, 80, 81, 83, 85, 87, 88, 90, 92, 93, 95, 97, 99];
 let blackNumber = [41, 43, 46, 48, 50, 53, 55, 58, 60, 62, 65, 67, 70, 72, 74, 77, 79, 82, 84, 86, 89, 91, 94, 96, 98];
+
+/*/////////////   FUNCTION INITIALISATIONS   ////////////////*/
+
 initWebcam();
 initKeyboard();
 
-
-document.querySelector('button').addEventListener('click', async() => {
-    console.log('audio is ready');
-    /*     $.getJSON("src/response.json", async function(data, textStatus, jqXHR) {
-            keyboardColor = $('.keyboard').attr('data-color');
-            await autoplayNotes(data, keyboardColor);
-        }); 
-        
-    */
-});
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
 $(".key").hover(function() {
@@ -306,6 +300,8 @@ function changeKeyStatus(keyStatus, element) {
     }
 }
 
+/*/////////////   GET KEY NUMBER   ////////////////*/
+
 function getKeyNumber(key) {
     let keyNumber;
     let getKeyNote = key.attr('data-note');
@@ -368,13 +364,15 @@ function createNote(element, note, height) {
     }, 5000);
 }
 
+/*/////////////   ADD LENGTH TO NOTES   ////////////////*/
+
 function addLengthToNotes(noteId) {
     $(`.note-block[data-note=${noteId}]:last-child`).css('height', (count++) + '0px');
 }
 
-async function autoplayNotes(noteSeq, keyboardColor) {
-    console.log("b");
+/*/////////////   FUNCTION TO AUTO PLAY NOTES  ////////////////*/
 
+async function autoplayNotes(noteSeq, keyboardColor) {
     let height;
     let newKeyData;
     let counter = 0;
@@ -411,30 +409,23 @@ async function autoplayNotes(noteSeq, keyboardColor) {
 
 }
 
+/*/////////////   CALCULATE HEUGHT   ////////////////*/
+
 function calculateHeight(startTime, endTime) {
     return endTime - startTime;
 }
 
-
-
-
-
-let notes = [];
+/*/////////////   CHECK KEYBOARD MODE   ////////////////*/
 
 function checkKeyBoardMode(checkMode) {
-
-    console.log(checkMode);
     if (checkMode === "true") {
-
-        console.log("yes");
+        console.log("Duet mode active");
         $(".key").mousedown(function() {
             sendUserNotes($(this).attr('data-note'));
         });
 
-        setInterval(() => {
-            console.log("item");
+        window.keyBoardTIMER = setInterval(() => {
             if (notes.length > 1) {
-
                 sendUserNotesToAI(notes).then(data => {
                     console.log(data);
                     keyboardColor = $('.keyboard').attr('data-color');
@@ -442,14 +433,15 @@ function checkKeyBoardMode(checkMode) {
                 });
                 notes = [];
             }
-
         }, 5000);
     } else {
-        console.log("not active");
+        clearInterval(window.keyBoardTIMER)
+        console.log("Duet mode not active");
         // BOT IS NOT ACTIVE;
     }
-
 }
+
+/*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
 function sendUserNotes(noteNumber) {
     let object = {
@@ -459,6 +451,7 @@ function sendUserNotes(noteNumber) {
     notes.push(object);
 }
 
+/*/////////////   SEND NOTES TO BACKEND   ////////////////*/
 
 async function sendUserNotesToAI(notes) {
     const rawResponse = await fetch('https://paino-fp3.herokuapp.com/notes-to-midi', {

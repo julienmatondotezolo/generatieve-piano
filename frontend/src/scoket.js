@@ -25,8 +25,7 @@ $('.ai-bot').click(function (e) {
     } else {
         $('.keyboard').attr("data-mode", bool);
         $(this).attr("data-mode", bool).text("duet with A.I bot").css({color: "", background: ""});
-    }   
-    console.log(bool)
+    }  
 });
 
 /*/////////////   CLICK FUNCTION TO JOIN   ////////////////*/
