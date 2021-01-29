@@ -11,6 +11,7 @@ let clicked = false;
 let count = 5;
 let keyboardColor;
 let keyData;
+let checkMode;
 
 let notesArrObj = [{
     emotion: "sad",
@@ -122,6 +123,7 @@ let blackNumber = [41, 43, 46, 48, 50, 53, 55, 58, 60, 62, 65, 67, 70, 72, 74, 7
 initWebcam();
 initKeyboard();
 
+
 document.querySelector('button').addEventListener('click', async() => {
     console.log('audio is ready');
     /*     $.getJSON("src/response.json", async function(data, textStatus, jqXHR) {
@@ -149,6 +151,8 @@ $(".key").mouseup(function() {
     changeKeyStatus($(this).attr('data-active'), this);
 }).mousedown(function() {
     clicked = true;
+    checkMode = $('.keyboard').attr("data-mode");
+    checkKeyBoardMode(checkMode);
     keyData = $(this).attr('data-note');
     playNotes(keyData);
 
@@ -414,34 +418,38 @@ function calculateHeight(startTime, endTime) {
 
 
 
-let checkMode = $('.keyboard').attr("data-mode");
+
 let notes = [];
 
+function checkKeyBoardMode(checkMode) {
 
-if (checkMode) {
+    console.log(checkMode);
+    if (checkMode === "true") {
 
-    $(".key").mousedown(function() {
-        sendUserNotes($(this).attr('data-note'));
-    });
+        console.log("yes");
+        $(".key").mousedown(function() {
+            sendUserNotes($(this).attr('data-note'));
+        });
 
-    setInterval(() => {
-        console.log("item");
-        if (notes.length > 1) {
+        setInterval(() => {
+            console.log("item");
+            if (notes.length > 1) {
 
-            sendUserNotesToAI(notes).then(data => {
-                console.log(data);
-                keyboardColor = $('.keyboard').attr('data-color');
-                autoplayNotes(data, keyboardColor);
-            });
-            notes = [];
-        }
+                sendUserNotesToAI(notes).then(data => {
+                    console.log(data);
+                    keyboardColor = $('.keyboard').attr('data-color');
+                    autoplayNotes(data, keyboardColor);
+                });
+                notes = [];
+            }
 
-    }, 5000);
-} else {
-    // BOT IS NOT ACTIVE;
+        }, 5000);
+    } else {
+        console.log("not active");
+        // BOT IS NOT ACTIVE;
+    }
+
 }
-
-
 
 function sendUserNotes(noteNumber) {
     let object = {
@@ -453,7 +461,7 @@ function sendUserNotes(noteNumber) {
 
 
 async function sendUserNotesToAI(notes) {
-    const rawResponse = await fetch('http://localhost:3000/notes-to-midi', {
+    const rawResponse = await fetch('https://paino-fp3.herokuapp.com/notes-to-midi', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
