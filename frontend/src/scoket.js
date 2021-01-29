@@ -8,9 +8,26 @@ let peerObj = {};
 let joinerPeerObj = {};
 let roomId = getUrlParameter('rooms');
 let url = "";
+let bool = false;
 
 randomUserImage();
 onlineDuet(roomId);
+
+/*/////////////   CLICK FUNCTION TO CHANGE MODE   ////////////////*/
+
+$('.ai-bot').click(function (e) { 
+    e.preventDefault();
+    bool = !bool;
+    
+    if(bool) {
+        $('.keyboard').attr("data-mode", bool);
+        $(this).attr("data-connect", "pending").text("exit bot mode").css({color: "#fff", background: "grey"})
+    } else {
+        $('.keyboard').attr("data-mode", bool);
+        $(this).attr("data-mode", bool).text("duet with A.I bot").css({color: "", background: ""});
+    }   
+    console.log(bool)
+});
 
 /*/////////////   CLICK FUNCTION TO JOIN   ////////////////*/
 
@@ -27,6 +44,7 @@ $(".online-duet").click(function (e) {
         console.log("Leaving room...")
         exitOnlineDuet(roomId)
     }
+    disableBtn('.ai-bot', false)
 });
 
 /*/////////////   FUNCTION CREATE OR JOIN   ////////////////*/
