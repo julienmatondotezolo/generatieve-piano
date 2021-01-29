@@ -3,6 +3,7 @@
 var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 var local_stream;
 let peer = null;
+let conn = null;
 let peerObj = {};
 let joinerPeerObj = {};
 let roomId = getUrlParameter('rooms');
@@ -16,6 +17,7 @@ onlineDuet(roomId);
 $(".online-duet").click(function (e) {
     e.preventDefault();
 
+    $(this).data('clicked', true);
     let checkStatus = $(this).attr("data-connect");
 
     if (checkStatus === "false") {
@@ -32,7 +34,7 @@ $(".online-duet").click(function (e) {
 function onlineDuet(id) {
     if (id) {
         joinOnlineDuet(id)
-    } else {
+    } else if ( $(".online-duet").data('clicked') ){
         createRoom(id)
     }
 }
@@ -80,6 +82,7 @@ function createRoom(){
         window.history.pushState({}, document.title, newUrl)
 
         console.log("Room created with ID: ", id)
+        roomId = id
 
         getUserMedia({video: true, audio: true}, (stream)=>{
             local_stream = stream;
@@ -88,10 +91,10 @@ function createRoom(){
             console.log(err)
         })
         
-        console.log("Waiting for peer to join.")
         $(".online-duet").attr("data-connect", "true").removeClass("bg-green").addClass("bg-red").text("exit online duet").css("color", "#fff")
     })
-    peer.on('connection', function(conn) {
+    peer.on('connection', function(peerConn) {
+        conn = peerConn
         conn.on('open', function() {
             // Receive messages
             conn.on('data', function (data) {
@@ -103,7 +106,7 @@ function createRoom(){
         })
     });
     peer.on('close', function() {
-        console.log("Connection closed.")
+        console.log("Connection destroyed. Please refresh.")
     });
     peer.on('disconnected', function() {
         console.log("Disconnected.")
@@ -147,7 +150,7 @@ function joinOnlineDuet(roomId) {
                 console.log(err)
             })
 
-            let conn = peer.connect(roomId);
+            conn = peer.connect(roomId);
             conn.on('open', function() {
                 // Receive messages
                 conn.on('data', function (data) {
@@ -160,6 +163,10 @@ function joinOnlineDuet(roomId) {
 
             $(".online-duet").attr("data-connect", "true").removeClass("bg-green").addClass("bg-red").text("exit online duet").css("color", "#fff")
         })
+        peer.on('close', function () {
+            peer = null;
+            console.log('Connection destroyed. Please refresh');
+        });
     } else {
         console.log("No rooms found")
     }
@@ -170,15 +177,15 @@ function joinOnlineDuet(roomId) {
 function exitOnlineDuet(roomId) {
     $(`.user-content[data-user=${joinerPeerObj.userId}]`).remove()
 
-    // peer.destroy();
-    peer.disconnect();
+    // peer.disconnect();
+    peer.destroy();
 
     console.log("Left room with ID: " + roomId)
     $(".remote-video").hide();
     $(".online-duet").attr("data-connect", "false").removeClass("bg-red").addClass("bg-green").text("join online duet").css("color", "")
 
     let newUrl = document.location.href.split('?')[0];
-    window.location = newUrl
+    // window.location = newUrl
 }
 
 /*/////////////   RANDOM USER IMAGE   ////////////////*/
