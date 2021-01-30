@@ -26,21 +26,6 @@ let notesArrObj = [{
 }, {
     emotion: "angry",
     level: 0.997367799282074
-}, {
-    emotion: "angry",
-    level: 0.6776954913139343
-}, {
-    emotion: "angry",
-    level: 0.8976954913139343
-}, {
-    emotion: "surprised",
-    level: 1
-}, {
-    emotion: "sad",
-    level: 0.9978705644607544
-}, {
-    emotion: "happy",
-    level: 0.5648226141929626
 }];
 
 let noteSeqData = {
@@ -84,36 +69,7 @@ let noteSeqData = {
             startTime: 4.0,
             endTime: 4.5
         },
-        {
-            pitch: 65,
-            startTime: 4.5,
-            endTime: 5.0
-        },
-        {
-            pitch: 64,
-            startTime: 5.0,
-            endTime: 5.5
-        },
-        {
-            pitch: 64,
-            startTime: 5.5,
-            endTime: 6.0
-        },
-        {
-            pitch: 62,
-            startTime: 6.0,
-            endTime: 6.5
-        },
-        {
-            pitch: 62,
-            startTime: 6.5,
-            endTime: 7.0
-        },
-        {
-            pitch: 60,
-            startTime: 7.0,
-            endTime: 8.0
-        },
+
     ]
 };
 
@@ -124,8 +80,8 @@ initWebcam();
 initKeyboard();
 
 
-document.querySelector('button').addEventListener('click', async() => {
-    console.log('audio is ready');
+document.querySelector('button').addEventListener('click', async() => { // Function a supprimer?
+    //   console.log('audio is ready');
     /*     $.getJSON("src/response.json", async function(data, textStatus, jqXHR) {
             keyboardColor = $('.keyboard').attr('data-color');
             await autoplayNotes(data, keyboardColor);
@@ -134,6 +90,7 @@ document.querySelector('button').addEventListener('click', async() => {
     */
 });
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
+
 
 $(".key").hover(function() {
     // over
@@ -144,6 +101,14 @@ $(".key").hover(function() {
     // $(this).css('background-color', '')
 });
 
+
+$(".key").on('mouseleave', function() {
+    clearInterval(window.myTimerOnMove);
+
+});
+
+
+
 $(".key").mouseup(function() {
     clicked = false;
     count = 5;
@@ -151,8 +116,7 @@ $(".key").mouseup(function() {
     changeKeyStatus($(this).attr('data-active'), this);
 }).mousedown(function() {
     clicked = true;
-    checkMode = $('.keyboard').attr("data-mode");
-    checkKeyBoardMode(checkMode);
+
     keyData = $(this).attr('data-note');
     playNotes(keyData);
 
@@ -166,6 +130,7 @@ $(".key").mouseup(function() {
     let counter = 0;
     $('.key').mouseenter(function(e) {
 
+        counter++;
         if (counter <= 1) {
 
 
@@ -416,42 +381,55 @@ function calculateHeight(startTime, endTime) {
 }
 
 
+/* 
+$(".key").mousedown(function() {
+    console.log("Klicked in mode");
+    sendUserNotes($(this).attr('data-note'));
+    
+    
+}); */
 
-
-
+let myVar;
+checkMode = $('.keyboard').attr("data-mode");
 let notes = [];
 
-function checkKeyBoardMode(checkMode) {
+$(".ai-bot").click(function() { // Active or desactive BOT MODE when clicked on the button
 
-    console.log(checkMode);
+    checkMode = $('.keyboard').attr("data-mode");
+    notes = [];
+
+    function myStopFunction() {
+        clearInterval(myVar);
+    }
     if (checkMode === "true") {
-
-        console.log("yes");
-        $(".key").mousedown(function() {
-            sendUserNotes($(this).attr('data-note'));
-        });
-
-        setInterval(() => {
-            console.log("item");
-            if (notes.length > 1) {
-
-                sendUserNotesToAI(notes).then(data => {
-                    console.log(data);
-                    keyboardColor = $('.keyboard').attr('data-color');
-                    autoplayNotes(data, keyboardColor);
-                });
-                notes = [];
-            }
-
-        }, 5000);
+        console.log("Duet mode active");
+        myVar = setInterval(sendData, 5000); // 
     } else {
-        console.log("not active");
-        // BOT IS NOT ACTIVE;
+        console.log("Duet mode not active");
+        myStopFunction();
     }
 
-}
+});
 
-function sendUserNotes(noteNumber) {
+
+$(".key").mousedown(function() {}).mousedown(function() { // Function to add the notes of the user input in an array + WHEN THE CHECKMODE == TRUE => BOT MODE
+    if (checkMode === "true") {
+        let counter = 0;
+        sendUserNotes($(this).attr('data-note'));
+        $('.key').mouseenter(function(e) {
+            counter++;
+            if (counter <= 1) {
+                if ($(".key:hover").length !== 0 && clicked) {
+                    sendUserNotes($(this).attr('data-note'));
+                    counter = 0;
+                }
+            }
+        });
+    }
+});
+
+
+function sendUserNotes(noteNumber) { // Add the notes of the user in an object then push in array
     let object = {
         pitch: parseInt(noteNumber)
 
@@ -460,7 +438,20 @@ function sendUserNotes(noteNumber) {
 }
 
 
-async function sendUserNotesToAI(notes) {
+function sendData() { // Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
+    if (notes.length > 1 && checkMode === "true") {
+
+        sendUserNotesToAI(notes).then(data => {
+            console.log(data);
+            keyboardColor = $('.keyboard').attr('data-color');
+            autoplayNotes(data, keyboardColor);
+        });
+        notes = [];
+    }
+}
+
+
+async function sendUserNotesToAI(notes) { // Async function to send data of user input to BACKEND. Response (.then(data)) = AI response (see when function is called)
     const rawResponse = await fetch('https://paino-fp3.herokuapp.com/notes-to-midi', {
         method: 'POST',
         headers: {
@@ -479,3 +470,48 @@ async function sendUserNotesToAI(notes) {
     }
 
 }
+
+
+/* function checkKeyBoardMode(checkMode) { // Ancienne fonction qui fonctionnait mal 
+
+    console.log(checkMode);
+    if (checkMode === "true") {
+
+        console.log("yes");
+        $(".key").mousedown(function() {
+            let counter = 0;
+            $('.key').mouseenter(function(e) {
+
+                counter++;
+                if (counter <= 1) {
+
+
+                    if ($(".key:hover").length !== 0 && clicked) {
+                        console.log("");
+
+                        counter = 0;
+                    }
+                }
+            });
+
+        });
+
+        setInterval(() => {
+            console.log(checkMode);
+            if (notes.length > 1 && checkMode === "true") {
+
+                sendUserNotesToAI(notes).then(data => {
+                    console.log(data);
+                    keyboardColor = $('.keyboard').attr('data-color');
+                    autoplayNotes(data, keyboardColor);
+                });
+                notes = [];
+            }
+
+        }, 5000);
+    } else {
+        console.log("not active");
+
+    }
+
+} */

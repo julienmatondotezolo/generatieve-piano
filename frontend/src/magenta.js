@@ -11,7 +11,14 @@ testInstance instanceof AudioSynth; // true
 testInstance === Synth; // true
 
 
+const sampler = new Tone.Sampler({
+    urls: {
+        "C4": "C4.mp3",
 
+    },
+    release: 1,
+    baseUrl: "https://tonejs.github.io/audio/salamander/",
+}).toDestination();
 
 // players = new mm.Player()
 /* soundFontPlayer();
@@ -56,10 +63,18 @@ export async function playNotes(keyData, notesArr) {
 
     //  console.log(newKeyData);
     //  console.log(notes[newKeyData]);
-    let piano = Synth.createInstrument('piano');
+    /*     var audio = new Audio('src/C4v13.wav');
+        audio.play();
+     */
 
-    piano.play(notes[keyData].letter, notes[keyData].number, 2);
 
+    Tone.loaded().then(() => {
+            sampler.triggerAttackRelease([`${notes[keyData].letter + notes[keyData].number}`], 4);
+        })
+        /*     let piano = Synth.createInstrument('piano');
+
+            piano.play(notes[keyData].letter, notes[keyData].number, 2);
+         */
 
 
 }
@@ -86,9 +101,13 @@ export function playNotes2(keyData, notesArr) {
     let piano = Synth.createInstrument('piano');
     notesArr.delayedForEach(function(key, index, array) {
 
-        piano.play(key.letter, key.number, 2);
+        //   piano.play(key.letter, key.number, 2);
 
+        Tone.loaded().then(() => {
+            sampler.triggerAttackRelease([`${key.letter + key.number}`], 4);
+        })
     }, 500);
+
 
 }
 

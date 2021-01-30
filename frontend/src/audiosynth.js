@@ -1,3 +1,6 @@
+"use strict";
+
+
 var Synth, AudioSynth, AudioSynthInstrument;
 ! function() {
 
@@ -64,7 +67,7 @@ var Synth, AudioSynth, AudioSynthInstrument;
     setPub('getSampleRate', function() {
         return this._sampleRate;
     });
-    setPriv('_volume', 32768, true);
+    setPriv('_volume', 13107, true);
     setPub('setVolume', function(v) {
         v = parseFloat(v);
         if (isNaN(v)) {
