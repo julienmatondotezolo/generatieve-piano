@@ -1,14 +1,14 @@
-/*/////////////   PARAMETERS   ////////////////*/
+/*/////////////   VARIABLES   ////////////////*/
 
-var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-var local_stream;
+let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+let local_stream;
 let peer = null;
+let peerId = null;
+let socket = io('ws://localhost:8080');
 let conn = null;
 let peerObj = {};
 let joinerPeerObj = {};
 let roomId = getUrlParameter('rooms');
-let url = "";
-let bool = false;
 
 /*/////////////   INITIALISATION   ////////////////*/
 
@@ -31,7 +31,7 @@ export function onlineDuet(id) {
 function setName(data) {
     if (data.username) {
         $('.room').append(`
-            <article class="user-content" data-user="${data.userId}">
+            <article class="user-content" data-user="${data.peer_id}">
                 <img class="random-logo" src="${data.src}" alt=""">
                 <p class="user">${data.username}</p>
             </article>
@@ -62,9 +62,11 @@ function createRoom(){
     console.log("Creating room.")
 
     peer = new Peer()
-
     peer.on('open', (id) => {
-        peerObj.userId = id
+        peerId = id;
+        peerObj.peer_id = id
+        initSocket(peerObj)
+
         let newUrl = document.location.href + "?rooms=" + id;
         window.history.pushState({}, document.title, newUrl)
 
@@ -90,6 +92,7 @@ function createRoom(){
             });
             // Send messages
             conn.send(peerObj);
+            sendMessage(conn)
         })
     });
     peer.on('close', function() {
@@ -103,11 +106,13 @@ function createRoom(){
         call.on('stream',(stream)=>{
             setRemoteStream(stream)
         })
-    })
+    });
     peer.on('error', function (err) {
         console.log(err);
         alert('' + err);
     });
+
+    peerObj.message = "Created user send"
 }
 
 /*/////////////   JOIN ONLINE DUET   ////////////////*/
@@ -117,10 +122,12 @@ function joinOnlineDuet(roomId) {
         console.log("Joining room with ID: " + roomId)
 
         peer = new Peer()
-    
         peer.on('open', (id) => {
-            peerObj.userId = id
-            console.log("Connected with ID: " + id)
+            peerId = id;
+            peerObj.peer_id = id;
+            initSocket(peerObj)
+
+            console.log("Connected with ID: " + id);
             // GET USER MEDIA
             getUserMedia({
                 video: true,
@@ -143,7 +150,6 @@ function joinOnlineDuet(roomId) {
                 conn.on('data', function (data) {
                     setName(data)
                 });
-
                 // Send messages
                 conn.send(peerObj);
             })
@@ -154,6 +160,8 @@ function joinOnlineDuet(roomId) {
             peer = null;
             console.log('Connection destroyed. Please refresh');
         });
+
+        peerObj.message = "joined user send"
     } else {
         console.log("No rooms found")
     }
@@ -162,7 +170,7 @@ function joinOnlineDuet(roomId) {
 /*/////////////   EXIT ONLINE DUET   ////////////////*/
 
 export function exitOnlineDuet(roomId) {
-    $(`.user-content[data-user=${joinerPeerObj.userId}]`).remove()
+    $(`.user-content[data-user=${joinerPeerObj.peer_id}]`).remove()
 
     peer.disconnect();
     peer.destroy();
@@ -175,7 +183,16 @@ export function exitOnlineDuet(roomId) {
     window.location = newUrl
 }
 
-/*/////////////   RANDOM USER IMAGE   ////////////////*/
+/*/////////////   INITIALIZE SOCKET   ////////////////*/
+
+function initSocket(obj) {
+    socket.on('message', text => {
+        console.log(text)
+    });
+    socket.emit('message', obj)
+}
+
+/*/////////////   RANDOM USER   ////////////////*/
 
 function randomUserImage() {
     let randomNumber = Math.floor(Math.random() * 25) + 1;
@@ -196,7 +213,16 @@ function randomUserNumber() {
     return randomDegrees
 }
 
+/*/////////////   SAVE USER   ////////////////*/
+
+function saveUserData(data) {
+    localStorage.setItem("paino_user_data", JSON.stringify(data));
+    let user_data = localStorage.getItem("paino_user_data");
+    return user_data
+}
+
 // Get url parameter
+
 function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
         sURLVariables = sPageURL.split('&'),

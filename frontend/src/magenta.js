@@ -1,8 +1,9 @@
 "use strict";
 
-let newKeyData;
-let players;
-
+let notes;
+$.getJSON("src/keyNumbers.json", function(json) {
+    notes = json;
+});
 
 const sampler = new Tone.Sampler({
     urls: {
@@ -13,72 +14,16 @@ const sampler = new Tone.Sampler({
     baseUrl: "https://tonejs.github.io/audio/salamander/",
 }).toDestination();
 
-// players = new mm.Player()
-/* soundFontPlayer();
-const music_vae = new mm.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
 
-async function soundFontPlayer() {
-    players = await new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus');
-} */
-
-let notes;
-$.getJSON("src/keyNumbers.json", function(json) {
-    notes = json;
-});
-
-export async function playNotes(keyData, notesArr) {
-    //  console.log('PLAYER STATUS: ', players.getPlayState());
-
-    /*     let MIDI;
-        let pitchLevel = 30;
-
-        if (notesArr) {
-            MIDI = {
-                notes: notesArr
-            };
-        } else {
-            MIDI = {
-                notes: [{
-                    pitch: pitchLevel,
-                    startTime: 0.0,
-                    endTime: 0.1
-                }]
-            };
-        }
-
-        if (keyData.indexOf('w') > -1) {
-            newKeyData = keyData.replace('w', '');
-            MIDI.notes[0].pitch = parseInt(newKeyData);
-        } else {
-            newKeyData = keyData.replace('b', '');
-            MIDI.notes[0].pitch = parseInt(newKeyData) - 20;
-        } */
-
-    //  console.log(newKeyData);
-    //  console.log(notes[newKeyData]);
-    /*     var audio = new Audio('src/C4v13.wav');
-        audio.play();
-     */
-
+export async function playNotes(keyData) {
 
     Tone.loaded().then(() => {
-            sampler.triggerAttackRelease([`${notes[keyData].letter + notes[keyData].number}`], 4);
-        })
-        /*     let piano = Synth.createInstrument('piano');
-
-            piano.play(notes[keyData].letter, notes[keyData].number, 2);
-         */
-
+        sampler.triggerAttackRelease([`${notes[keyData].letter + notes[keyData].number}`], 1);
+    });
 
 }
 
-
-
-
-
-
-
-export function playNotes2(keyData, notesArr) {
+export function playAINotes(keyData, notesArr) {
 
     Array.prototype.delayedForEach = function(callback, timeout, thisArg) {
         var i = 0,
@@ -91,14 +36,10 @@ export function playNotes2(keyData, notesArr) {
         caller();
     }; //  https://gist.github.com/fernandosavio/6011834
 
-    let piano = Synth.createInstrument('piano');
     notesArr.delayedForEach(function(key, index, array) {
-
-        //   piano.play(key.letter, key.number, 2);
-
         Tone.loaded().then(() => {
-            sampler.triggerAttackRelease([`${key.letter + key.number}`], 4);
-        })
+            sampler.triggerAttackRelease([`${key.letter + key.number}`], 3);
+        });
     }, 500);
 
 
@@ -118,5 +59,5 @@ http://newt.phys.unsw.edu.au/jw/notes.html
 https://devriffs.com/simple-tonejs-keyboard/
 https://paino-fp3.herokuapp.com/
 
-
-https://shannonpeng.com/projects/virtual-piano*/
+https://shannonpeng.com/projects/virtual-piano
+*/
