@@ -3,13 +3,6 @@
 let newKeyData;
 let players;
 
-Synth instanceof AudioSynth; // true
-
-var testInstance = new AudioSynth;
-testInstance instanceof AudioSynth; // true
-
-testInstance === Synth; // true
-
 
 const sampler = new Tone.Sampler({
     urls: {

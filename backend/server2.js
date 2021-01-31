@@ -97,7 +97,9 @@ function createNotesObject(item) { // Create a playable object with the generate
 
 
     item.notes.forEach(element => {
+
         if (element.pitch < 101 && element.pitch > 39) {
+
 
             let pitch = {
                 pitch: element.pitch

@@ -396,12 +396,11 @@ $(".key").mousedown(function() {
 }); */
 
 let myVar;
-checkMode = $('.keyboard').attr("data-mode");
 let notes = [];
 
 export function toggleBotMode() { // Active or desactive BOT MODE when clicked on the button
-
     checkMode = $('.keyboard').attr("data-mode");
+    console.log(checkMode)
     notes = [];
 
     function myStopFunction() {
@@ -444,6 +443,7 @@ function sendUserNotes(noteNumber) { // Add the notes of the user in an object t
 }
 
 function checkKeyboardMode(mode, element) {
+    console.log(mode);
     if (mode === "bot") {
 
         sendUserNotes($(element).attr('data-note'));
@@ -456,7 +456,7 @@ function checkKeyboardMode(mode, element) {
 
 // Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
 function sendData() {
-    if (notes.length > 1 && checkMode === "true") {
+    if (notes.length > 1 && checkMode === "bot") {
 
         sendUserNotesToAI(notes).then(data => {
             console.log(data);
