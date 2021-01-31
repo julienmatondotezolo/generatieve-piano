@@ -3,7 +3,7 @@
 "use strict";
 import {
     playNotes,
-    playNotes2
+    playAINotes
 } from './magenta.js';
 /*/////////////   VARIABLES   ////////////////*/
 
@@ -139,7 +139,6 @@ $(".key").mouseup(function() {
 
             if ($(".key:hover").length !== 0 && clicked) {
                 console.log("SLIDED");
-
                 counter = 0;
                 keyData = $(this).attr('data-note');
                 playNotes(keyData);
@@ -344,8 +343,6 @@ function addLengthToNotes(noteId) {
 }
 
 async function autoplayNotes(noteSeq, keyboardColor) {
-    console.log("b");
-
     let height;
     let newKeyData;
     let counter = 0;
@@ -362,23 +359,24 @@ async function autoplayNotes(noteSeq, keyboardColor) {
         caller();
     };
 
-    noteSeq.notesPitch.delayedForEach(function(notes, index, array) {
+    if (noteSeq.notesPitch.length > 0) {
+        noteSeq.notesPitch.delayedForEach(function(notes, index, array) {
 
-        counter++;
-        let matchKey = $(".keyboard").find(`.key[data-note='${notes.pitch}']`);
+            counter++;
+            let matchKey = $(".keyboard").find(`.key[data-note='${notes.pitch}']`);
 
-        keyData = matchKey.attr('data-note');
+            keyData = matchKey.attr('data-note');
 
-        newKeyData = keyData ? matchKey.attr('data-note') : 'w75';
-        let element = keyData ? $(`.key[data-note='${notes.pitch}']`) : $(".key[data-note='75']");
-        addColorToKey(matchKey, newKeyboardColor, true, 500);
-        height = calculateHeight(counter * 10, counter * 10);
-        createNote(element, keyData, height);
+            newKeyData = keyData ? matchKey.attr('data-note') : 'w75';
+            let element = keyData ? $(`.key[data-note='${notes.pitch}']`) : $(".key[data-note='75']");
+            addColorToKey(matchKey, newKeyboardColor, true, 500);
+            height = calculateHeight(counter * 10, counter * 10);
+            createNote(element, keyData, height);
 
 
-    }, 500);
-
-    await playNotes2(newKeyData, noteSeq.notes);
+        }, 500);
+        await playAINotes(newKeyData, noteSeq.notes);
+    }
 
 }
 
@@ -387,20 +385,13 @@ function calculateHeight(startTime, endTime) {
 }
 
 
-/* 
-$(".key").mousedown(function() {
-    console.log("Klicked in mode");
-    sendUserNotes($(this).attr('data-note'));
-    
-    
-}); */
 
 let myVar;
 let notes = [];
 
-export function toggleBotMode() { // Active or desactive BOT MODE when clicked on the button
+// Active or desactive BOT MODE when clicked on the button
+export function toggleBotMode() {
     checkMode = $('.keyboard').attr("data-mode");
-    console.log(checkMode)
     notes = [];
 
     function myStopFunction() {
@@ -408,58 +399,30 @@ export function toggleBotMode() { // Active or desactive BOT MODE when clicked o
     }
     if (checkMode === "bot") {
         console.log("Duet mode active");
-        myVar = setInterval(sendData, 5000); // 
+        myVar = setInterval(sendData, 5000);
     } else {
         console.log("Duet mode not active");
         myStopFunction();
     }
 
 }
-
-
-// Function to add the notes of the user input in an array + WHEN THE CHECKMODE == TRUE => BOT MODE
-$(".key").mousedown(function() {
-    if (checkMode === "bot") {
-        let counter = 0;
-        sendUserNotes($(this).attr('data-note'));
-        $('.key').mouseenter(function(e) {
-            counter++;
-            if (counter <= 1) {
-                if ($(".key:hover").length !== 0 && clicked) {
-                    counter = 0;
-                }
-            }
-        });
-    }
-});
-
-
-function sendUserNotes(noteNumber) { // Add the notes of the user in an object then push in array
-    let object = {
-        pitch: parseInt(noteNumber)
-
-    };
+// Add the notes of the user in an object then push in array
+function sendUserNotes(noteNumber) {
+    let object = { pitch: parseInt(noteNumber) };
     notes.push(object);
 }
 
 function checkKeyboardMode(mode, element) {
-    console.log(mode);
     if (mode === "bot") {
-
         sendUserNotes($(element).attr('data-note'));
-
     }
-
-
 }
 
 
 // Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
 function sendData() {
     if (notes.length > 1 && checkMode === "bot") {
-
         sendUserNotesToAI(notes).then(data => {
-            console.log(data);
             keyboardColor = $('.keyboard').attr('data-color');
             autoplayNotes(data, keyboardColor);
         });
@@ -468,16 +431,15 @@ function sendData() {
 }
 
 
-async function sendUserNotesToAI(notes) { // Async function to send data of user input to BACKEND. Response (.then(data)) = AI response (see when function is called)
-    const rawResponse = await fetch('https://paino-fp3.herokuapp.com/notes-to-midi', {
+// Async function to send data of user input to BACKEND. Response (.then(data)) = AI response (see when function is called)
+async function sendUserNotesToAI(notes) {
+    const rawResponse = await fetch('http://localhost:3000/notes-to-midi', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            notes
-        })
+        body: JSON.stringify({ notes })
     });
 
     if (rawResponse.status === 200) {
@@ -487,48 +449,3 @@ async function sendUserNotesToAI(notes) { // Async function to send data of user
     }
 
 }
-
-
-/* function checkKeyBoardMode(checkMode) { // Ancienne fonction qui fonctionnait mal 
-
-    console.log(checkMode);
-    if (checkMode === "true") {
-
-        console.log("yes");
-        $(".key").mousedown(function() {
-            let counter = 0;
-            $('.key').mouseenter(function(e) {
-
-                counter++;
-                if (counter <= 1) {
-
-
-                    if ($(".key:hover").length !== 0 && clicked) {
-                        console.log("");
-
-                        counter = 0;
-                    }
-                }
-            });
-
-        });
-
-        setInterval(() => {
-            console.log(checkMode);
-            if (notes.length > 1 && checkMode === "true") {
-
-                sendUserNotesToAI(notes).then(data => {
-                    console.log(data);
-                    keyboardColor = $('.keyboard').attr('data-color');
-                    autoplayNotes(data, keyboardColor);
-                });
-                notes = [];
-            }
-
-        }, 5000);
-    } else {
-        console.log("not active");
-
-    }
-
-} */

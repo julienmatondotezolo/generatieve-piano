@@ -89,46 +89,44 @@ app.post("/emotion-to-notes", async(req, res, next) => {
 
 });
 
-function createNotesObject(item) { // Create a playable object with the generated  notes of the AI
-
-    console.log("hello");
+// Create a playable object with the generated  notes of the AI
+function createNotesObject(item) {
     let notes = [];
     let notesPitch = [];
 
-
+    console.log(item);
     item.notes.forEach(element => {
+        let pitch;
+        let randomNumber = Math.floor(Math.random() * 61) + 40;
+        let convertedNote;
+        let newString;
+        let newNumber;
+
 
         if (element.pitch < 101 && element.pitch > 39) {
+            convertedNote = note(element.pitch);
+            pitch = { pitch: element.pitch };
+        } else {
+            convertedNote = note(randomNumber);
+            pitch = { pitch: randomNumber };
 
-
-            let pitch = {
-                pitch: element.pitch
-            };
-
-
-            var str = note(element.pitch);
-            let string;
-            let number;
-            if (note(element.pitch).length === 2) {
-                string = str.slice(0, 1);
-                number = str.slice(1, 2);
-            } else {
-                string = str.slice(0, 2);
-                number = str.slice(2, 3);
-
-            }
-            let newObject = {
-                'letter': string,
-                'number': number,
-                'endTime': 1,
-            };
-            notes.push(newObject);
-            notesPitch.push(pitch);
         }
+
+        if (convertedNote.length === 2) {
+            newString = convertedNote.slice(0, 1);
+            newNumber = convertedNote.slice(1, 2);
+        } else {
+            newString = convertedNote.slice(0, 2);
+            newNumber = convertedNote.slice(2, 3);
+        }
+
+        let newObject = {
+            'letter': newString,
+            'number': newNumber
+        };
+        notes.push(newObject);
+        notesPitch.push(pitch);
     });
-
-    //  let filteredNotes = notes.filter((element) => element.pitch < 124 && element.pitch > 7); // filter the notes that are unplayable
-
 
     return {
         notes,
@@ -138,7 +136,8 @@ function createNotesObject(item) { // Create a playable object with the generate
 }
 
 
-function extractEmotion(emotionArr) { // Takes the most common emotion of the user that the front-end sends to us
+// Takes the most common emotion of the user that the front-end sends to us
+function extractEmotion(emotionArr) {
 
     let counter = 0;
     let counterTwo = 1;
@@ -162,7 +161,8 @@ function extractEmotion(emotionArr) { // Takes the most common emotion of the us
     return firstEmotion;
 }
 
-function chooseMidiFile(firstEmotion) { // Chooses a midi file depending on what extractEmotion() returns
+// Chooses a midi file depending on what extractEmotion() returns
+function chooseMidiFile(firstEmotion) {
 
     let x = Math.floor(Math.random() * 5) + 1;
     let midiFile;
@@ -201,15 +201,11 @@ app.post("/notes-to-midi", async(req, res, next) => {
     let notes = req.body;
     notes.totalTime = notes.notes.length;
 
-    console.log(notes);
-
-
     const qns = mmcore.sequences.quantizeNoteSequence(notes, 2); // 2 == steps per quarter
-    melodyRNN.continueSequence(qns, 10, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
+    await melodyRNN.continueSequence(qns, 10, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
         .then(sample => {
 
             let object = createNotesObject(sample);
-
             res.send(object);
 
         });
@@ -219,7 +215,7 @@ app.post("/notes-to-midi", async(req, res, next) => {
 });
 
 
-/* for (let index = 40; index <= 100; index++) {
+for (let index = 40; index <= 100; index++) {
     var str = note(index);
     let string;
     let number;
@@ -238,4 +234,4 @@ app.post("/notes-to-midi", async(req, res, next) => {
              },
          `);
 
-} */
+}
