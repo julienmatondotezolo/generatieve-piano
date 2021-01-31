@@ -74,11 +74,10 @@ let noteSeqData = {
 };
 
 /*/////////////   FUNCTION INITIALISATIONS   ////////////////*/
-let whiteNumber = [40, 42, 44, 45, 47, 49, 51, 52, 54, 56, 57, 59, 61, 63, 64, 66, 68, 69, 71, 73, 75, 76, 78, 80, 81, 83, 85, 87, 88, 90, 92, 93, 95, 97, 99];
-let blackNumber = [41, 43, 46, 48, 50, 53, 55, 58, 60, 62, 65, 67, 70, 72, 74, 77, 79, 82, 84, 86, 89, 91, 94, 96, 98];
+let whiteNumber = [36, 38, 40, 41, 43, 45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88, 89, 91, 93, 95];
+let blackNumber = [37, 39, 42, 44, 46, 49, 51, 54, 56, 58, 61, 63, 66, 68, 70, 73, 75, 78, 80, 82, 85, 87, 90, 92, 94];
 initWebcam();
 initKeyboard();
-
 
 document.querySelector('button').addEventListener('click', async() => { // Function a supprimer?
     //   console.log('audio is ready');
@@ -104,9 +103,7 @@ $(".key").hover(function() {
 
 $(".key").on('mouseleave', function() {
     clearInterval(window.myTimerOnMove);
-
 });
-
 
 
 $(".key").mouseup(function() {
@@ -125,7 +122,6 @@ $(".key").mouseup(function() {
     changeKeyStatus($(this).attr('data-active'), this);
 
     createNote($(this), $(this).attr('data-note'));
-    // console.log($(this).attr('data-note'));
     window.myTimer = setInterval(addLengthToNotes, 50, $(this).attr('data-note'));
     let counter = 0;
 
@@ -135,8 +131,6 @@ $(".key").mouseup(function() {
 
         counter++;
         if (counter <= 1) {
-
-
             if ($(".key:hover").length !== 0 && clicked) {
                 console.log("SLIDED");
                 counter = 0;
@@ -144,14 +138,12 @@ $(".key").mouseup(function() {
                 playNotes(keyData);
 
                 keyboardColor = $('.keyboard').attr('data-color');
-                addColorToKey(this, keyboardColor, false)
+                addColorToKey(this, keyboardColor, false);
 
-                createNote($(this), $(this).attr('data-note'))
+                createNote($(this), $(this).attr('data-note'));
                 clearInterval(window.myTimerOnMove);
 
                 checkKeyboardMode(checkMode, this);
-
-            } else {
 
             }
         }
@@ -160,7 +152,6 @@ $(".key").mouseup(function() {
         count = 5;
         clearInterval(window.myTimerOnMove);
     });
-
 
 });
 
@@ -176,7 +167,6 @@ function initWebcam() {
 
 /*/////////////   INITIALIZE KEYBOARD   ////////////////*/
 
-
 function initKeyboard() {
     generateKeyboard();
 }
@@ -191,8 +181,6 @@ function generateKeyboard() {
     let steps = 40; // 
     let stepsBlack = 37;
     let stepsBlackByTen = 0;
-
-
 
     for (let i = 0; i < keyLength; i++) {
         generateKey(i, keyLength);
@@ -265,7 +253,6 @@ function addNotesToKeys() {
         $(this).children('p').text(blackNumber[stepsBlack]);
         stepsBlack += 1;
     });
-
 }
 
 function changeKeyStatus(keyStatus, element) {
@@ -274,21 +261,6 @@ function changeKeyStatus(keyStatus, element) {
     } else {
         keyStatus = $(element).attr('data-active', 'false');
     }
-}
-
-function getKeyNumber(key) {
-    let keyNumber;
-    let getKeyNote = key.attr('data-note');
-
-    if (getKeyNote.indexOf('w') > -1) {
-        keyNumber = getKeyNote.replace('w', ' ');
-    }
-
-    if (getKeyNote.indexOf('b') > -1) {
-        keyNumber = getKeyNote.replace('b', ' ');
-    }
-
-    return keyNumber;
 }
 
 /*/////////////   RESPONSIVE KEY WITDH   ////////////////*/
@@ -321,7 +293,6 @@ function addColorToKey(element, color, autoplay, endTime) {
 /*/////////////   GENERATE NOTES   ////////////////*/
 
 function createNote(element, note, height) {
-
     // sendUserNotes(note); If you uncomment this line, the bot will play with himself when you touch on minimum one piano key.
 
     keyboardColor = $('.keyboard').attr('data-color');
@@ -342,7 +313,7 @@ function addLengthToNotes(noteId) {
     $(`.note-block[data-note=${noteId}]:last-child`).css('height', (count++) + '0px');
 }
 
-async function autoplayNotes(noteSeq, keyboardColor) {
+export async function autoplayNotes(noteSeq, keyboardColor) {
     let height;
     let newKeyData;
     let counter = 0;
@@ -384,8 +355,6 @@ function calculateHeight(startTime, endTime) {
     return endTime - startTime;
 }
 
-
-
 let myVar;
 let notes = [];
 
@@ -418,7 +387,6 @@ function checkKeyboardMode(mode, element) {
     }
 }
 
-
 // Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
 function sendData() {
     if (notes.length > 1 && checkMode === "bot") {
@@ -430,10 +398,9 @@ function sendData() {
     }
 }
 
-
 // Async function to send data of user input to BACKEND. Response (.then(data)) = AI response (see when function is called)
 async function sendUserNotesToAI(notes) {
-    const rawResponse = await fetch('http://localhost:3000/notes-to-midi', {
+    const rawResponse = await fetch('https://paino-fp3.herokuapp.com/notes-to-midi', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',

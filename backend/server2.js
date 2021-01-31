@@ -16,7 +16,7 @@ const rnn = require('@magenta/music/node/music_rnn');
 const melodyRNN = new rnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn');
 const app = express();
 const server = require('http').Server(app);
-var note = require('midi-note')
+var note = require('midi-note');
 
 
 melodyRNN.initialize();
@@ -59,26 +59,24 @@ app.get("/", (req, res) => {
 
 // ========== POST EMOTIONS TO NOTES ==========  //
 app.post("/emotion-to-notes", async(req, res, next) => {
-    console.log(req.body);
-    let emotionArr = req.body;
-    let firstEmotion = extractEmotion(emotionArr);
+    let notes = req.body;
+    let firstEmotion = extractEmotion(notes);
     let midiFile = chooseMidiFile(firstEmotion);
 
     async function emotionsToNotes() {
 
         let midiBuffer;
         midiBuffer = fs.readFileSync(midiFile);
+        console.log(midiFile);
         const notes = mmcore.midiToSequenceProto(midiBuffer); // Transforms a midi file to an array of notes
         const qns = mmcore.sequences.quantizeNoteSequence(notes, 2); // 2 == steps per quarter
         melodyRNN.continueSequence(qns, 15, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
             .then(sample => {
 
-                console.log(sample);
-                let object = createNotesObject(sample);
-                console.log(object);
+                let notesObject = createNotesObject(sample);
 
                 res.send({
-                    object,
+                    notesObject,
                     firstEmotion
                 });
             });
@@ -94,16 +92,15 @@ function createNotesObject(item) {
     let notes = [];
     let notesPitch = [];
 
-    console.log(item);
     item.notes.forEach(element => {
         let pitch;
-        let randomNumber = Math.floor(Math.random() * 61) + 40;
+        let randomNumber = Math.floor(Math.random() * 60) + 36;
         let convertedNote;
         let newString;
         let newNumber;
 
 
-        if (element.pitch < 101 && element.pitch > 39) {
+        if (element.pitch < 95 && element.pitch > 36) {
             convertedNote = note(element.pitch);
             pitch = { pitch: element.pitch };
         } else {
@@ -138,7 +135,8 @@ function createNotesObject(item) {
 
 // Takes the most common emotion of the user that the front-end sends to us
 function extractEmotion(emotionArr) {
-
+    console.log(emotionArr);
+    emotionArr = emotionArr.notes;
     let counter = 0;
     let counterTwo = 1;
     let firstEmotion;
@@ -214,8 +212,9 @@ app.post("/notes-to-midi", async(req, res, next) => {
 
 });
 
+//console.log(note(35))
 
-for (let index = 40; index <= 100; index++) {
+/* for (let index = 36; index <= 40; index++) {
     var str = note(index);
     let string;
     let number;
@@ -234,4 +233,4 @@ for (let index = 40; index <= 100; index++) {
              },
          `);
 
-}
+} */

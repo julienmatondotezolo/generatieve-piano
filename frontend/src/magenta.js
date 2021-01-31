@@ -18,7 +18,7 @@ const sampler = new Tone.Sampler({
 export async function playNotes(keyData) {
 
     Tone.loaded().then(() => {
-        sampler.triggerAttackRelease([`${notes[keyData].letter + notes[keyData].number}`], 2);
+        sampler.triggerAttackRelease([`${notes[keyData].letter + notes[keyData].number}`], 1);
     });
 
 }
@@ -38,7 +38,7 @@ export function playAINotes(keyData, notesArr) {
 
     notesArr.delayedForEach(function(key, index, array) {
         Tone.loaded().then(() => {
-            sampler.triggerAttackRelease([`${key.letter + key.number}`], 4);
+            sampler.triggerAttackRelease([`${key.letter + key.number}`], 3);
         });
     }, 500);
 
