@@ -10,49 +10,18 @@ let roomId = getUrlParameter('rooms');
 let url = "";
 let bool = false;
 
+/*/////////////   INITIALISATION   ////////////////*/
+
 randomUserImage();
 onlineDuet(roomId);
 
-/*/////////////   CLICK FUNCTION TO CHANGE MODE   ////////////////*/
-
-$('.ai-bot').click(function(e) {
-    e.preventDefault();
-    bool = !bool;
-
-    if (bool) {
-        $('.keyboard').attr("data-mode", bool);
-        $(this).attr("data-connect", "pending").text("exit bot mode").css({ color: "#fff", background: "grey" })
-    } else {
-        $('.keyboard').attr("data-mode", bool);
-        $(this).attr("data-mode", bool).text("duet with A.I bot").css({ color: "", background: "" });
-    }
-    console.log(bool)
-});
-
-/*/////////////   CLICK FUNCTION TO JOIN   ////////////////*/
-
-$(".online-duet").click(function(e) {
-    e.preventDefault();
-
-    $(this).data('clicked', true);
-    let checkStatus = $(this).attr("data-connect");
-
-    if (checkStatus === "false") {
-        $(this).attr("data-connect", "pending").removeClass("bg-green").text("connecting...").css({ color: "#fff", background: "grey" })
-        onlineDuet(roomId);
-    } else if (checkStatus === "true") {
-        console.log("Leaving room...")
-        exitOnlineDuet(roomId)
-    }
-    //   disableBtn('.ai-bot', false)
-});
-
 /*/////////////   FUNCTION CREATE OR JOIN   ////////////////*/
 
-function onlineDuet(id) {
+export function onlineDuet(id) {
+    $(this).attr("data-connect", "pending").removeClass("bg-green").text("connecting...").css({color: "#fff", background: "grey"})
     if (id) {
         joinOnlineDuet(id)
-    } else if ($(".online-duet").data('clicked')) {
+    } else if ( $(".online-duet").data('clicked') ){
         createRoom(id)
     }
 }
@@ -89,7 +58,7 @@ function setRemoteStream(stream) {
 
 /*/////////////   CREATE ONLINE DUET   ////////////////*/
 
-function createRoom() {
+function createRoom(){
     console.log("Creating room.")
 
     peer = new Peer()
@@ -102,20 +71,20 @@ function createRoom() {
         console.log("Room created with ID: ", id)
         roomId = id
 
-        getUserMedia({ video: true, audio: true }, (stream) => {
+        getUserMedia({video: true, audio: true}, (stream)=>{
             local_stream = stream;
             setLocalStream(local_stream)
-        }, (err) => {
+        },(err)=>{
             console.log(err)
         })
-
+        
         $(".online-duet").attr("data-connect", "true").removeClass("bg-green").addClass("bg-red").text("exit online duet").css("color", "#fff")
     })
     peer.on('connection', function(peerConn) {
         conn = peerConn
         conn.on('open', function() {
             // Receive messages
-            conn.on('data', function(data) {
+            conn.on('data', function (data) {
                 joinerPeerObj = data
                 setName(data)
             });
@@ -129,13 +98,13 @@ function createRoom() {
     peer.on('disconnected', function() {
         console.log("Disconnected.")
     });
-    peer.on('call', (call) => {
+    peer.on('call',(call) => {
         call.answer(local_stream);
-        call.on('stream', (stream) => {
+        call.on('stream',(stream)=>{
             setRemoteStream(stream)
         })
     })
-    peer.on('error', function(err) {
+    peer.on('error', function (err) {
         console.log(err);
         alert('' + err);
     });
@@ -148,11 +117,11 @@ function joinOnlineDuet(roomId) {
         console.log("Joining room with ID: " + roomId)
 
         peer = new Peer()
-
+    
         peer.on('open', (id) => {
             peerObj.userId = id
             console.log("Connected with ID: " + id)
-                // GET USER MEDIA
+            // GET USER MEDIA
             getUserMedia({
                 video: true,
                 audio: true
@@ -160,7 +129,7 @@ function joinOnlineDuet(roomId) {
                 local_stream = stream;
                 let call = peer.call(roomId, stream)
                 setLocalStream(local_stream)
-
+    
                 call.on('stream', (stream) => {
                     setRemoteStream(stream);
                 })
@@ -171,7 +140,7 @@ function joinOnlineDuet(roomId) {
             conn = peer.connect(roomId);
             conn.on('open', function() {
                 // Receive messages
-                conn.on('data', function(data) {
+                conn.on('data', function (data) {
                     setName(data)
                 });
 
@@ -181,7 +150,7 @@ function joinOnlineDuet(roomId) {
 
             $(".online-duet").attr("data-connect", "true").removeClass("bg-green").addClass("bg-red").text("exit online duet").css("color", "#fff")
         })
-        peer.on('close', function() {
+        peer.on('close', function () {
             peer = null;
             console.log('Connection destroyed. Please refresh');
         });
@@ -192,7 +161,7 @@ function joinOnlineDuet(roomId) {
 
 /*/////////////   EXIT ONLINE DUET   ////////////////*/
 
-function exitOnlineDuet(roomId) {
+export function exitOnlineDuet(roomId) {
     $(`.user-content[data-user=${joinerPeerObj.userId}]`).remove()
 
     peer.disconnect();
