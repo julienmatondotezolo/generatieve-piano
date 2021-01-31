@@ -10,9 +10,6 @@ testInstance instanceof AudioSynth; // true
 
 testInstance === Synth; // true
 
-
-
-
 // players = new mm.Player()
 /* soundFontPlayer();
 const music_vae = new mm.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');

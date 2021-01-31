@@ -10,44 +10,15 @@ let roomId = getUrlParameter('rooms');
 let url = "";
 let bool = false;
 
+/*/////////////   INITIALISATION   ////////////////*/
+
 randomUserImage();
 onlineDuet(roomId);
 
-/*/////////////   CLICK FUNCTION TO CHANGE MODE   ////////////////*/
-
-$('.ai-bot').click(function (e) { 
-    e.preventDefault();
-    bool = !bool;
-    
-    if(bool) {
-        $('.keyboard').attr("data-mode", bool);
-        $(this).attr("data-connect", "pending").text("exit bot mode").css({color: "#fff", background: "grey"})
-    } else {
-        $('.keyboard').attr("data-mode", bool);
-        $(this).attr("data-mode", bool).text("duet with A.I bot").css({color: "", background: ""});
-    }  
-});
-
-/*/////////////   CLICK FUNCTION TO JOIN   ////////////////*/
-
-$(".online-duet").click(function (e) {
-    e.preventDefault();
-
-    $(this).data('clicked', true);
-    let checkStatus = $(this).attr("data-connect");
-
-    if (checkStatus === "false") {
-        $(this).attr("data-connect", "pending").removeClass("bg-green").text("connecting...").css({color: "#fff", background: "grey"})
-        onlineDuet(roomId);
-    } else if (checkStatus === "true") {
-        console.log("Leaving room...")
-        exitOnlineDuet(roomId)
-    }
-});
-
 /*/////////////   FUNCTION CREATE OR JOIN   ////////////////*/
 
-function onlineDuet(id) {
+export function onlineDuet(id) {
+    $(this).attr("data-connect", "pending").removeClass("bg-green").text("connecting...").css({color: "#fff", background: "grey"})
     if (id) {
         joinOnlineDuet(id)
     } else if ( $(".online-duet").data('clicked') ){
@@ -190,7 +161,7 @@ function joinOnlineDuet(roomId) {
 
 /*/////////////   EXIT ONLINE DUET   ////////////////*/
 
-function exitOnlineDuet(roomId) {
+export function exitOnlineDuet(roomId) {
     $(`.user-content[data-user=${joinerPeerObj.userId}]`).remove()
 
     peer.disconnect();

@@ -1,10 +1,12 @@
 /*  global $ */
 /*/////////////   IMPORTS   ////////////////*/
 "use strict";
+
 import {
     playNotes,
     playNotes2
 } from './magenta.js';
+
 /*/////////////   VARIABLES   ////////////////*/
 
 let clicked = false;
