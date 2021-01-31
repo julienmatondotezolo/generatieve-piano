@@ -116,7 +116,7 @@ $(".key").mouseup(function() {
     changeKeyStatus($(this).attr('data-active'), this);
 }).mousedown(function() {
     clicked = true;
-
+    checkMode = $(".keyboard").attr('data-mode');
     keyData = $(this).attr('data-note');
     playNotes(keyData);
 
@@ -128,6 +128,9 @@ $(".key").mouseup(function() {
     // console.log($(this).attr('data-note'));
     window.myTimer = setInterval(addLengthToNotes, 50, $(this).attr('data-note'));
     let counter = 0;
+
+    checkKeyboardMode(checkMode, this);
+
     $('.key').mouseenter(function(e) {
 
         counter++;
@@ -146,6 +149,9 @@ $(".key").mouseup(function() {
 
                 createNote($(this), $(this).attr('data-note'))
                 clearInterval(window.myTimerOnMove);
+
+                checkKeyboardMode(checkMode, this);
+
             } else {
 
             }
@@ -393,7 +399,7 @@ let myVar;
 checkMode = $('.keyboard').attr("data-mode");
 let notes = [];
 
-$(".ai-bot").click(function() { // Active or desactive BOT MODE when clicked on the button
+export function toggleBotMode() { // Active or desactive BOT MODE when clicked on the button
 
     checkMode = $('.keyboard').attr("data-mode");
     notes = [];
@@ -401,7 +407,7 @@ $(".ai-bot").click(function() { // Active or desactive BOT MODE when clicked on 
     function myStopFunction() {
         clearInterval(myVar);
     }
-    if (checkMode === "true") {
+    if (checkMode === "bot") {
         console.log("Duet mode active");
         myVar = setInterval(sendData, 5000); // 
     } else {
@@ -409,18 +415,18 @@ $(".ai-bot").click(function() { // Active or desactive BOT MODE when clicked on 
         myStopFunction();
     }
 
-});
+}
 
 
-$(".key").mousedown(function() {}).mousedown(function() { // Function to add the notes of the user input in an array + WHEN THE CHECKMODE == TRUE => BOT MODE
-    if (checkMode === "true") {
+// Function to add the notes of the user input in an array + WHEN THE CHECKMODE == TRUE => BOT MODE
+$(".key").mousedown(function() {
+    if (checkMode === "bot") {
         let counter = 0;
         sendUserNotes($(this).attr('data-note'));
         $('.key').mouseenter(function(e) {
             counter++;
             if (counter <= 1) {
                 if ($(".key:hover").length !== 0 && clicked) {
-                    sendUserNotes($(this).attr('data-note'));
                     counter = 0;
                 }
             }
@@ -437,8 +443,19 @@ function sendUserNotes(noteNumber) { // Add the notes of the user in an object t
     notes.push(object);
 }
 
+function checkKeyboardMode(mode, element) {
+    if (mode === "bot") {
 
-function sendData() { // Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
+        sendUserNotes($(element).attr('data-note'));
+
+    }
+
+
+}
+
+
+// Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
+function sendData() {
     if (notes.length > 1 && checkMode === "true") {
 
         sendUserNotesToAI(notes).then(data => {
