@@ -115,7 +115,7 @@ $(".key").mouseup(function() {
     clicked = true;
     checkMode = $(".keyboard").attr('data-mode');
     keyData = $(this).attr('data-note');
-    socket.emit('message', keyData)
+    
     playNotes(keyData);
 
     keyboardColor = $('.keyboard').attr('data-color');

@@ -7,13 +7,13 @@ const io = require('socket.io')(http, {
 });
 
 io.on('connection', (socket) => {
-    socket.on('join-room', (roomId, userId) => {
-        console.log(`User with id: ${userId} joined ROOM: ${roomId}.`);
+    socket.on('join-room', (roomId, userObj) => {
+        console.log(`${userObj.username} joined ROOM: ${roomId}.`);
         socket.join(roomId)
-        socket.to(roomId).broadcast.emit('user-connected', userId)
+        socket.to(roomId).broadcast.emit('user-connected', userObj)
 
         socket.on('message', (data) => {
-            console.log(`${userId} send: `, data)
+            console.log(`${userObj} send: `, data)
             socket.to(roomId).broadcast.emit('message', data);
         });
 
@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
         });
 
         socket.on('disconnect', () => {
-            socket.to(roomId).broadcast.emit('user-disconnected', userId)
+            socket.to(roomId).broadcast.emit('user-disconnected', userObj)
         })
     })
 });

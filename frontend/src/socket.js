@@ -136,7 +136,6 @@ function createRoom(){
 
 function joinOnlineDuet(ROOM_ID) {
     if (ROOM_ID) {
-        console.log(ROOM_ID)
         peer = new Peer();
         socket = io('ws://localhost:8080');
 
@@ -146,26 +145,27 @@ function joinOnlineDuet(ROOM_ID) {
             peer.on('call', call => {
                 call.answer(stream)
                 call.on('stream', userVideoStream => {
-                    console.log("Im here")
                     setRemoteStream(userVideoStream)
                 })
             })
 
-            socket.on('user-connected', userId => {
-                connectToNewUser(userId, stream)
-                console.log("User connected: ", userId)
+            socket.on('user-connected', userObj => {
+                setName(userObj)
+                connectToNewUser(userObj.peer_id, stream)
+                console.log(userObj.username + " connected.")
             })
         },(err)=>{
             console.log(err)
         })
 
-        socket.on('user-disconnected', userId => {
-            exitOnlineDuet(ROOM_ID, userId)
+        socket.on('user-disconnected', userObj => {
+            leaveRoom(userObj)
+            console.log(`${userObj.username} disconnected.`)
         })
     
         peer.on('open', id => {
-            socket.emit('join-room', ROOM_ID, id)
             peerObj.peer_id = id;
+            socket.emit('join-room', ROOM_ID, peerObj)
         })
     
         $(".icon-devices").click(function (e) { 
@@ -188,7 +188,7 @@ function connectToNewUser(userId, stream) {
         setRemoteStream(userVideoStream)
     })
     call.on('close', () => {
-      console.log("Video closed")
+      console.log("Video closed.")
     })
 }
 
@@ -250,6 +250,11 @@ function connectToNewUser(userId, stream) {
 
 /*/////////////   EXIT ONLINE DUET   ////////////////*/
 
+function leaveRoom(userData) {
+    $(".remote-video").hide();
+    $(`.user-content[data-user=${userData.peer_id}]`).remove()
+}
+
 export function exitOnlineDuet(ROOM_ID) {
     $(`.user-content[data-user=${peerObj.peer_id}]`).remove()
 
@@ -260,8 +265,8 @@ export function exitOnlineDuet(ROOM_ID) {
     $(".remote-video").hide();
     $(".online-duet").attr("data-connect", "false").removeClass("bg-red").addClass("bg-green").text("join online duet").css("color", "")
 
-    // let newUrl = document.location.href.split('?')[0];
-    // window.location = newUrl
+    let newUrl = document.location.href.split('?')[0];
+    window.location = newUrl
 }
 
 /*/////////////   INITIALIZE SOCKET   ////////////////*/
