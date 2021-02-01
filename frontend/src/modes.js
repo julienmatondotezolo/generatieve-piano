@@ -6,7 +6,7 @@ import {
 } from './socket.js';
 
 import {
-    toggleBotMode
+    exitBotMode
 } from './keyboard.js';
 
 /*/////////////   VARIABLES   ////////////////*/
@@ -49,9 +49,9 @@ function toggleModes(mode1, mode2) {
         bool = !bool;
         if (bool) {
             $('.keyboard').attr("data-mode", "bot");
-            toggleBotMode();
         } else {
             $('.keyboard').attr("data-mode", bool);
+            exitBotMode();
             $(mode1).attr("data-bot", bool).removeClass("bg-red").text("duet with A.I bot").removeAttr('style');
             $(mode2).data('clicked', false).addClass("bg-green").prop('disabled', false).removeAttr('style');
         }

@@ -12,84 +12,18 @@ let count = 5;
 let keyboardColor;
 let keyData;
 let checkMode;
+let notes = [];
+let sendNotesInterval;
 
-let notesArrObj = [{
-    emotion: "sad",
-    level: 0.6376954913139343
-}, {
-
-    emotion: "happy",
-    level: 0.6376954913139343
-}, {
-    emotion: "angry",
-    level: 0.6376954913139343
-}, {
-    emotion: "angry",
-    level: 0.997367799282074
-}];
-
-let noteSeqData = {
-    notes: [{
-            pitch: 60,
-            startTime: 0.0,
-            endTime: 0.5
-        },
-        {
-            pitch: 60,
-            startTime: 0.5,
-            endTime: 1.0
-        },
-        {
-            pitch: 67,
-            startTime: 1.0,
-            endTime: 1.5
-        },
-        {
-            pitch: 67,
-            startTime: 1.5,
-            endTime: 2.0
-        },
-        {
-            pitch: 69,
-            startTime: 2.0,
-            endTime: 2.5
-        },
-        {
-            pitch: 69,
-            startTime: 2.5,
-            endTime: 3.0
-        },
-        {
-            pitch: 67,
-            startTime: 3.0,
-            endTime: 4.0
-        },
-        {
-            pitch: 65,
-            startTime: 4.0,
-            endTime: 4.5
-        },
-
-    ]
-};
-
-/*/////////////   FUNCTION INITIALISATIONS   ////////////////*/
 let whiteNumber = [36, 38, 40, 41, 43, 45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88, 89, 91, 93, 95];
 let blackNumber = [37, 39, 42, 44, 46, 49, 51, 54, 56, 58, 61, 63, 66, 68, 70, 73, 75, 78, 80, 82, 85, 87, 90, 92, 94];
+
+/*/////////////   FUNCTION INITIALISATIONS   ////////////////*/
+
 initWebcam();
 initKeyboard();
 
-document.querySelector('button').addEventListener('click', async() => { // Function a supprimer?
-    //   console.log('audio is ready');
-    /*     $.getJSON("src/response.json", async function(data, textStatus, jqXHR) {
-            keyboardColor = $('.keyboard').attr('data-color');
-            await autoplayNotes(data, keyboardColor);
-        }); 
-        
-    */
-});
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
-
 
 $(".key").hover(function() {
     // over
@@ -105,7 +39,6 @@ $(".key").on('mouseleave', function() {
     clearInterval(window.myTimerOnMove);
 });
 
-
 $(".key").mouseup(function() {
     clicked = false;
     count = 5;
@@ -113,7 +46,10 @@ $(".key").mouseup(function() {
     changeKeyStatus($(this).attr('data-active'), this);
 }).mousedown(function() {
     clicked = true;
+
     checkMode = $(".keyboard").attr('data-mode');
+    checkKeyboardMode(checkMode, this);
+
     keyData = $(this).attr('data-note');
     playNotes(keyData);
 
@@ -125,14 +61,11 @@ $(".key").mouseup(function() {
     window.myTimer = setInterval(addLengthToNotes, 50, $(this).attr('data-note'));
     let counter = 0;
 
-    checkKeyboardMode(checkMode, this);
-
     $('.key').mouseenter(function(e) {
-
         counter++;
         if (counter <= 1) {
             if ($(".key:hover").length !== 0 && clicked) {
-                console.log("SLIDED");
+                checkKeyboardMode(checkMode, this);
                 counter = 0;
                 keyData = $(this).attr('data-note');
                 playNotes(keyData);
@@ -142,9 +75,6 @@ $(".key").mouseup(function() {
 
                 createNote($(this), $(this).attr('data-note'));
                 clearInterval(window.myTimerOnMove);
-
-                checkKeyboardMode(checkMode, this);
-
             }
         }
     });
@@ -313,6 +243,8 @@ function addLengthToNotes(noteId) {
     $(`.note-block[data-note=${noteId}]:last-child`).css('height', (count++) + '0px');
 }
 
+/*/////////////   AUTO PLAY NOTES   ////////////////*/
+
 export async function autoplayNotes(noteSeq, keyboardColor) {
     let height;
     let newKeyData;
@@ -351,40 +283,43 @@ export async function autoplayNotes(noteSeq, keyboardColor) {
 
 }
 
+/*/////////////   CALCULATE NOTES HEIGHT   ////////////////*/
+
 function calculateHeight(startTime, endTime) {
     return endTime - startTime;
 }
 
-let myVar;
-let notes = [];
+/*/////////////   SWITCH BETWEEN MODES (BOT, ONLINE, NORMAL)   ////////////////*/
 
-// Active or desactive BOT MODE when clicked on the button
-export function toggleBotMode() {
-    checkMode = $('.keyboard').attr("data-mode");
-    notes = [];
-
-    function myStopFunction() {
-        clearInterval(myVar);
-    }
-    if (checkMode === "bot") {
-        console.log("Duet mode active");
-        myVar = setInterval(sendData, 5000);
+function checkKeyboardMode(mode, element) {
+    if (mode === "bot") {
+        sendUserNotes( $(element).attr('data-note') );
+        botMode()
+    } else if (mode === "online") {
+        console.log("Online duet mode active")
     } else {
-        console.log("Duet mode not active");
-        myStopFunction();
+        console.log("No mode active")
     }
-
 }
+
 // Add the notes of the user in an object then push in array
 function sendUserNotes(noteNumber) {
     let object = { pitch: parseInt(noteNumber) };
     notes.push(object);
 }
 
-function checkKeyboardMode(mode, element) {
-    if (mode === "bot") {
-        sendUserNotes($(element).attr('data-note'));
-    }
+/*/////////////   BOT MODES THAT WILL AUTOPLAY USER NOTES   ////////////////*/
+
+function botMode() {
+    console.log("[START] bot mode");
+    window.sendNotesInterval = setInterval(sendData, 5000);;
+}
+
+export function exitBotMode() {
+    notes = [];
+    clearInterval(window.sendNotesInterval);
+    console.log("[EXIT] bot mode");
+    window.location.reload();
 }
 
 // Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
@@ -393,8 +328,11 @@ function sendData() {
         sendUserNotesToAI(notes).then(data => {
             keyboardColor = $('.keyboard').attr('data-color');
             autoplayNotes(data, keyboardColor);
-        });
-        notes = [];
+        }).catch(error => {
+            console.log("error", error)
+        })
+    } else {
+        console.log("Empty notes or bot mode not detected.")
     }
 }
 
@@ -414,5 +352,10 @@ async function sendUserNotesToAI(notes) {
     } else {
         console.log("error getting data!");
     }
+}
 
+/*/////////////   ONLINE MODE   ////////////////*/
+
+function onlineMode() {
+    // Don't touche please
 }

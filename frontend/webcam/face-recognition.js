@@ -1,25 +1,19 @@
 //sources used: https://www.youtube.com/watch?v=CVClHLwv-4I&feature=youtu.be&ab_channel=WebDevSimplified
-"use strict";
-import {
-    autoplayNotes,
-
-} from '../src/keyboard.js';
-
 
 window.onload = function() {
 
     let emotionColorObj = {
-        "angry": 'red',
-        "disgusted": '#0eff00',
-        "fearful": '#9300ff',
-        "happy": 'yellow',
-        "neutral": 'grey',
-        "sad": '#0065ff',
-        "surprised": '#ff0068',
-    };
+        angry: 'red',
+        disgusted: '#0eff00',
+        fearful: '#9300ff',
+        happy: 'yellow',
+        neutral: 'grey',
+        sad: '#0065ff',
+        surprised: '#ff0068',
+    }
 
     let trackedEmotionsArr = [];
-
+    let emotionObj = {};
 
     const video = document.getElementById("video");
 
@@ -30,7 +24,7 @@ window.onload = function() {
         faceapi.nets.faceExpressionNet.loadFromUri("./models"),
     ]).then(startVideo);
 
-
+    startVideo()
 
     function startVideo() {
         // loader(true);
@@ -50,18 +44,19 @@ window.onload = function() {
         };
         faceapi.matchDimensions(canvas, displaySize);
         let scanningFace = setInterval(async() => {
+            console.log("now");
             const detections = await faceapi
                 .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
                 .withFaceLandmarks()
                 .withFaceExpressions();
-            // const resizedDetections = faceapi.resizeResults(detections, displaySize);
-            // canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-            //faceapi.draw.drawDetections(canvas, resizedDetections);
+            const resizedDetections = faceapi.resizeResults(detections, displaySize);
+            canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+            faceapi.draw.drawDetections(canvas, resizedDetections);
             // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
             // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
             let expressionsObject = detections[0];
             if (typeof expressionsObject !== "object") {
-                $('.emotion-txt').text("Searching face...").css('color', 'grey');
+                $('.emotion-txt').text("Searching face...").css('color', 'grey')
                 $('body').css({
                     'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, grey 100%)`
                 });
@@ -75,41 +70,27 @@ window.onload = function() {
                 emotionArr.sort(function(a, b) {
                     return b[1] - a[1];
                 });
-
                 let emotionVal = emotionArr[0][0];
                 let emotionLevel = emotionArr[0][1];
-                let emotionObj = {
-                    "emotion": emotionVal,
-                    "level": emotionLevel
-                };
-
+                emotionObj.level = emotionLevel;
+                emotionObj.emotion = emotionVal
                 trackedEmotionsArr.push(emotionObj);
-
-                $('.emotion-txt').text(`You are ${emotionVal}`).css('color', emotionColorObj[emotionVal]);
+                $('.emotion-txt').text(`You are ${emotionVal}`).css('color', emotionToColor(emotionVal))
                 $('body').css({
-                    'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, ${emotionColorObj[emotionVal]} 100%)`
+                    'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, ${emotionToColor(emotionVal)} 100%)`
                 });
-                $('.keyboard').attr('data-color', emotionColorObj[emotionVal]);
+                $('.keyboard').attr('data-color', emotionToColor(emotionVal))
                 $('.keyboard').css({
-                    borderColor: emotionColorObj[emotionVal],
+                    borderColor: emotionToColor(emotionVal),
                     borderImage: 'none'
-                });
+                })
             }
-        }, 1500);
+        }, 500);
+        //maybe change
         setTimeout(async() => {
-            console.log(trackedEmotionsArr);
-            //     clearInterval(scanningFace); // TO STOP THE INTERVAL
-
-            sendUserEmotionsToAI(trackedEmotionsArr).then(data => {
-                console.log(data); // == Data created by the AI, depending the emotions of the user (by the trackedEmotionsArr)
-
-                // Exported function from /keyboard.js. Call the function to automatically play the fetched data
-                autoplayNotes(data.notesObject);
-            });
-
-
-
-        }, 5000);
+            console.log(trackedEmotionsArr)
+            clearInterval(scanningFace); // TO STOP THE INTERVAL
+        }, 5000)
     });
 
     function loader(status) {
@@ -128,30 +109,9 @@ window.onload = function() {
     function emotionToColor(emotion) {
         for (const emotionToColor in emotionColorObj) {
             if (emotionToColor === emotion) {
-                return emotionColorObj[emotionToColor];
+                return emotionColorObj[emotionToColor]
             }
         }
-    }
-
-};
-
-
-
-// Send array of object of emotions of the user to the backend. Then you receive an object of notes by the IA, depending the most common emotion of the user
-async function sendUserEmotionsToAI(trackedEmotionsArr) {
-    const rawResponse = await fetch('https://paino-fp3.herokuapp.com/emotion-to-notes', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ trackedEmotionsArr })
-    });
-
-    if (rawResponse.status === 200) {
-        return await rawResponse.json();
-    } else {
-        console.log("error getting data!");
     }
 
 }
