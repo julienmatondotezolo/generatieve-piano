@@ -8,12 +8,25 @@ let socket = io('ws://localhost:8080');
 let conn = null;
 let peerObj = {};
 let joinerPeerObj = {};
-let roomId = getUrlParameter('rooms');
+let ROOM_ID = getUrlParameter('rooms');
 
 /*/////////////   INITIALISATION   ////////////////*/
 
 randomUserImage();
-onlineDuet(roomId);
+onlineDuet(ROOM_ID);
+
+socket.on('user-connected', userId => {
+    console.log("user-connected: ", userId)
+})
+
+socket.on('message', text => {
+    console.log(text)
+});
+
+socket.on('user-disconnected', userId => {
+    console.log("user-disconnected: ", userId)
+    // if (peers[userId]) peers[userId].close()
+})
 
 /*/////////////   FUNCTION CREATE OR JOIN   ////////////////*/
 
@@ -65,13 +78,13 @@ function createRoom(){
     peer.on('open', (id) => {
         peerId = id;
         peerObj.peer_id = id
-        initSocket(peerObj)
+        socket.emit('join-room', ROOM_ID, id)
 
         let newUrl = document.location.href + "?rooms=" + id;
         window.history.pushState({}, document.title, newUrl)
 
         console.log("Room created with ID: ", id)
-        roomId = id
+        ROOM_ID = id
 
         getUserMedia({video: true, audio: true}, (stream)=>{
             local_stream = stream;
@@ -92,7 +105,6 @@ function createRoom(){
             });
             // Send messages
             conn.send(peerObj);
-            sendMessage(conn)
         })
     });
     peer.on('close', function() {
@@ -112,20 +124,24 @@ function createRoom(){
         alert('' + err);
     });
 
-    peerObj.message = "Created user send"
+    $(".icon-devices").click(function (e) { 
+        e.preventDefault();
+        let txt = prompt("Send message", "")
+        socket.emit('message', txt)
+    });
 }
 
 /*/////////////   JOIN ONLINE DUET   ////////////////*/
 
-function joinOnlineDuet(roomId) {
-    if (roomId) {
-        console.log("Joining room with ID: " + roomId)
+function joinOnlineDuet(ROOM_ID) {
+    if (ROOM_ID) {
+        console.log("Joining room with ID: " + ROOM_ID)
 
         peer = new Peer()
         peer.on('open', (id) => {
             peerId = id;
             peerObj.peer_id = id;
-            initSocket(peerObj)
+            socket.emit('join-room', ROOM_ID, id)
 
             console.log("Connected with ID: " + id);
             // GET USER MEDIA
@@ -134,7 +150,7 @@ function joinOnlineDuet(roomId) {
                 audio: true
             }, (stream) => {
                 local_stream = stream;
-                let call = peer.call(roomId, stream)
+                let call = peer.call(ROOM_ID, stream)
                 setLocalStream(local_stream)
     
                 call.on('stream', (stream) => {
@@ -144,7 +160,7 @@ function joinOnlineDuet(roomId) {
                 console.log(err)
             })
 
-            conn = peer.connect(roomId);
+            conn = peer.connect(ROOM_ID);
             conn.on('open', function() {
                 // Receive messages
                 conn.on('data', function (data) {
@@ -162,6 +178,12 @@ function joinOnlineDuet(roomId) {
         });
 
         peerObj.message = "joined user send"
+        
+        $(".icon-devices").click(function (e) { 
+            e.preventDefault();
+            let txt = prompt("Send message", "")
+            socket.emit('message', txt)
+        });
     } else {
         console.log("No rooms found")
     }
@@ -169,13 +191,13 @@ function joinOnlineDuet(roomId) {
 
 /*/////////////   EXIT ONLINE DUET   ////////////////*/
 
-export function exitOnlineDuet(roomId) {
+export function exitOnlineDuet(ROOM_ID) {
     $(`.user-content[data-user=${joinerPeerObj.peer_id}]`).remove()
 
     peer.disconnect();
     peer.destroy();
 
-    console.log("Left room with ID: " + roomId)
+    console.log("Left room with ID: " + ROOM_ID)
     $(".remote-video").hide();
     $(".online-duet").attr("data-connect", "false").removeClass("bg-red").addClass("bg-green").text("join online duet").css("color", "")
 
@@ -189,7 +211,6 @@ function initSocket(obj) {
     socket.on('message', text => {
         console.log(text)
     });
-    socket.emit('message', obj)
 }
 
 /*/////////////   RANDOM USER   ////////////////*/
