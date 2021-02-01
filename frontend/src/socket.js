@@ -1,3 +1,9 @@
+/*/////////////   IMPORTS   ////////////////*/
+
+import {
+    onlineMode
+} from './keyboard.js';
+
 /*/////////////   VARIABLES   ////////////////*/
 
 let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -5,6 +11,7 @@ let peer = null;
 let peerId = null;
 let socket;
 let conn = null;
+let note = null;
 let peerObj = {};
 let ROOM_ID = getUrlParameter('rooms');
 
@@ -95,9 +102,7 @@ function joinOnlineDuet(ROOM_ID) {
             console.log(err)
         })
 
-        socket.on('piano-key', pianoData => {
-            console.log(pianoData)
-        });
+        getOnlineNotes()
 
         socket.on('user-disconnected', userObj => {
             leaveRoom(userObj)
@@ -156,11 +161,18 @@ export function exitOnlineDuet(ROOM_ID) {
     window.location = newUrl
 }
 
-/*/////////////   INITIALIZE SOCKET   ////////////////*/
+/*/////////////   EXPORT SOCKETS   ////////////////*/
 
-export function onlineNotes(pianoKey) {
+function getOnlineNotes() {
+    socket.on('piano-key', pianoData => {
+        console.log(pianoData);
+        onlineMode(`.key[data-note=${pianoData}]`, pianoData)
+    });
+}
+
+export function sendOnlineNotes(pianoKey) {
     if (pianoKey) {
-        socket.emit('piano-key', pianoKey)
+        socket.emit('piano-key', pianoKey);
     }
 }
 

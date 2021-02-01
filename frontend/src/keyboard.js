@@ -7,7 +7,7 @@ import {
 } from './magenta.js';
 
 import {
-    onlineNotes
+    sendOnlineNotes
 } from './socket.js';
 /*/////////////   VARIABLES   ////////////////*/
 
@@ -303,7 +303,7 @@ function checkKeyboardMode(mode, element) {
         botMode();
     } else if (mode === "online") {
         keyData = $(element).attr('data-note');
-        onlineMode(keyData);
+        sendOnlineNotes(keyData);
     } else {
         console.log("No mode active");
     }
@@ -363,7 +363,10 @@ async function sendUserNotesToAI(notes) {
 
 /*/////////////   ONLINE MODE   ////////////////*/
 
-function onlineMode(key) {
-    onlineNotes(key)
+export function onlineMode(element, key) {
+    playNotes(key);
+    keyboardColor = $('.keyboard').attr('data-color');
+    addColorToKey(element, keyboardColor, true, 1000);
+    createNote($(element), key);
 }
  
