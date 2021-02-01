@@ -17,6 +17,10 @@ io.on('connection', (socket) => {
             socket.to(roomId).broadcast.emit('message', data);
         });
 
+        socket.on('piano-key', (data) => {
+            socket.to(roomId).broadcast.emit('piano-key', data);
+        });
+
         socket.on('disconnect', () => {
             socket.to(roomId).broadcast.emit('user-disconnected', userId)
         })
