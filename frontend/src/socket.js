@@ -62,7 +62,7 @@ function createRoom(){
     peer = new Peer();
 
     peer.on('open', (id) => {
-        let newUrl = document.location.href + "?rooms=" + id;
+        let newUrl = document.location.href + "?rooms=" + id + "&keyboard=online";
         window.location = newUrl
 
         $(".online-duet").attr("data-connect", "pending").removeClass("bg-green").addClass("bg-red").text("joining...").css("color", "#fff")
@@ -95,6 +95,10 @@ function joinOnlineDuet(ROOM_ID) {
             console.log(err)
         })
 
+        socket.on('piano-key', pianoData => {
+            console.log(pianoData)
+        });
+
         socket.on('user-disconnected', userObj => {
             leaveRoom(userObj)
             console.log(`${userObj.username} disconnected.`)
@@ -112,6 +116,7 @@ function joinOnlineDuet(ROOM_ID) {
             socket.emit('message', peerObj)
         });
 
+        $(".ai-bot").data('clicked', false).removeClass("bg-green").attr("data-bot", false).prop('disabled', true).css("background", "#7e7e7e");
         $(".online-duet").attr("data-connect", "true").removeClass("bg-green").addClass("bg-red").text("exit online duet").css("color", "#fff")
     } else {
         console.log("No room found.")
@@ -154,11 +159,6 @@ export function exitOnlineDuet(ROOM_ID) {
 /*/////////////   INITIALIZE SOCKET   ////////////////*/
 
 export function onlineNotes(pianoKey) {
-    if (socket) {
-        socket.on('piano-key', pianoData => {
-            console.log(pianoData)
-        });
-    }
     if (pianoKey) {
         socket.emit('piano-key', pianoKey)
     }
