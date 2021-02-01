@@ -14,19 +14,7 @@ let ROOM_ID = getUrlParameter('rooms');
 
 randomUserImage();
 onlineDuet(ROOM_ID);
-
-socket.on('user-connected', userId => {
-    console.log("user-connected: ", userId)
-})
-
-socket.on('message', text => {
-    console.log(text)
-});
-
-socket.on('user-disconnected', userId => {
-    console.log("user-disconnected: ", userId)
-    // if (peers[userId]) peers[userId].close()
-})
+initSocket();
 
 /*/////////////   FUNCTION CREATE OR JOIN   ////////////////*/
 
@@ -74,17 +62,19 @@ function setRemoteStream(stream) {
 function createRoom(){
     console.log("Creating room.")
 
-    peer = new Peer()
+    peer = new Peer();
+    socket = io('ws://localhost:8080', {'multiplex': false});
+
     peer.on('open', (id) => {
         peerId = id;
         peerObj.peer_id = id
-        socket.emit('join-room', ROOM_ID, id)
 
         let newUrl = document.location.href + "?rooms=" + id;
         window.history.pushState({}, document.title, newUrl)
 
         console.log("Room created with ID: ", id)
         ROOM_ID = id
+        socket.emit('join-room', ROOM_ID, id)
 
         getUserMedia({video: true, audio: true}, (stream)=>{
             local_stream = stream;
@@ -137,7 +127,9 @@ function joinOnlineDuet(ROOM_ID) {
     if (ROOM_ID) {
         console.log("Joining room with ID: " + ROOM_ID)
 
-        peer = new Peer()
+        peer = new Peer();
+        socket = io('ws://localhost:8080');
+
         peer.on('open', (id) => {
             peerId = id;
             peerObj.peer_id = id;
@@ -176,8 +168,6 @@ function joinOnlineDuet(ROOM_ID) {
             peer = null;
             console.log('Connection destroyed. Please refresh');
         });
-
-        peerObj.message = "joined user send"
         
         $(".icon-devices").click(function (e) { 
             e.preventDefault();
@@ -207,10 +197,20 @@ export function exitOnlineDuet(ROOM_ID) {
 
 /*/////////////   INITIALIZE SOCKET   ////////////////*/
 
-function initSocket(obj) {
+function initSocket() {
+    socket.on('user-connected', userId => {
+        console.log("user-connected: ", userId)
+    })
+    
     socket.on('message', text => {
         console.log(text)
     });
+    
+    socket.on('user-disconnected', userId => {
+        console.log("user-disconnected: ", userId)
+        // if (peers[userId]) peers[userId].close()
+    })
+    
 }
 
 /*/////////////   RANDOM USER   ////////////////*/

@@ -7,13 +7,13 @@ const io = require('socket.io')(http, {
 });
 
 io.on('connection', (socket) => {
-    console.log('A user connected');
     socket.on('join-room', (roomId, userId) => {
+        console.log(`User with id: ${userId} joined ROOM: ${roomId}.`);
         socket.join(roomId)
         socket.to(roomId).broadcast.emit('user-connected', userId)
 
         socket.on('message', (data) => {
-            console.log("message: ", data)
+            console.log(`${userId} send: `, data)
             socket.to(roomId).broadcast.emit('message', data);
         });
 
