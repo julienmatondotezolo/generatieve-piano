@@ -27,7 +27,7 @@ window.onload = function () {
     startVideo()
   
     function startVideo() {
-      // loader(true);
+      loader(true);
       navigator.getUserMedia({
           video: {}
         },
@@ -103,12 +103,12 @@ window.onload = function () {
           })
         }
   
-      }, 1500);
+      }, 1000);
       //maybe change
   
-      setTimeout(async () => {
-        console.log(trackedEmotionsArr)
-      }, 20000)
+    //   setTimeout(async () => {
+    //     console.log(trackedEmotionsArr)
+    //   }, 20000)
     });
   
     function loader(status) {

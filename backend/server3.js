@@ -13,12 +13,13 @@ io.on('connection', (socket) => {
         socket.to(roomId).broadcast.emit('user-connected', userObj)
 
         socket.on('message', (data) => {
-            console.log(`${userObj} send: `, data)
+            console.log(`${data.username} send: `, data.txt)
             socket.to(roomId).broadcast.emit('message', data);
         });
 
-        socket.on('piano-key', (data) => {
-            socket.to(roomId).broadcast.emit('piano-key', data);
+        socket.on('piano-key', (pianoData) => {
+            console.log("Playing: ", pianoData)
+            socket.to(roomId).broadcast.emit('piano-key', pianoData);
         });
 
         socket.on('disconnect', () => {

@@ -5,6 +5,10 @@ import {
     playNotes,
     playAINotes
 } from './magenta.js';
+
+import {
+    onlineNotes
+} from './socket.js';
 /*/////////////   VARIABLES   ////////////////*/
 
 let clicked = false;
@@ -117,6 +121,7 @@ $(".key").mouseup(function() {
     keyData = $(this).attr('data-note');
     
     playNotes(keyData);
+    onlineNotes(keyData)
 
     keyboardColor = $('.keyboard').attr('data-color');
     addColorToKey(this, keyboardColor, false);
