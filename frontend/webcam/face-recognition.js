@@ -27,7 +27,7 @@ window.onload = function () {
     startVideo()
   
     function startVideo() {
-      loader(true);
+      // loader(true);
       navigator.getUserMedia({
           video: {}
         },

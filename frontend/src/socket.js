@@ -82,6 +82,7 @@ function joinOnlineDuet(ROOM_ID) {
     if (ROOM_ID) {
         peer = new Peer();
         socket = io('ws://localhost:8080');
+        // socket = io('ws://paino-socket.herokuapp.com/:15540');
 
         getUserMedia({video: true, audio: true}, (stream)=>{
             setLocalStream(stream)
@@ -95,7 +96,7 @@ function joinOnlineDuet(ROOM_ID) {
 
             socket.on('user-connected', userObj => {
                 setName(userObj)
-                connectToNewUser(userObj.peer_id, stream)
+                connectToNewUser(userObj, stream)
                 console.log(userObj.username + " connected.")
             })
         },(err)=>{
@@ -113,6 +114,20 @@ function joinOnlineDuet(ROOM_ID) {
             peerObj.peer_id = id;
             socket.emit('join-room', ROOM_ID, peerObj)
         })
+
+        peer.on('connection', function(peerConn) {
+            console.log("user connected")
+            conn = peerConn
+            conn.on('open', function() {
+                // Receive messages
+                conn.on('data', function (data) {
+                    joinerPeerObj = data
+                    setName(data)
+                });
+                // Send messages
+                conn.send(peerObj);
+            })
+        });
     
         $(".icon-devices").click(function (e) { 
             e.preventDefault();
@@ -128,9 +143,12 @@ function joinOnlineDuet(ROOM_ID) {
     }
 }
 
-function connectToNewUser(userId, stream) {
-    const call = peer.call(userId, stream)
+/*/////////////  CONNECT TO NEW USER   ////////////////*/
+
+function connectToNewUser(userObj, stream) {
+    const call = peer.call(userObj.peer_id, stream)
     setLocalStream(stream)
+
     // const video = document.createElement('video')
     call.on('stream', userVideoStream => {
         setRemoteStream(userVideoStream)
