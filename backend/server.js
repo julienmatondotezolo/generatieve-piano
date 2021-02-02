@@ -3,13 +3,13 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-//const port = normalizePort(process.env.PORT || "3000");
+
 const port = process.env.PORT || 3000;
 const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
 const http = require("http").Server(app);
-const io = require("socket.io")(http);
-const postman = require("./routes/postman");
+const createUsers = require("./routes/create-users");
+const sendUsers = require("./routes/send-users");
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -26,17 +26,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-/* app.get("/postman", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-}); */
-
-/* io.on("connection", (socket) => {
-  socket.on("sendEmotion", (msg) => {
-    console.log("message: " + msg);
-  });
-}); */
-
-app.use("/postman", postman);
+app.use("/create-users", createUsers);
+app.use("/send-users", sendUsers);
 
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);

@@ -17,20 +17,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
 
+    <!-- <script type="module" src="src/scoket.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+        
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/13.8.21/Tone.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tensorflow/1.2.8/tf.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.0/es6/music_vae.js"></script>
-    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
-    <script defer type="module" src="src/socket.js"></script>
 
-    <script defer src="webcam/face-api.min.js"></script>
-    <script defer src="webcam/face-recognition.js"></script>
+  <!--   <script defer src="webcam/face-api.min.js"></script>
+    <script defer src="webcam/face-recognition.js"></script> -->
+    <script type="module" src="src/socket.js"></script>
     <script type="module" src="src/keyboard.js"></script>
-
 </head>
 
 <body>
@@ -42,54 +43,54 @@
     </header>
 
     <main>
-        <button>This website is using sound</button>
-        <button id="testButton">testbutton</button>
         <div class="notes">
             <!-- <div class="note-block"></div> -->
         </div>
-        <!-- <div class="keyboard box-shadow">
-            <div class="key white" data-note="a">
-                <p>a</p>
-            </div>
-            <div class="key black" data-note="z">
-                <p>z</p>
-            </div>
-            <div class="key white" data-note="e">
-                <p>e</p>
-            </div>
-        </div> -->
 
         <div class="keyboard">
             <div id="piano">
                 <div class="keys">
-
-                    <div class="white-keys">
-                        <div class="key white-key"></div>
-                        <div class="key white-key"></div>
-                        <div class="key white-key"></div>
-                        <div class="key white-key"></div>
-                        <div class="key white-key"></div>
-                        <div class="key white-key"></div>
-                        <div class="key white-key"></div>
-                    </div>
-
-                    <div class="black-keys">
-                        <span class="cluster">
-                            <div class="key black-key"></div>
-                            <div class="key black-key"></div>
-                        </span>
-                        <span class="cluster">
-                            <div class="key black-key"></div>
-                            <div class="key black-key"></div>
-                            <div class="key black-key"></div>
-                        </span>
-                    </div>
-
+                    <div class="white-keys"></div>
+                    <div class="black-keys"></div>
                 </div>
             </div>
         </div>
-        <!-- <script src="js/jam-session.js"></script> -->
 
+        <aside class="info">
+            <section class="room">
+                <article class="user-content" data-user="off">
+                    <img class="random-logo" src="images/icons/1.png" alt="">
+                    <p class="user">Guest pianist</p>
+                </article>
+            </section>
+            <figure class="info-btn">
+                <img src="images/icon-info.png" alt="Icon info">
+            </figure>
+        </aside>
+
+        <div class="options">
+            <button class="btn ai-bot">duet with A.I bot</button>
+            <figure class="settings">
+                <section class="icon-devices" data-usb="off">
+                    <img src="images/icon-metro-usb.png" alt="usb iicon images">
+                </section>
+                <section class="icon-devices" data-mic="off">
+                    <img src="images/icon-material-mic.png" alt="usb iicon images">
+                </section>
+                <section class="icon-devices" data-video="off">
+                    <img src="images/icon-video.png" alt="usb iicon images">
+                </section>
+            </figure>
+            <button class="btn online-duet bg-green" data-connect="false">join online duet</button>
+        </div>
+        <div class="face-recognition-wrap">
+            <figure class="video-wrap">
+              <div class="emotion-content">
+                <p class="emotion-txt">Searching face...</p>
+              </div>
+              <video id="video" width="200" height="200" autoplay muted></video>
+            </figure>
+          </div>
     </main>
 
 
