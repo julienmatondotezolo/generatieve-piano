@@ -1,8 +1,13 @@
 /*/////////////   IMPORTS   ////////////////*/
-
+"use strict";
 import {
     onlineMode
 } from './keyboard.js';
+
+
+import {
+    exitNormalMode,
+} from '../webcam/face-recognition.js';
 
 /*/////////////   VARIABLES   ////////////////*/
 
@@ -23,11 +28,11 @@ onlineDuet(ROOM_ID);
 /*/////////////   FUNCTION CREATE OR JOIN   ////////////////*/
 
 export function onlineDuet(id) {
-    $(this).attr("data-connect", "pending").removeClass("bg-green").text("connecting...").css({ color: "#fff", background: "grey" })
+    $(this).attr("data-connect", "pending").removeClass("bg-green").text("connecting...").css({ color: "#fff", background: "grey" });
     if (id) {
-        joinOnlineDuet(id)
+        joinOnlineDuet(id);
     } else if ($(".online-duet").data('clicked')) {
-        createRoom(id)
+        createRoom(id);
     }
 }
 
@@ -64,16 +69,16 @@ function setRemoteStream(stream) {
 /*/////////////   CREATE ONLINE DUET   ////////////////*/
 
 function createRoom() {
-    console.log("Creating room.")
+    console.log("Creating room.");
 
     peer = new Peer();
 
     peer.on('open', (id) => {
         let newUrl = document.location.href + "?rooms=" + id + "&keyboard=online";
-        window.location = newUrl
+        window.location = newUrl;
 
-        $(".online-duet").attr("data-connect", "pending").removeClass("bg-green").addClass("bg-red").text("joining...").css("color", "#fff")
-    })
+        $(".online-duet").attr("data-connect", "pending").removeClass("bg-green").addClass("bg-red").text("joining...").css("color", "#fff");
+    });
 }
 
 /*/////////////   JOIN ONLINE DUET   ////////////////*/
@@ -84,81 +89,81 @@ function joinOnlineDuet(ROOM_ID) {
         socket = io('ws://localhost:8080');
 
         getUserMedia({ video: true, audio: true }, (stream) => {
-            setLocalStream(stream)
+            setLocalStream(stream);
 
             peer.on('call', call => {
-                call.answer(stream)
+                call.answer(stream);
                 call.on('stream', userVideoStream => {
-                    setRemoteStream(userVideoStream)
-                })
-            })
+                    setRemoteStream(userVideoStream);
+                });
+            });
 
             socket.on('user-connected', userObj => {
-                setName(userObj)
-                connectToNewUser(userObj.peer_id, stream)
-                console.log(userObj.username + " connected.")
-            })
+                setName(userObj);
+                connectToNewUser(userObj.peer_id, stream);
+                console.log(userObj.username + " connected.");
+            });
         }, (err) => {
-            console.log(err)
+            console.log(err);
         })
 
-        getOnlineNotes()
+        getOnlineNotes();
 
         socket.on('user-disconnected', userObj => {
-            leaveRoom(userObj)
-            console.log(`${userObj.username} disconnected.`)
-        })
+            leaveRoom(userObj);
+            console.log(`${userObj.username} disconnected.`);
+        });
 
         peer.on('open', id => {
             peerObj.peer_id = id;
-            socket.emit('join-room', ROOM_ID, peerObj)
-        })
+            socket.emit('join-room', ROOM_ID, peerObj);
+        });
 
         $(".icon-devices").click(function(e) {
             e.preventDefault();
-            let txt = prompt("Send message", "")
-            peerObj.txt = txt
-            socket.emit('message', peerObj)
+            let txt = prompt("Send message", "");
+            peerObj.txt = txt;
+            socket.emit('message', peerObj);
         });
 
         $(".ai-bot").data('clicked', false).removeClass("bg-green").attr("data-bot", false).prop('disabled', true).css("background", "#7e7e7e");
-        $(".online-duet").attr("data-connect", "true").removeClass("bg-green").addClass("bg-red").text("exit online duet").css("color", "#fff")
+        $(".online-duet").attr("data-connect", "true").removeClass("bg-green").addClass("bg-red").text("exit online duet").css("color", "#fff");
     } else {
-        console.log("No room found.")
+        console.log("No room found.");
     }
 }
 
 function connectToNewUser(userId, stream) {
-    const call = peer.call(userId, stream)
-    setLocalStream(stream)
-        // const video = document.createElement('video')
+    const call = peer.call(userId, stream);
+    setLocalStream(stream);
+    // const video = document.createElement('video')
     call.on('stream', userVideoStream => {
-        setRemoteStream(userVideoStream)
-    })
+        setRemoteStream(userVideoStream);
+    });
     call.on('close', () => {
-        console.log("Video closed.")
-    })
+        console.log("Video closed.");
+    });
 }
 
 /*/////////////   EXIT ONLINE DUET   ////////////////*/
 
 function leaveRoom(userData) {
     $(".remote-video").hide();
-    $(`.user-content[data-user=${userData.peer_id}]`).remove()
+    $(`.user-content[data-user=${userData.peer_id}]`).remove();
 }
 
 export function exitOnlineDuet(ROOM_ID) {
-    $(`.user-content[data-user=${peerObj.peer_id}]`).remove()
+    $(`.user-content[data-user=${peerObj.peer_id}]`).remove();
 
     peer.disconnect();
     peer.destroy();
 
-    console.log("Left room with ID: " + ROOM_ID)
+    console.log("Left room with ID: " + ROOM_ID);
     $(".remote-video").hide();
-    $(".online-duet").attr("data-connect", "false").removeClass("bg-red").addClass("bg-green").text("join online duet").css("color", "")
+    $(".online-duet").attr("data-connect", "false").removeClass("bg-red").addClass("bg-green").text("join online duet").css("color", "");
 
     let newUrl = document.location.href.split('?')[0];
-    window.location = newUrl
+    window.location = newUrl;
 }
 
 /*/////////////   EXPORT SOCKETS   ////////////////*/
@@ -166,7 +171,7 @@ export function exitOnlineDuet(ROOM_ID) {
 function getOnlineNotes() {
     socket.on('piano-key', pianoData => {
         console.log(pianoData);
-        onlineMode(`.key[data-note=${pianoData}]`, pianoData)
+        onlineMode(`.key[data-note=${pianoData}]`, pianoData);
     });
 }
 
@@ -181,20 +186,20 @@ export function sendOnlineNotes(pianoKey) {
 function randomUserImage() {
     let randomNumber = Math.floor(Math.random() * 25) + 1;
     let randomDegrees = Math.floor(Math.random() * 360);
-    let generateUsername = "Julien" + randomUserNumber()
+    let generateUsername = "Julien" + randomUserNumber();
 
     $(".random-logo").attr("src", `images/icons/${randomNumber}.png`);
     // $(".random-logo").css("filter", `hue-rotate(${randomDegrees}deg) saturate(2)`);
-    peerObj.src = `images/icons/${randomNumber}.png`
-    peerObj.username = generateUsername
-    $('.user').text(generateUsername)
+    peerObj.src = `images/icons/${randomNumber}.png`;
+    peerObj.username = generateUsername;
+    $('.user').text(generateUsername);
 }
 
 function randomUserNumber() {
     let randomNumber = Math.floor(Math.random() * 25) + 1;
     let randomDegrees = Math.floor(Math.random() * 360);
 
-    return randomDegrees
+    return randomDegrees;
 }
 
 /*/////////////   SAVE USER   ////////////////*/
@@ -202,7 +207,7 @@ function randomUserNumber() {
 function saveUserData(data) {
     localStorage.setItem("paino_user_data", JSON.stringify(data));
     let user_data = localStorage.getItem("paino_user_data");
-    return user_data
+    return user_data;
 }
 
 // Get url parameter
@@ -220,4 +225,4 @@ function getUrlParameter(sParam) {
             return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
         }
     }
-};
+}
