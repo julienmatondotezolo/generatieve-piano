@@ -1,7 +1,7 @@
 //sources used: https://www.youtube.com/watch?v=CVClHLwv-4I&feature=youtu.be&ab_channel=WebDevSimplified
 
 window.onload = function () {
-
+console.log('ayoub tg');
     let emotionColorObj = {
       angry: 'red',
       disgusted: '#0eff00',

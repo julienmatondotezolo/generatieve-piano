@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/master.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="welcome-container" class="container">
+        <img src="./images/paino-logo.png" alt="" width="417.5" height="130.5">
+        <span>Play, Enjoy, Make friends or <br> catch feelings with our A.I</span>
+    </div>
+
+    <div id="enter-name-container" class="container">
+        <p>Enter your name to start</p>
+        <input type="text" id="username-input"> <br>
+        <span id="unvalid-username">Please enter a valid username!</span>
+        <button id="start-button">start</button>
+    </div>
+
+    <div id="container-face-recognition" class="container">
+    </div>
+
+
+    <script src="src/firstpage.js"></script>
+    <script defer src="webcam/face-api.min.js"></script>
+    <script type="module" defer src="webcam/face-recognition.js"></script>
+
+</body>
+
+</html>
