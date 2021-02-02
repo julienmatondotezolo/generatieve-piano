@@ -1,17 +1,21 @@
 /*/////////////   IMPORT FUNCTIONS   ////////////////*/
-
+"use strict";
 import {
     onlineDuet,
     exitOnlineDuet,
 } from './socket.js';
 
+
 import {
-    exitBotMode
+    botMode,
+    exitBotMode,
 } from './keyboard.js';
+
 
 /*/////////////   VARIABLES   ////////////////*/
 
 let roomId = getUrlParameter('rooms');
+let keyboardMode = getUrlParameter('keyboard');
 let bool = false;
 
 /*/////////////   CLICK FUNCTIONS   ////////////////*/
@@ -26,7 +30,13 @@ $(".online-duet").click(function(e) {
     toggleModes(".online-duet", ".ai-bot")
 });
 
-/*/////////////   PARAMETERS   ////////////////*/
+/*/////////////   CHECK KEYBOARD MODE   ////////////////*/
+
+if (keyboardMode) {
+    $('.keyboard').attr("data-mode", keyboardMode);
+}
+
+/*/////////////   TOGGLE BETWEEN MODES   ////////////////*/
 
 function toggleModes(mode1, mode2) {
     if (mode1 == ".online-duet") {
@@ -49,11 +59,12 @@ function toggleModes(mode1, mode2) {
         bool = !bool;
         if (bool) {
             $('.keyboard').attr("data-mode", "bot");
+            botMode();
         } else {
             $('.keyboard').attr("data-mode", bool);
-            exitBotMode();
             $(mode1).attr("data-bot", bool).removeClass("bg-red").text("duet with A.I bot").removeAttr('style');
             $(mode2).data('clicked', false).addClass("bg-green").prop('disabled', false).removeAttr('style');
+            exitBotMode();
         }
     } else {
         console.error("Error: ", "wrong mode.");

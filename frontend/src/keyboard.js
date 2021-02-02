@@ -5,6 +5,10 @@ import {
     playNotes,
     playAINotes
 } from './magenta.js';
+
+import {
+    sendOnlineNotes
+} from './socket.js';
 /*/////////////   VARIABLES   ////////////////*/
 
 let clicked = false;
@@ -65,8 +69,10 @@ $(".key").mouseup(function() {
         counter++;
         if (counter <= 1) {
             if ($(".key:hover").length !== 0 && clicked) {
-                checkKeyboardMode(checkMode, this);
                 counter = 0;
+
+                checkKeyboardMode(checkMode, this);
+
                 keyData = $(this).attr('data-note');
                 playNotes(keyData);
 
@@ -293,12 +299,12 @@ function calculateHeight(startTime, endTime) {
 
 function checkKeyboardMode(mode, element) {
     if (mode === "bot") {
-        sendUserNotes( $(element).attr('data-note') );
-        botMode()
+        sendUserNotes($(element).attr('data-note'));
     } else if (mode === "online") {
-        console.log("Online duet mode active")
+        keyData = $(element).attr('data-note');
+        sendOnlineNotes(keyData);
     } else {
-        console.log("No mode active")
+        console.log("No mode active");
     }
 }
 
@@ -310,20 +316,21 @@ function sendUserNotes(noteNumber) {
 
 /*/////////////   BOT MODES THAT WILL AUTOPLAY USER NOTES   ////////////////*/
 
-function botMode() {
+export function botMode() {
     console.log("[START] bot mode");
-    window.sendNotesInterval = setInterval(sendData, 5000);;
+    window.sendNotesInterval = setInterval(sendData, 5000);
 }
 
 export function exitBotMode() {
     notes = [];
     clearInterval(window.sendNotesInterval);
     console.log("[EXIT] bot mode");
-    window.location.reload();
+    // window.location.reload();
 }
 
 // Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
 function sendData() {
+    console.log("senddata");
     if (notes.length > 1 && checkMode === "bot") {
         sendUserNotesToAI(notes).then(data => {
             keyboardColor = $('.keyboard').attr('data-color');
@@ -331,6 +338,7 @@ function sendData() {
         }).catch(error => {
             console.log("error", error)
         })
+        notes = [];
     } else {
         console.log("Empty notes or bot mode not detected.")
     }
@@ -356,6 +364,9 @@ async function sendUserNotesToAI(notes) {
 
 /*/////////////   ONLINE MODE   ////////////////*/
 
-function onlineMode() {
-    // Don't touche please
+export function onlineMode(element, key) {
+    playNotes(key);
+    keyboardColor = $('.keyboard').attr('data-color');
+    addColorToKey(element, keyboardColor, true, 1000);
+    createNote($(element), key);
 }
