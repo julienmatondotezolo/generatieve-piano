@@ -5,7 +5,6 @@ import {
     exitOnlineDuet,
 } from './socket.js';
 
-
 import {
     botMode,
     exitBotMode,

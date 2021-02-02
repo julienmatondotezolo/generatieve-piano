@@ -35,6 +35,24 @@ window.onload = function() {
         );
     }
 
+    let boolean;
+    $(".settings").on('click', function() {
+        boolean = !boolean;
+        if (boolean) {
+
+            console.log("yea");
+            video.srcObject.getTracks().forEach(function(track) {
+                track.stop();
+                track.src = "";
+            });
+
+
+        } else {
+            startVideo();
+            clearInterval(window.scanningFace);
+        }
+    });
+
     video.addEventListener("play", () => {
         const canvas = faceapi.createCanvasFromMedia(video);
         document.body.append(canvas);
@@ -46,7 +64,7 @@ window.onload = function() {
 
         faceapi.matchDimensions(canvas, displaySize);
 
-        let scanningFace = setInterval(async() => {
+        window.scanningFace = setInterval(async() => {
             const detections = await faceapi
                 .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
                 .withFaceLandmarks()
@@ -62,7 +80,7 @@ window.onload = function() {
             let expressionsObject = detections[0];
 
             if (typeof expressionsObject !== "object") {
-                $('.emotion-txt').text("Searching face...").css('color', 'grey')
+                $('.emotion-txt').text(`Searching face...`).css('color', 'grey');
                 $('body').css({
                     'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, grey 100%)`
                 });
