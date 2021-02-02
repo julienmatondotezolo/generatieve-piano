@@ -1,226 +1,110 @@
+/*  global $ */
 /*/////////////   IMPORTS   ////////////////*/
-
+"use strict";
 import {
-    playNotes
+    playNotes,
+    playAINotes
 } from './magenta.js';
 
+import {
+    sendOnlineNotes
+} from './socket.js';
 /*/////////////   VARIABLES   ////////////////*/
 
 let clicked = false;
 let count = 5;
 let keyboardColor;
 let keyData;
+let checkMode;
+let notes = [];
+let sendNotesInterval;
 
-let notesArrObj = [
-    {
-        emotion: "sad",
-        level: 0.6376954913139343
-    }, {
-        emotion: "sad",
-        level: 0.6376954913139343
-    }, {
-        emotion: "sad",
-        level: 0.6376954913139343
-    }, {
-        emotion: "sad",
-        level: 0.997367799282074
-    }, {
-        emotion: "happy",
-        level: 0.6776954913139343
-    }, {
-        emotion: "sad",
-        level: 0.8976954913139343
-    }, {
-        emotion: "surprised",
-        level: 1
-    }, {
-        emotion: "sad",
-        level: 0.9978705644607544
-    }, {
-        emotion: "happy",
-        level: 0.5648226141929626
-    }
-]
-
-let noteSeqData = {
-    notes: [{
-            pitch: 60,
-            startTime: 0.0,
-            endTime: 0.5
-        },
-        {
-            pitch: 60,
-            startTime: 0.5,
-            endTime: 1.0
-        },
-        {
-            pitch: 67,
-            startTime: 1.0,
-            endTime: 1.5
-        },
-        {
-            pitch: 67,
-            startTime: 1.5,
-            endTime: 2.0
-        },
-        {
-            pitch: 69,
-            startTime: 2.0,
-            endTime: 2.5
-        },
-        {
-            pitch: 69,
-            startTime: 2.5,
-            endTime: 3.0
-        },
-        {
-            pitch: 67,
-            startTime: 3.0,
-            endTime: 4.0
-        },
-        {
-            pitch: 65,
-            startTime: 4.0,
-            endTime: 4.5
-        },
-        {
-            pitch: 65,
-            startTime: 4.5,
-            endTime: 5.0
-        },
-        {
-            pitch: 64,
-            startTime: 5.0,
-            endTime: 5.5
-        },
-        {
-            pitch: 64,
-            startTime: 5.5,
-            endTime: 6.0
-        },
-        {
-            pitch: 62,
-            startTime: 6.0,
-            endTime: 6.5
-        },
-        {
-            pitch: 62,
-            startTime: 6.5,
-            endTime: 7.0
-        },
-        {
-            pitch: 60,
-            startTime: 7.0,
-            endTime: 8.0
-        },
-    ]
-};
+let whiteNumber = [36, 38, 40, 41, 43, 45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88, 89, 91, 93, 95];
+let blackNumber = [37, 39, 42, 44, 46, 49, 51, 54, 56, 58, 61, 63, 66, 68, 70, 73, 75, 78, 80, 82, 85, 87, 90, 92, 94];
 
 /*/////////////   FUNCTION INITIALISATIONS   ////////////////*/
 
-initWebcam()
-initKeyboard()
-
-document.querySelector('.ai-bot').addEventListener('click', async () => {
-    console.log('audio is ready')
-    $.getJSON("src/response.json", async function (data, textStatus, jqXHR) {
-        keyboardColor = $('.keyboard').attr('data-color');
-        await autoplayNotes(data, keyboardColor);
-    });
-    // await sendEmotion(notesArrObj)
-})
-
-async function sendEmotion(emotionArr) {
-    changeBtn('loading...')
-    const rawResponse = await fetch('https://paino-fp3.herokuapp.com/emotion-to-notes', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(emotionArr)
-    }).then((result) => {
-        console.log(result.json())
-    }).catch((err) => {
-        changeBtn('error')
-        console.log(err.body)
-    });
-
-    console.log(await rawResponse)
-    const dataPitchNotes = await rawResponse.json();
-    keyboardColor = $('.keyboard').attr('data-color');
-    await autoplayNotes(dataPitchNotes, keyboardColor);
-    changeBtn('This website using sound.')
-}
-
-function changeBtn(text) {
-    $('button').text(text)
-}
+initWebcam();
+initKeyboard();
 
 /*/////////////   CLICK FUNCTIONS ON KEY   ////////////////*/
 
-$(".key").hover(function () {
+$(".key").hover(function() {
     // over
     keyboardColor = $('.keyboard').attr('data-color');
-    addColorToKey(this, keyboardColor)
-}, function () {
+    addColorToKey(this, keyboardColor);
+}, function() {
     // out
     // $(this).css('background-color', '')
 });
 
-$(".key").mouseup(function () {
+
+$(".key").on('mouseleave', function() {
+    clearInterval(window.myTimerOnMove);
+});
+
+$(".key").mouseup(function() {
     clicked = false;
     count = 5;
     clearInterval(window.myTimer);
-    changeKeyStatus($(this).attr('data-active'), this)
-}).mousedown(function () {
+    changeKeyStatus($(this).attr('data-active'), this);
+}).mousedown(function() {
     clicked = true;
+
+    checkMode = $(".keyboard").attr('data-mode');
+    checkKeyboardMode(checkMode, this);
+
     keyData = $(this).attr('data-note');
     playNotes(keyData);
 
     keyboardColor = $('.keyboard').attr('data-color');
-    addColorToKey(this, keyboardColor, false)
-    changeKeyStatus($(this).attr('data-active'), this)
-    
-    createNote($(this), $(this).attr('data-note'))
-    window.myTimer = setInterval(addLengthToNotes, 50, $(this).attr('data-note'))
+    addColorToKey(this, keyboardColor, false);
+    changeKeyStatus($(this).attr('data-active'), this);
 
-    // $('.key').mouseenter(function (e) {
-    //     if ($(".key:hover").length != 0 && clicked) {
+    createNote($(this), $(this).attr('data-note'));
+    window.myTimer = setInterval(addLengthToNotes, 50, $(this).attr('data-note'));
+    let counter = 0;
 
-    //         keyData = $(this).attr('data-note');
-    //         playNotes(keyData);
+    $('.key').mouseenter(function(e) {
+        counter++;
+        if (counter <= 1) {
+            if ($(".key:hover").length !== 0 && clicked) {
+                counter = 0;
 
-    //         keyboardColor = $('.keyboard').attr('data-color');
-    //         addColorToKey(this, keyboardColor, false)
+                checkKeyboardMode(checkMode, this);
 
-    //         createNote($(this), $(this).attr('data-note'))
-    //     } else {
-    //         // console.log('Mouse: ', 'Not clicked')
-    //     }
-    // })
+                keyData = $(this).attr('data-note');
+                playNotes(keyData);
 
-    // $('.key').mouseleave(function () {
-    //     count = 5;
-    //     clearInterval(window.myTimerOnMove);
-    // })
+                keyboardColor = $('.keyboard').attr('data-color');
+                addColorToKey(this, keyboardColor, false);
+
+                createNote($(this), $(this).attr('data-note'));
+                clearInterval(window.myTimerOnMove);
+            }
+        }
+    });
+    $('.key').mouseleave(function() {
+        count = 5;
+        clearInterval(window.myTimerOnMove);
+    });
 
 });
 
 /*/////////////   INITIALIZE WEBCAM   ////////////////*/
 
 function initWebcam() {
-    $.get("webcam/webcam.html", function (content) {
+    $.get("webcam/webcam.html", function(content) {
         // console.log( 'Webcam DATA HTML', content )
         $('main').append(content);
     });
-    console.log('Webcam is loaded.')
+    console.log('Webcam is loaded.');
 }
 
 /*/////////////   INITIALIZE KEYBOARD   ////////////////*/
 
 function initKeyboard() {
-    generateKeyboard()
+    generateKeyboard();
 }
 
 /*/////////////   GENERATE KEYBOARD   ////////////////*/
@@ -229,34 +113,32 @@ function generateKeyboard() {
     $('.white-keys').empty();
     $('.black-keys').empty();
 
-    let keyLength = 35
-    let steps = 46;
+    let keyLength = 35; // Number of visible keys
+    let steps = 40; // 
     let stepsBlack = 37;
     let stepsBlackByTen = 0;
 
     for (let i = 0; i < keyLength; i++) {
-        steps += 2
-        generateKey(i, keyLength, steps)
+        generateKey(i, keyLength);
     }
 
     for (let i = 0; i < 5; i++) {
-        stepsBlack += 2
-        stepsBlackByTen += 10
-        generateBlackKey(i, stepsBlackByTen, stepsBlack)
+        generateBlackKey(i, stepsBlackByTen);
     }
 
-    addNotesToKeys()
+    addNotesToKeys();
 
-    let keyboard = " * Keyboard loaded * "
-    console.log("%c" + keyboard, "background: #f0047f; color: #fff")
+    let keyboard = " * Keyboard loaded * ";
+    console.log("%c" + keyboard, "background: #f0047f; color: #fff");
 }
 
 /*/////////////   GENERATE KEYS   ////////////////*/
 
-function generateKey(keyNote, keyLength, steps) {
+function generateKey(keyNote, keyLength) {
+
     $('.white-keys').append(`
-         <div class="key white-key unselectable" data-note="w${steps}" data-active="false">
-            <p>${steps}</p>
+         <div class="key white-key unselectable" data-note="${whiteNumber[keyNote]}" data-active="false">
+            <p>${whiteNumber[keyNote]}</p>
         </div>
     `);
 
@@ -265,24 +147,24 @@ function generateKey(keyNote, keyLength, steps) {
     });
 }
 
-function generateBlackKey(keyNote, bigSteps, steps) {
+function generateBlackKey(keyNote, bigSteps) {
     $('.black-keys').append(`
         <span class="cluster clus2" style="width: ${keyWidth(22)}%;">
-            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+            <div class="key black-key unselectable" data-active="false">
                 <p>${bigSteps}</p>
             </div>
-            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+            <div class="key black-key unselectable" data-active="false">
                 <p>${bigSteps}</p>
             </div>
         </span>
         <span class="cluster clus3" style="width: ${keyWidth(13)}%;">
-            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+            <div class="key black-key unselectable" data-active="false">
                 <p>${bigSteps}</p>
             </div>
-            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+            <div class="key black-key unselectable" data-active="false">
                 <p>${bigSteps}</p>
             </div>
-            <div class="key black-key unselectable" data-note="b${keyNote}" data-active="false">
+            <div class="key black-key unselectable"data-active="false">
                 <p>${bigSteps}</p>
             </div>
         </span>
@@ -300,73 +182,45 @@ function generateBlackKey(keyNote, bigSteps, steps) {
 }
 
 function addNotesToKeys() {
-    let whiteKeys = $('.white-key')
-    let steps = 46;
-    let stepsBlack = 47;
-
-    for (let i = 1; i < whiteKeys.length + 1; i++) {
-        steps += 2
-        $(`.white-key:nth-child(${i}) p`).text(steps)
-    }
+    let stepsBlack = 0;
 
     $('.black-key').each(function(i, e) {
-        stepsBlack += 2
-        $(this).attr('data-note', stepsBlack)
-        $(this).children('p').text(stepsBlack)
+        $(this).attr('data-note', blackNumber[stepsBlack]);
+        $(this).children('p').text(blackNumber[stepsBlack]);
+        stepsBlack += 1;
     });
-
-    // $('.key').each(function(i, e) {
-    //     steps += 1
-    //     $(this).attr('data-note', steps)
-    //     $(this).children('p').text(steps)
-    // });
 }
 
 function changeKeyStatus(keyStatus, element) {
-    if (keyStatus == 'false') {
-        keyStatus = $(element).attr('data-active', 'true')
+    if (keyStatus === 'false') {
+        keyStatus = $(element).attr('data-active', 'true');
     } else {
-        keyStatus = $(element).attr('data-active', 'false')
+        keyStatus = $(element).attr('data-active', 'false');
     }
-}
-
-function getKeyNumber(key) {
-    let keyNumber;
-    let getKeyNote = key.attr('data-note');
-
-    if (getKeyNote.indexOf('w') > -1) {
-        keyNumber = getKeyNote.replace('w', ' ')
-    }
-
-    if (getKeyNote.indexOf('b') > -1) {
-        keyNumber = getKeyNote.replace('b', ' ')
-    }
-
-    return keyNumber
 }
 
 /*/////////////   RESPONSIVE KEY WITDH   ////////////////*/
 
 function keyWidth(keysLength) {
     let keyboardLength = $('.keys').width();
-    let keyWidth = (100 / keysLength)
-    return keyWidth
+    let keyWidth = (100 / keysLength);
+    return keyWidth;
 }
 
 /*/////////////   CLICKED KEY FUNCTIONS   ////////////////*/
 
 function addColorToKey(element, color, autoplay, endTime) {
     let keyboardColor = color ? color : '#e6e6e6';
-    $(element).css('background', `linear-gradient(180deg, ${keyboardColor} 0%, ${keyboardColor} 100%)`)
+    $(element).css('background', `linear-gradient(180deg, ${keyboardColor} 0%, ${keyboardColor} 100%)`);
 
     if (autoplay) {
-        setTimeout(function () {
-            $(element).css('background', '')
+        setTimeout(function() {
+            $(element).css('background', '');
         }, endTime);
     } else {
-        $(element).mouseout(function () {
-            setTimeout(function () {
-                $(element).css('background', '')
+        $(element).mouseout(function() {
+            setTimeout(function() {
+                $(element).css('background', '');
             }, 100);
         });
     }
@@ -375,18 +229,18 @@ function addColorToKey(element, color, autoplay, endTime) {
 /*/////////////   GENERATE NOTES   ////////////////*/
 
 function createNote(element, note, height) {
+    // sendUserNotes(note); If you uncomment this line, the bot will play with himself when you touch on minimum one piano key.
+
     keyboardColor = $('.keyboard').attr('data-color');
-    let width = element.width()
-    let positionLeft = element.offset().left
+    let width = element.width();
+    let positionLeft = element.offset().left;
     let keyHeight = height ? height : 5;
-    
-    $('#video').css('border', `${keyHeight} solid ${keyboardColor}`);
 
     $('.notes').append(`
         <div class="note-block" data-note="${note}" style="left: ${positionLeft}px; height: ${keyHeight}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>
     `);
 
-    setTimeout(function () {
+    setTimeout(function() {
         $(`.note-block:nth-child(1)`).remove();
     }, 5000);
 }
@@ -395,33 +249,124 @@ function addLengthToNotes(noteId) {
     $(`.note-block[data-note=${noteId}]:last-child`).css('height', (count++) + '0px');
 }
 
-async function autoplayNotes(noteSeq, keyboardColor) {
+/*/////////////   AUTO PLAY NOTES   ////////////////*/
 
-    let notesArr = []
+export async function autoplayNotes(noteSeq, keyboardColor) {
     let height;
     let newKeyData;
-    let newKeyboardColor = keyboardColor ? keyboardColor : '#e6e6e6'
+    let counter = 0;
+    let newKeyboardColor = keyboardColor ? keyboardColor : '#e6e6e6';
 
-    for (const notes of await noteSeq.notes) {
-        let matchKey = $(".keyboard").find(`.key[data-note='w${notes.pitch}']`);
-        keyData = matchKey.attr('data-note');
+    Array.prototype.delayedForEach = function(callback, timeout, thisArg) {
+        var i = 0,
+            l = this.length,
+            self = this,
+            caller = function() {
+                callback.call(thisArg || self, self[i], i, self);
+                (++i < l) && setTimeout(caller, timeout);
+            };
+        caller();
+    };
 
-        newKeyData = keyData ? matchKey.attr('data-note') : 'w75';
-        let element = keyData ? $(`.key[data-note='w${notes.pitch}']`) : $(".key[data-note='75']");
+    if (noteSeq.notesPitch.length > 0) {
+        noteSeq.notesPitch.delayedForEach(function(notes, index, array) {
 
-        notesArr.push(notes)
+            counter++;
+            let matchKey = $(".keyboard").find(`.key[data-note='${notes.pitch}']`);
 
-        setTimeout(() => {
-            addColorToKey(matchKey, newKeyboardColor, true, notes.startTime + 1000)
-            height = calculateHeight(notes.startTime * 10, notes.endTime * 10)
-            createNote(element, keyData, height)
-        }, notes.startTime * 1000);
+            keyData = matchKey.attr('data-note');
+
+            newKeyData = keyData ? matchKey.attr('data-note') : 'w75';
+            let element = keyData ? $(`.key[data-note='${notes.pitch}']`) : $(".key[data-note='75']");
+            addColorToKey(matchKey, newKeyboardColor, true, 500);
+            height = calculateHeight(counter * 10, counter * 10);
+            createNote(element, keyData, height);
+
+
+        }, 500);
+        await playAINotes(newKeyData, noteSeq.notes);
     }
-
-    await playNotes(newKeyData, notesArr);
 
 }
 
+/*/////////////   CALCULATE NOTES HEIGHT   ////////////////*/
+
 function calculateHeight(startTime, endTime) {
-    return endTime - startTime
+    return endTime - startTime;
+}
+
+/*/////////////   SWITCH BETWEEN MODES (BOT, ONLINE, NORMAL)   ////////////////*/
+
+function checkKeyboardMode(mode, element) {
+    if (mode === "bot") {
+        sendUserNotes($(element).attr('data-note'));
+    } else if (mode === "online") {
+        keyData = $(element).attr('data-note');
+        sendOnlineNotes(keyData);
+    } else {
+        console.log("No mode active");
+    }
+}
+
+// Add the notes of the user in an object then push in array
+function sendUserNotes(noteNumber) {
+    let object = { pitch: parseInt(noteNumber) };
+    notes.push(object);
+}
+
+/*/////////////   BOT MODES THAT WILL AUTOPLAY USER NOTES   ////////////////*/
+
+export function botMode() {
+    console.log("[START] bot mode");
+    window.sendNotesInterval = setInterval(sendData, 5000);
+}
+
+export function exitBotMode() {
+    notes = [];
+    clearInterval(window.sendNotesInterval);
+    console.log("[EXIT] bot mode");
+    // window.location.reload();
+}
+
+// Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
+function sendData() {
+    console.log("senddata");
+    if (notes.length > 1 && checkMode === "bot") {
+        sendUserNotesToAI(notes).then(data => {
+            keyboardColor = $('.keyboard').attr('data-color');
+            autoplayNotes(data, keyboardColor);
+        }).catch(error => {
+            console.log("error", error)
+        })
+        notes = [];
+    } else {
+        console.log("Empty notes or bot mode not detected.")
+    }
+}
+
+// Async function to send data of user input to BACKEND. Response (.then(data)) = AI response (see when function is called)
+async function sendUserNotesToAI(notes) {
+    const rawResponse = await fetch('https://paino-fp3.herokuapp.com/notes-to-midi', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ notes })
+    });
+
+    if (rawResponse.status === 200) {
+        return await rawResponse.json();
+    } else {
+        console.log("error getting data!");
+    }
+}
+
+/*/////////////   ONLINE MODE   ////////////////*/
+
+export function onlineMode(element, key) {
+    playNotes(key);
+    keyboardColor = $('.keyboard').attr('data-color');
+    addColorToKey(element, keyboardColor, true, 1000);
+    createNote($(element), key);
 }

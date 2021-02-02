@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const http = require("http");
 const fs = require("fs");
 const cors = require('cors');
-// const tf = require('@tensorflow/tfjs-node'); // Uncomment for heroku && comment for localhost
+//const tf = require('@tensorflow/tfjs-node'); // Uncomment for heroku && comment for localhost
 const path = require('path');
 const port = process.env.PORT || 3000;
 const mmcore = require('@magenta/music/node/core');
@@ -16,6 +16,8 @@ const rnn = require('@magenta/music/node/music_rnn');
 const melodyRNN = new rnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn');
 const app = express();
 const server = require('http').Server(app);
+var note = require('midi-note');
+
 
 melodyRNN.initialize();
 
@@ -29,7 +31,9 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use(bodyParser.urlencoded({ extended: true, }));
+app.use(bodyParser.urlencoded({
+    extended: true,
+}));
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -55,23 +59,26 @@ app.get("/", (req, res) => {
 
 // ========== POST EMOTIONS TO NOTES ==========  //
 app.post("/emotion-to-notes", async(req, res, next) => {
-
-    let emotionArr = req.body;
-    let firstEmotion = extractEmotion(emotionArr);
+    let notes = req.body;
+    let firstEmotion = extractEmotion(notes);
     let midiFile = chooseMidiFile(firstEmotion);
 
     async function emotionsToNotes() {
 
         let midiBuffer;
         midiBuffer = fs.readFileSync(midiFile);
+        console.log(midiFile);
         const notes = mmcore.midiToSequenceProto(midiBuffer); // Transforms a midi file to an array of notes
         const qns = mmcore.sequences.quantizeNoteSequence(notes, 2); // 2 == steps per quarter
         melodyRNN.continueSequence(qns, 15, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
             .then(sample => {
 
-                let object = createNotesObject(sample);
+                let notesObject = createNotesObject(sample);
 
-                res.send({ object, firstEmotion });
+                res.send({
+                    notesObject,
+                    firstEmotion
+                });
             });
 
     }
@@ -80,29 +87,56 @@ app.post("/emotion-to-notes", async(req, res, next) => {
 
 });
 
-function createNotesObject(item) { // Create a playable object with the generated  notes of the AI
-
+// Create a playable object with the generated  notes of the AI
+function createNotesObject(item) {
     let notes = [];
+    let notesPitch = [];
 
     item.notes.forEach(element => {
+        let pitch;
+        let randomNumber = Math.floor(Math.random() * 60) + 36;
+        let convertedNote;
+        let newString;
+        let newNumber;
+
+
+        if (element.pitch < 95 && element.pitch > 36) {
+            convertedNote = note(element.pitch);
+            pitch = { pitch: element.pitch };
+        } else {
+            convertedNote = note(randomNumber);
+            pitch = { pitch: randomNumber };
+
+        }
+
+        if (convertedNote.length === 2) {
+            newString = convertedNote.slice(0, 1);
+            newNumber = convertedNote.slice(1, 2);
+        } else {
+            newString = convertedNote.slice(0, 2);
+            newNumber = convertedNote.slice(2, 3);
+        }
+
         let newObject = {
-            pitch: element.pitch,
-            startTime: element.quantizedEndStep * 0.3,
-            endTime: element.quantizedEndStep * 0.3 + 0.3,
+            'letter': newString,
+            'number': newNumber
         };
         notes.push(newObject);
+        notesPitch.push(pitch);
     });
 
-    let filteredNotes = notes.filter((element) => element.pitch < 124 && element.pitch > 7); // filter the notes that are unplayable
-
-
-    return filteredNotes;
+    return {
+        notes,
+        notesPitch
+    };
 
 }
 
 
-function extractEmotion(emotionArr) { // Takes the most common emotion of the user that the front-end sends to us
-
+// Takes the most common emotion of the user that the front-end sends to us
+function extractEmotion(emotionArr) {
+    console.log(emotionArr);
+    emotionArr = emotionArr.notes;
     let counter = 0;
     let counterTwo = 1;
     let firstEmotion;
@@ -125,7 +159,8 @@ function extractEmotion(emotionArr) { // Takes the most common emotion of the us
     return firstEmotion;
 }
 
-function chooseMidiFile(firstEmotion) { // Chooses a midi file depending on what extractEmotion() returns
+// Chooses a midi file depending on what extractEmotion() returns
+function chooseMidiFile(firstEmotion) {
 
     let x = Math.floor(Math.random() * 5) + 1;
     let midiFile;
@@ -164,17 +199,11 @@ app.post("/notes-to-midi", async(req, res, next) => {
     let notes = req.body;
     notes.totalTime = notes.notes.length;
 
-    console.log(notes);
-
-
-
-
     const qns = mmcore.sequences.quantizeNoteSequence(notes, 2); // 2 == steps per quarter
-    melodyRNN.continueSequence(qns, 15, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
+    await melodyRNN.continueSequence(qns, 10, 2) // AI continues the sequence depending the midi file // 15 == notes /-/ 2 == temperature
         .then(sample => {
 
             let object = createNotesObject(sample);
-
             res.send(object);
 
         });
@@ -182,3 +211,26 @@ app.post("/notes-to-midi", async(req, res, next) => {
 
 
 });
+
+//console.log(note(35))
+
+/* for (let index = 36; index <= 40; index++) {
+    var str = note(index);
+    let string;
+    let number;
+    if (note(index).length === 2) {
+        string = str.slice(0, 1);
+        number = str.slice(1, 2);
+    } else {
+        string = str.slice(0, 2);
+        number = str.slice(2, 3);
+
+    }
+    console.log(`
+             "${index}": {
+                 "letter": "${string}",
+                 "number": ${number}
+             },
+         `);
+
+} */
