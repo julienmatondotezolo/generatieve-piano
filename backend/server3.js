@@ -1,3 +1,5 @@
+const PORT = process.env.PORT || 8080;
+
 const http = require('http').createServer();
 
 const io = require('socket.io')(http, {
@@ -28,8 +30,7 @@ io.on('connection', (socket) => {
     })
 });
 
-http.listen(8080, () => console.log('listening on http://localhost:8080'));
-
+http.listen(8080, () => console.log('listening on ' + PORT));
 
 /*/////////////   CLASSIC WEBSOCKETS   ////////////////*/
 
