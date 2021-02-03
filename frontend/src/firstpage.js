@@ -12,9 +12,7 @@ if (localStorage.getItem("username") !== undefined) {
         showEnterName();
     }, 1000)
 
-
-
-
+    
 let enterNameToWebcam = () => {
 
     document.getElementById('start-button').addEventListener('click', (e) => {
