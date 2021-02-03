@@ -1,0 +1,170 @@
+.keyboard {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-top: 15px solid rgb(240, 4, 127);
+    border-image: linear-gradient(90deg, rgba(240, 4, 127, 1) 0%, rgba(255, 0, 80, 1) 100%);
+    border-image-slice: 1;
+    background-color: #1A1A1A;
+    z-index: 999;
+    transition: al .3s ease-in-out;
+    -webkit-transition: al .3s ease-in-out;
+    -moz-transition: al .3s ease-in-out;
+    -ms-transition: al .3s ease-in-out;
+    -o-transition: al .3s ease-in-out;
+}
+
+#piano {
+	position: relative;
+	width: calc(100% - 20px);
+	height: 100px;
+	margin: auto;
+}
+
+#piano .keys {
+	cursor: pointer;
+	position: relative;
+	top: -5%;
+	width: 100%;
+	height: 110%;
+	margin: auto;
+	overflow: hidden;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.486);
+}
+
+#piano .key {
+	box-sizing: border-box;
+	width: 40px;
+	height: 100%;
+	background: white;
+	display: inline-block;
+	text-align: center;
+	/* margin-right: -2px; */
+}
+
+#piano .white-key{
+	border-left: 2px solid #E6E6E6;
+	border-right: 2px solid #E6E6E6;
+}
+
+#piano .black-key {
+	/* width: 30px; */
+	/* margin-right: 14px; */
+	height: 100%;
+	vertical-align: top;
+	z-index: 999;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	color: rgb(255, 255, 255);
+	background: linear-gradient(180deg, #000000 0%, #3E3E3E 78%, #1C1C1C 85%, #000000 100%);
+	float: left;
+}
+
+.black {
+    align-items: center;
+    position: absolute;
+    color: rgb(255, 255, 255);
+    left: 3%;
+    width: 5%;
+    height: 50px;
+    background-color: #141414;
+}
+
+#piano .white-keys {
+	display: flex;
+	position: absolute;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	left: 0;
+}
+
+#piano .black-keys {
+	position: absolute;
+	width: 96%;
+	height: 60%;
+	left: 1.98%;
+	overflow: hidden;
+}
+
+#piano .cluster {
+	display: block;
+	margin-right: 4.3%;
+	height: 100%;
+	float: left;
+}
+
+#piano .cluster:last-child {
+    margin-right: 0;
+}
+
+#piano .cluster .black-key:last-child {
+    margin: 0 !important;
+}
+
+/*/////////////    NOTES   ////////////////*/
+
+.notes {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 333;
+}
+
+/*/////////////    COLOR BLOCK   ////////////////*/
+
+.note-block {
+	position: absolute;
+	left: 50%;
+	bottom: 10%;
+	width: 20px;
+	height: 20px;
+	opacity: 1.0;
+	transform: translate(0, 0);
+	transform-origin: top;
+	transition: all .2s;
+	animation: goUp 6s;
+	border-radius: 30px;
+	-webkit-animation: goUp 6s;
+	background-color: grey;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	-ms-border-radius: 30px;
+	-o-border-radius: 30px;
+	-webkit-transition: all .2s;
+	-moz-transition: all .2s;
+	-ms-transition: all .2s;
+	-o-transition: all .2s;
+}
+
+@keyframes goUp {
+    0% {
+        display: block;
+        transform: translate(0, 0);
+    }
+
+    50% {
+        opacity: 1.0;
+    }
+
+    100% {
+        opacity: 0.0;
+        transform: translate(0, -700px);
+        -webkit-transform: translate(0, -700px);
+        -moz-transform: translate(0, -700px);
+        -ms-transform: translate(0, -700px);
+        -o-transform: translate(0, -700px);
+}
+}
+
+.colorBg {
+    background-color: #f0047f !important;
+    transition: .5s all ease-in;
+    -webkit-transition: .5s all ease-in;
+    -moz-transition: .5s all ease-in;
+    -ms-transition: .5s all ease-in;
+    -o-transition: .5s all ease-in;
+}

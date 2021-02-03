@@ -16,7 +16,6 @@ let emotionColorObj = {
 };
 
 let video = document.getElementById("video");
-let noUserIcon = document.getElementById("noUserIcon");
 let trackedEmotionsArr = [];
 let boolean = true;
 
@@ -31,7 +30,7 @@ Promise.all([
 
 // Function to start the WebCam
 function startVideo() {
-    loader(true);
+    // loader(true);
     video = document.getElementById("video");
     navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -48,47 +47,31 @@ function startVideo() {
         });
 }
 
-setTimeout(() => {
-    openAndCloseCamera();
-}, 2500);
 // Desactive your webcam when clicked on the video button ///
-function openAndCloseCamera() {
-    $(".video").on('click', function() {
-        let video = document.getElementById("video");
-        let noUserIcon = document.getElementById("noUserIcon");
-        if (boolean) { // Desactive the webcam
-            $("#video").attr('actived', "false");
-            $(".video").addClass('icon-devices-desactivated'); // Add red background to the button to mark it as "desactived"
-            video.srcObject.getTracks().forEach(function(track) { // Code to stop the webcam
-                track.stop();
-                track.src = "";
+$(".video").on('click', function() {
+    if (boolean) { // Desactive the webcam
+        $("#video").attr('actived', "false");
+        $(".video").addClass('icon-devices-desactivated'); // Add red background to the button to mark it as "desactived"
+        video.srcObject.getTracks().forEach(function(track) { // Code to stop the webcam
+            track.stop();
+            track.src = "";
+        });
+    } else { // Active the webcam
+        navigator.mediaDevices.getUserMedia({ // Code to reopen the webcam
+                audio: false,
+                video: true
+            })
+            .then(stream => {
+                window.localStream = stream;
+                video.srcObject = stream;
+                //audio.srcObject = stream; // For the audio
             });
+        $("#video").attr('actived', "true");
+        $(".video").removeClass('icon-devices-desactivated'); // Remove the red background
+    }
+    boolean = !boolean;
+});
 
-            console.log(video);
-            video.setAttribute('class', 'displayNone');
-            noUserIcon.removeAttribute('class', 'displayNone');
-            $('.emotion-txt').text(`Your webcam is not open `).css('color', 'grey');
-
-        } else { // Active the webcam
-            navigator.mediaDevices.getUserMedia({ // Code to reopen the webcam
-                    audio: false,
-                    video: true
-                })
-                .then(stream => {
-                    window.localStream = stream;
-                    video.srcObject = stream;
-                    //audio.srcObject = stream; // For the audio
-                });
-
-            noUserIcon.setAttribute('class', 'displayNone');
-            video.removeAttribute('class', 'displayNone');
-            $('.emotion-txt').text(`Searching face...`).css('color', 'grey');
-            $("#video").attr('actived', "true");
-            $(".video").removeClass('icon-devices-desactivated'); // Remove the red background
-        }
-        boolean = !boolean;
-    });
-}
 // Function to exit the normal mode
 export function exitNormalMode() {
     console.log("[EXIT] normal mode");
@@ -169,6 +152,7 @@ function faceApi() {
                 console.log("Webcam is not open");
                 text = `Your webcam is not open`;
             }
+
             $('.emotion-txt').text(`${text}`).css('color', emotionColorObj[emotionVal], );
             $('body').css({
                 'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, ${emotionColorObj[emotionVal]} 100%)`
@@ -176,12 +160,13 @@ function faceApi() {
             $('.keyboard').attr('data-color', emotionColorObj[emotionVal]);
             $('.circle-video').css({
                 borderColor: emotionColorObj[emotionVal]
-            });
+            })
             $('.keyboard').css({
                 borderColor: emotionColorObj[emotionVal],
                 borderImage: 'none'
             });
         }
+
         /* TIMER */
         timer = timer - 1;
         if (timer === 0) {
@@ -192,18 +177,18 @@ function faceApi() {
     if (checkMode === "false") { // Normal Mode
         window.sendEmotionsInterval = setInterval(async() => {
             console.log(trackedEmotionsArr);
-            //     clearInterval(scanningFace); // TO STOP THE INTERVAL
+                clearInterval(scanningFace); // TO STOP THE INTERVAL
             sendUserEmotionsToAI(trackedEmotionsArr).then(data => {
                 console.log(data); // == Data created by the AI, depending the emotions of the user (by the trackedEmotionsArr)
                 // Exported function from /keyboard.js. Call the function to automatically play the fetched data
                 if (data.length !== 0) {
-                    autoplayNotes(data.notesObject);
+                    // autoplayNotes(data.notesObject);
                 }
             }).catch(error => {
                 console.log("error", error);
             });
             trackedEmotionsArr = [];
-        }, 5000);
+        }, 15000);
 
     } else if (checkMode === "bot") {
         loader(false);
@@ -221,7 +206,7 @@ function faceApi() {
 
 // Send array of object of emotions of the user to the backend. Then you receive an object of notes by the IA, depending the most common emotion of the user
 async function sendUserEmotionsToAI(notes) {
-    const rawResponse = await fetch('http://localhost:3000/emotion-to-notes', {
+    const rawResponse = await fetch('https://paino-fp3.herokuapp.com/emotion-to-notes', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',

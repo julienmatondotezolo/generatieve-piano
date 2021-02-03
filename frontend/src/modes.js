@@ -1,5 +1,5 @@
 /*/////////////   IMPORT FUNCTIONS   ////////////////*/
-"use strict";
+
 import {
     onlineDuet,
     exitOnlineDuet,
@@ -49,15 +49,13 @@ function toggleModes(mode1, mode2) {
         let checkStatus = $(mode1).attr("data-connect");
         bool = !bool;
         if (checkStatus === "false") {
-            $('.keyboard').attr("data-mode", "online");
+            // $('.keyboard').attr("data-mode", "online").attr('data-color', 'blue');
             onlineDuet(roomId);
             exitNormalMode();
-
         } else if (checkStatus === "true") {
             $('.keyboard').attr("data-mode", bool);
             exitOnlineDuet(roomId);
             $(mode2).data('clicked', false).prop('disabled', false).removeAttr('style');
-
         }
     } else if (mode1 == ".ai-bot") {
         $(mode1).data('clicked', true).addClass("bg-red").text("exit bot mode").css("color", "#fff")
@@ -76,7 +74,6 @@ function toggleModes(mode1, mode2) {
         }
     } else {
         console.error("Error: ", "wrong mode.");
-
     }
 }
 
