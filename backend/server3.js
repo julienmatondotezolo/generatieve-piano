@@ -8,12 +8,21 @@ const io = require('socket.io')(server, {
 });
 
 const PORT = process.env.PORT || 8080;
+let canJoin = true;
 
 io.on('connection', (socket) => {
     console.log('Client connected');
     socket.on('join-room', (roomId, userObj) => {
-        console.log(`${userObj.username} joined ROOM: ${roomId}.`);
-        socket.join(roomId)
+
+        if(canJoin) {
+            socket.join(roomId)
+            console.log(`${userObj.username} joined ROOM: ${roomId}.`);
+            canJoin = false;
+        } else {
+            console.log("Room already full.")
+            socket.emit('room-error', "Room already full.")
+        }
+
         socket.to(roomId).broadcast.emit('user-connected', userObj)
 
         socket.on('message', (data) => {

@@ -52,7 +52,7 @@ function setName(data) {
 function setLocalStream(stream) {
     let video = document.getElementById("video");
     video.srcObject = stream;
-    video.muted = true;
+    video.muted = false;
     video.play();
 }
 
@@ -63,6 +63,7 @@ function setRemoteStream(stream) {
 
     let video = document.getElementById("remote-video");
     video.srcObject = stream;
+    video.muted = false;
     video.play();
 }
 
@@ -86,11 +87,14 @@ function createRoom(){
 function joinOnlineDuet(ROOM_ID) {
     if (ROOM_ID) {
         peer = new Peer();
-        // socket = io('ws://localhost:8080');
-        socket = io('https://paino-socket.herokuapp.com/', { 
+        socket = io('ws://localhost:8080', { 
             transports: [ "websocket" ],
             withCredentials: true,
         });
+        // socket = io('https://paino-socket.herokuapp.com/', { 
+        //     transports: [ "websocket" ],
+        //     withCredentials: true,
+        // });
 
         getUserMedia({video: true, audio: true}, (stream)=>{
             setLocalStream(stream)
@@ -98,6 +102,7 @@ function joinOnlineDuet(ROOM_ID) {
             peer.on('call', call => {
                 call.answer(stream)
                 call.on('stream', userVideoStream => {
+                    userVideoStream.getAudioTracks()[0].enabled = true;
                     setRemoteStream(userVideoStream)
                 })
             })
@@ -159,6 +164,7 @@ function connectToNewUser(userObj, stream) {
 
     // const video = document.createElement('video')
     call.on('stream', userVideoStream => {
+        userVideoStream.getAudioTracks()[0].enabled = true;
         setRemoteStream(userVideoStream)
     })
     call.on('close', () => {
@@ -193,6 +199,10 @@ function getOnlineNotes() {
     socket.on('piano-key', pianoData => {
         console.log(pianoData);
         onlineMode(`.key[data-note=${pianoData}]`, pianoData)
+    });
+
+    socket.on('room-error', roomError => {
+        console.log(roomError);
     });
 }
 
