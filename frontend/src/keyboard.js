@@ -299,8 +299,7 @@ function calculateHeight(startTime, endTime) {
 
 function checkKeyboardMode(mode, element) {
     if (mode === "bot") {
-        sendUserNotes( $(element).attr('data-note') );
-        botMode();
+        sendUserNotes($(element).attr('data-note'));
     } else if (mode === "online") {
         keyData = $(element).attr('data-note');
         sendOnlineNotes(keyData);
@@ -317,20 +316,21 @@ function sendUserNotes(noteNumber) {
 
 /*/////////////   BOT MODES THAT WILL AUTOPLAY USER NOTES   ////////////////*/
 
-function botMode() {
+export function botMode() {
     console.log("[START] bot mode");
-    window.sendNotesInterval = setInterval(sendData, 5000);;
+    window.sendNotesInterval = setInterval(sendData, 5000);
 }
 
 export function exitBotMode() {
     notes = [];
     clearInterval(window.sendNotesInterval);
     console.log("[EXIT] bot mode");
-    window.location.reload();
+    // window.location.reload();
 }
 
 // Function every 5000ms when BOT MODE is active. Look if they are notes of user in array, if yes => SEND DATA TO BACKEND
 function sendData() {
+    console.log("senddata");
     if (notes.length > 1 && checkMode === "bot") {
         sendUserNotesToAI(notes).then(data => {
             keyboardColor = $('.keyboard').attr('data-color');
@@ -338,6 +338,7 @@ function sendData() {
         }).catch(error => {
             console.log("error", error)
         })
+        notes = [];
     } else {
         console.log("Empty notes or bot mode not detected.")
     }
@@ -369,4 +370,3 @@ export function onlineMode(element, key) {
     addColorToKey(element, keyboardColor, true, 1000);
     createNote($(element), key);
 }
- 

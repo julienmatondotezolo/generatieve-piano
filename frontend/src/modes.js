@@ -5,6 +5,16 @@ import {
     exitOnlineDuet,
 } from './socket.js';
 
+import {
+    botMode,
+    exitBotMode,
+} from './keyboard.js';
+
+import {
+    exitNormalMode,
+    loadNormalMode,
+} from '../webcam/face-recognition.js';
+
 /*/////////////   VARIABLES   ////////////////*/
 
 let roomId = getUrlParameter('rooms');
@@ -41,6 +51,7 @@ function toggleModes(mode1, mode2) {
         if (checkStatus === "false") {
             $('.keyboard').attr("data-mode", "online");
             onlineDuet(roomId);
+            exitNormalMode();
         } else if (checkStatus === "true") {
             $('.keyboard').attr("data-mode", bool);
             exitOnlineDuet(roomId);
@@ -52,10 +63,14 @@ function toggleModes(mode1, mode2) {
         bool = !bool;
         if (bool) {
             $('.keyboard').attr("data-mode", "bot");
+            botMode();
+            exitNormalMode();
         } else {
             $('.keyboard').attr("data-mode", bool);
             $(mode1).attr("data-bot", bool).removeClass("bg-red").text("duet with A.I bot").removeAttr('style');
             $(mode2).data('clicked', false).addClass("bg-green").prop('disabled', false).removeAttr('style');
+            exitBotMode();
+            loadNormalMode();
         }
     } else {
         console.error("Error: ", "wrong mode.");

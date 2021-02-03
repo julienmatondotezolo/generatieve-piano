@@ -4,6 +4,10 @@ import {
     onlineMode
 } from './keyboard.js';
 
+import {
+    exitNormalMode,
+} from '../webcam/face-recognition.js';
+
 /*/////////////   VARIABLES   ////////////////*/
 
 let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -28,6 +32,7 @@ export function onlineDuet(id) {
         joinOnlineDuet(id)
     } else if ( $(".online-duet").data('clicked') ){
         createRoom(id)
+        exitNormalMode();
     }
 }
 
@@ -82,8 +87,10 @@ function joinOnlineDuet(ROOM_ID) {
     if (ROOM_ID) {
         peer = new Peer();
         // socket = io('ws://localhost:8080');
-        let host = 'http://paino-socket.herokuapp.com/:18020';
-        socket = io(host);
+        socket = io('https://paino-socket.herokuapp.com/', { 
+            transports: [ "websocket" ],
+            withCredentials: true,
+        });
 
         getUserMedia({video: true, audio: true}, (stream)=>{
             setLocalStream(stream)
