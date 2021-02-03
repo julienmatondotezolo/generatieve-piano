@@ -41,7 +41,9 @@ canvas {
     z-index: 999;
 }
 
-#video, #remote-video {
+#video,
+#remote-video,
+#noUserIcon {
     position: absolute;
     left: 50%;
     top: 50%;
