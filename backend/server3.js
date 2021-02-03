@@ -17,7 +17,6 @@ io.on('connection', (socket) => {
         if(canJoin) {
             socket.join(roomId)
             console.log(`${userObj.username} joined ROOM: ${roomId}.`);
-            canJoin = false;
         } else {
             console.log("Room already full.")
             socket.emit('room-error', "Room already full.")

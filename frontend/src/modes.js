@@ -18,7 +18,6 @@ import {
 /*/////////////   VARIABLES   ////////////////*/
 
 let roomId = getUrlParameter('rooms');
-let keyboardMode = getUrlParameter('keyboard');
 let bool = false;
 
 /*/////////////   CLICK FUNCTIONS   ////////////////*/
@@ -32,12 +31,6 @@ $(".online-duet").click(function(e) {
     e.preventDefault();
     toggleModes(".online-duet", ".ai-bot")
 });
-
-/*/////////////   CHECK KEYBOARD MODE   ////////////////*/
-
-if (keyboardMode) {
-    $('.keyboard').attr("data-mode", keyboardMode);
-}
 
 /*/////////////   TOGGLE BETWEEN MODES   ////////////////*/
 

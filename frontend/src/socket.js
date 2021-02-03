@@ -18,6 +18,7 @@ let conn = null;
 let note = null;
 let peerObj = {};
 let ROOM_ID = getUrlParameter('rooms');
+let keyboardMode = getUrlParameter('keyboard');
 
 /*/////////////   INITIALISATION   ////////////////*/
 
@@ -50,6 +51,8 @@ function setName(data) {
 }
 
 function setLocalStream(stream) {
+    $('.circle-video').css( "border-color", "#42ddf2")
+
     let video = document.getElementById("video");
     video.srcObject = stream;
     video.muted = false;
@@ -60,6 +63,9 @@ function setLocalStream(stream) {
 
 function setRemoteStream(stream) {
     $(".remote-video").show();
+
+    $('.circle-remote-video').css( "border-color", "#bd23fe")
+    $(`.user-content:last-child .user`).css("color", "#bd23fe")
 
     let video = document.getElementById("remote-video");
     video.srcObject = stream;
@@ -85,16 +91,19 @@ function createRoom(){
 /*/////////////   JOIN ONLINE DUET   ////////////////*/
 
 function joinOnlineDuet(ROOM_ID) {
+    if (keyboardMode) {
+        $('.keyboard').attr("data-mode", keyboardMode);
+    }
     if (ROOM_ID) {
         peer = new Peer();
-        socket = io('ws://localhost:8080', { 
-            transports: [ "websocket" ],
-            withCredentials: true,
-        });
-        // socket = io('https://paino-socket.herokuapp.com/', { 
+        // socket = io('ws://localhost:8080', { 
         //     transports: [ "websocket" ],
         //     withCredentials: true,
         // });
+        socket = io('https://paino-socket.herokuapp.com/', { 
+            transports: [ "websocket" ],
+            withCredentials: true,
+        });
 
         getUserMedia({video: true, audio: true}, (stream)=>{
             setLocalStream(stream)
@@ -110,6 +119,7 @@ function joinOnlineDuet(ROOM_ID) {
             socket.on('user-connected', userObj => {
                 setName(userObj)
                 connectToNewUser(userObj, stream)
+                changeSiteColor("#42ddf2")
                 console.log(userObj.username + " connected.")
             })
         },(err)=>{
@@ -239,6 +249,21 @@ function saveUserData(data) {
     localStorage.setItem("paino_user_data", JSON.stringify(data));
     let user_data = localStorage.getItem("paino_user_data");
     return user_data
+}
+
+function changeSiteColor(color) {
+    $('body').css({
+        'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, ${color} 100%)`
+    });
+    $('.keyboard').attr('data-color', color);
+    $(`.user-content .user`).css("color", color)
+    $('.circle-video').css({
+        borderColor: color
+    })
+    $('.keyboard').css({
+        borderColor: color,
+        borderImage: 'none'
+    });
 }
 
 // Get url parameter
