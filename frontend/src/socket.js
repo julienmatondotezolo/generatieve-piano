@@ -33,6 +33,8 @@ export function onlineDuet(id) {
         joinOnlineDuet(id);
     } else if ($(".online-duet").data('clicked')) {
         createRoom(id);
+        exitNormalMode();
+
     }
 }
 

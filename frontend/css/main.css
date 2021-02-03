@@ -9,6 +9,7 @@ main {
     overflow: hidden;
 }
 
+
 /*/////////////    ASIDE INFO WITH USERNAME AND INFO    ////////////////*/
 
 aside.info {
@@ -97,6 +98,7 @@ aside.info {
     height: 100%;
 }
 
+
 /*/////////////    OPTIONS    ////////////////*/
 
 .options {
@@ -110,10 +112,10 @@ aside.info {
     transform: translate(-50%, 0);
     border-radius: 50px;
     background: rgb(0 0 0 / 50%);
-    z-index: 666;
+    z-index: 69966;
 }
 
-.options > .settings {
+.options>.settings {
     display: flex;
     padding: 0 5px;
     margin: 0 2em;
@@ -138,6 +140,10 @@ aside.info {
     -moz-transition: all .2s ease-out;
     -ms-transition: all .2s ease-out;
     -o-transition: all .2s ease-out;
+}
+
+.icon-devices-desactivated {
+    background-color: red !important;
 }
 
 .icon-devices:hover {

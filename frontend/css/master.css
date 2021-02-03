@@ -13,6 +13,7 @@
     background-color: #FF004E !important;
 }
 
+
 /*/////////////    BODY   ////////////////*/
 
 body {
@@ -26,7 +27,7 @@ body {
     box-sizing: border-box;
     float: left;
     background: #333;
-    background: linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 70%, rgba(255,0,80,1) 100%);
+    background: linear-gradient(180deg, rgba(25, 25, 25, 1) 25%, rgba(51, 51, 51, 1) 70%, rgba(255, 0, 80, 1) 100%);
     background-size: cover;
 }
 
@@ -50,7 +51,9 @@ body {
     max-width: 1440px;
 }
 
+
 /*/////////////   TEXT  ////////////////*/
+
 
 /* @font-face {
     font-family: 'Gotham Pro';
@@ -120,6 +123,7 @@ em {
     user-select: none;
 }
 
+
 /*/////////////    BOX & SHADOWS  ////////////////*/
 
 .box {
@@ -144,6 +148,7 @@ em {
     border-bottom: 2px solid #0ff;
 }
 
+
 /*/////////////    COLOMS   ////////////////*/
 
 .cl1 {
@@ -165,11 +170,9 @@ em {
     .form-slider .cl2 {
         width: 50%;
     }
-
     .cl2 {
         width: 100%;
     }
-
     .cl3 {
         width: 48%;
     }
@@ -180,6 +183,7 @@ em {
         width: 100%;
     }
 }
+
 
 /*/////////////  NAVIGATIONS AND LINKS ////////////////*/
 
@@ -199,6 +203,7 @@ nav ol,
 nav ul {
     list-style: none;
 }
+
 
 /*/////////////    NOTIFICATION   ////////////////*/
 
@@ -220,6 +225,7 @@ nav ul {
     z-index: 999;
 }
 
+
 /*/////////////    LOADER   ////////////////*/
 
 .loader {
@@ -235,7 +241,11 @@ nav ul {
     box-sizing: border-box;
     -webkit-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
-    z-index: 9999999999;
+    z-index: 9999;
+}
+
+.video {
+    z-index: 999999;
 }
 
 .loader-spinner {
@@ -287,7 +297,6 @@ nav ul {
         -o-transform: rotate(0deg);
         transform: rotate(0deg);
     }
-
     100% {
         -webkit-transform: rotate(360deg);
         -ms-transform: rotate(360deg);
@@ -297,20 +306,18 @@ nav ul {
     }
 }
 
-
 @keyframes bgColorAnim {
     0% {
         border-color: rgb(180, 180, 180);
     }
-
     50% {
         border-color: rgb(220, 220, 220);
     }
-
     100% {
         border-color: rgb(236, 236, 236);
     }
 }
+
 
 /*/////////////    BUTTONS & INPUTS  ////////////////*/
 
@@ -383,6 +390,7 @@ input {
     color: var(--darkgrey);
     background: var(--lightgrey);
 }
+
 
 /*///////////////  FOOTER  //////////////////*/
 

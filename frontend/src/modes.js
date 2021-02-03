@@ -51,12 +51,13 @@ function toggleModes(mode1, mode2) {
         if (checkStatus === "false") {
             $('.keyboard').attr("data-mode", "online");
             onlineDuet(roomId);
+            exitNormalMode();
 
         } else if (checkStatus === "true") {
             $('.keyboard').attr("data-mode", bool);
             exitOnlineDuet(roomId);
             $(mode2).data('clicked', false).prop('disabled', false).removeAttr('style');
-            loadNormalMode();
+
         }
     } else if (mode1 == ".ai-bot") {
         $(mode1).data('clicked', true).addClass("bg-red").text("exit bot mode").css("color", "#fff")
