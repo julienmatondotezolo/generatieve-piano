@@ -55,7 +55,7 @@ function setLocalStream(stream) {
 
     let video = document.getElementById("video");
     video.srcObject = stream;
-    video.muted = false;
+    video.muted = true;
     video.play();
 }
 
@@ -119,7 +119,6 @@ function joinOnlineDuet(ROOM_ID) {
             socket.on('user-connected', userObj => {
                 setName(userObj)
                 connectToNewUser(userObj, stream)
-                changeSiteColor("#42ddf2")
                 console.log(userObj.username + " connected.")
             })
         },(err)=>{
@@ -131,6 +130,7 @@ function joinOnlineDuet(ROOM_ID) {
         socket.on('user-disconnected', userObj => {
             leaveRoom(userObj)
             console.log(`${userObj.username} disconnected.`)
+            alert(`${userObj.username} disconnected.`)
         })
     
         peer.on('open', id => {
@@ -138,18 +138,11 @@ function joinOnlineDuet(ROOM_ID) {
             socket.emit('join-room', ROOM_ID, peerObj)
         })
 
-        peer.on('connection', function(peerConn) {
-            console.log("user connected")
-            conn = peerConn
-            conn.on('open', function() {
-                // Receive messages
-                conn.on('data', function (data) {
-                    joinerPeerObj = data
-                    setName(data)
-                });
-                // Send messages
-                conn.send(peerObj);
-            })
+        peer.on('connection', function(conn) {
+            conn.on('data', function(data){
+              setName(data)
+              changeSiteColor("#42ddf2")
+            });
         });
     
         $(".icon-devices").click(function (e) { 
@@ -169,6 +162,13 @@ function joinOnlineDuet(ROOM_ID) {
 /*/////////////  CONNECT TO NEW USER   ////////////////*/
 
 function connectToNewUser(userObj, stream) {
+    changeSiteColor("#42ddf2")
+
+    let conn = peer.connect(userObj.peer_id);
+    conn.on('open', function(){
+        conn.send(userObj);
+    });
+
     const call = peer.call(userObj.peer_id, stream)
     setLocalStream(stream)
 
@@ -208,7 +208,7 @@ export function exitOnlineDuet(ROOM_ID) {
 function getOnlineNotes() {
     socket.on('piano-key', pianoData => {
         console.log(pianoData);
-        onlineMode(`.key[data-note=${pianoData}]`, pianoData)
+        onlineMode(`.key[data-note=${pianoData}]`, pianoData, "#bd23fe")
     });
 
     socket.on('room-error', roomError => {
