@@ -146,6 +146,10 @@ aside.info {
     background-color: red !important;
 }
 
+.displayNone {
+    display: none !important;
+}
+
 .icon-devices:hover {
     opacity: 0.5;
     transform: scale(0.95);
