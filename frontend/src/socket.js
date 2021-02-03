@@ -81,8 +81,9 @@ function createRoom(){
 function joinOnlineDuet(ROOM_ID) {
     if (ROOM_ID) {
         peer = new Peer();
-        socket = io('ws://localhost:8080');
-        // socket = io('ws://paino-socket.herokuapp.com/:15540');
+        // socket = io('ws://localhost:8080');
+        let host = 'http://paino-socket.herokuapp.com/:18020';
+        socket = io(host);
 
         getUserMedia({video: true, audio: true}, (stream)=>{
             setLocalStream(stream)

@@ -1,14 +1,16 @@
-const PORT = process.env.PORT || 8080;
-
-const http = require('http').createServer();
-
-const io = require('socket.io')(http, {
+const server = require('http').createServer();
+const io = require('socket.io')(server, {
     cors: {
-        origin: "*"
+        origin: "http://localhost:5500/",
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
+const PORT = process.env.PORT || 8080;
+
 io.on('connection', (socket) => {
+    console.log('Client connected');
     socket.on('join-room', (roomId, userObj) => {
         console.log(`${userObj.username} joined ROOM: ${roomId}.`);
         socket.join(roomId)
@@ -30,19 +32,6 @@ io.on('connection', (socket) => {
     })
 });
 
-http.listen(8080, () => console.log('listening on ' + PORT));
-
-/*/////////////   CLASSIC WEBSOCKETS   ////////////////*/
-
-// let CLIENTS = [];
-// const WebSocket = require('ws')
-// const wss = new WebSocket.Server({
-//     port: '8080'
-// })
-
-// wss.on('connection', socket => {
-//     socket.on('message', message => {
-//         let peerObj = JSON.parse(message)
-//         socket.send(`${peerObj.message}`);
-//     });
-// });
+server.listen(PORT, () => {
+    console.log(`App is running on port ${ PORT }`);
+});
