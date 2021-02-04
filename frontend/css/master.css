@@ -3,6 +3,7 @@
 @import url(main.css);
 @import url(webcam.css);
 @import url(piano.css);
+@import url(qrcode.css);
 
 /*////////////////  COLORS  ///////////*/
 
@@ -128,6 +129,13 @@ em {
     user-select: none;
 }
 
+::-moz-selection { /* Code for Firefox */
+    background: rgb(240 3 126 / 22%);
+}
+  
+::selection {
+    background: rgb(240 3 126 / 22%);
+}
 
 /*/////////////    BOX & SHADOWS  ////////////////*/
 

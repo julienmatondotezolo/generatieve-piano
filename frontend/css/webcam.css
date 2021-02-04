@@ -42,8 +42,7 @@ canvas {
 }
 
 #video,
-#remote-video,
-#noUserIcon {
+#remote-video {
     position: absolute;
     left: 50%;
     top: 50%;
