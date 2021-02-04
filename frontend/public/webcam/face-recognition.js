@@ -119,11 +119,13 @@ function faceApi() {
             $('body').css({
                 'background': `linear-gradient(180deg, rgba(25,25,25,1) 25%, rgba(51,51,51,1) 75%, grey 100%)`
             });
+            console.log("fyn");
         } else {
             loader(false);
             let text;
             let emotionVal;
             checkMode = $(".keyboard").attr('data-mode');
+            console.log(checkMode);
             if (webcamState === "true") { // If the webcam is open => For the bot mode and normal mode
                 expressionsObject = detections[0].expressions;
                 let emotionArr = [];
@@ -177,12 +179,12 @@ function faceApi() {
     if (checkMode === "false") { // Normal Mode
         window.sendEmotionsInterval = setInterval(async() => {
             console.log(trackedEmotionsArr);
-                clearInterval(scanningFace); // TO STOP THE INTERVAL
+            // clearInterval(scanningFace); // TO STOP THE INTERVAL
             sendUserEmotionsToAI(trackedEmotionsArr).then(data => {
                 console.log(data); // == Data created by the AI, depending the emotions of the user (by the trackedEmotionsArr)
                 // Exported function from /keyboard.js. Call the function to automatically play the fetched data
                 if (data.length !== 0) {
-                    // autoplayNotes(data.notesObject);
+                    autoplayNotes(data.notesObject);
                 }
             }).catch(error => {
                 console.log("error", error);
@@ -198,10 +200,8 @@ function faceApi() {
         loader(false);
         clearInterval(window.sendEmotionsInterval);
         clearInterval(window.scanningFace);
-        console.log("ONLINE MODE");
-
+        console.log("Desactive all interval");
     }
-
 }
 
 // Send array of object of emotions of the user to the backend. Then you receive an object of notes by the IA, depending the most common emotion of the user

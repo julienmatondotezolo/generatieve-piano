@@ -8,9 +8,13 @@ import {
     exitNormalMode,
 } from '../webcam/face-recognition.js';
 
+import {
+    generateQrCode
+} from './qrCode.js';
+
 /*/////////////   VARIABLES   ////////////////*/
 
-let getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 let peer = null;
 let peerId = null;
 let socket;
@@ -18,6 +22,7 @@ let conn = null;
 let note = null;
 let peerObj = {};
 let user_stream;
+let local_username;
 let ROOM_ID = getUrlParameter('rooms');
 let keyboardMode = getUrlParameter('keyboard');
 
@@ -88,7 +93,8 @@ function createRoom(){
 
     peer.on('open', (id) => {
         let newUrl = document.location.href + "?rooms=" + id + "&keyboard=online";
-        window.location = newUrl
+        generateQrCode(newUrl);
+        // window.location = newUrl
 
         $(".online-duet").attr("data-connect", "pending").removeClass("bg-green").addClass("bg-red").text("joining...").css("color", "#fff")
     })
@@ -230,7 +236,9 @@ export function sendOnlineNotes(pianoKey) {
 function randomUserImage() {
     let randomNumber = Math.floor(Math.random() * 25) + 1;
     let randomColor = Math.floor(Math.random() * 360);
-    let generateUsername = "Julien" + randomUserNumber()
+
+    local_username = localStorage.getItem("paino-username");
+    let generateUsername = local_username + randomUserNumber()
 
     $(".random-logo").attr("src", `images/icons/${randomNumber}.png`);
     // $(".random-logo").css("filter", `hue-rotate(${randomDegrees}deg) saturate(2)`);

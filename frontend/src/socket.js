@@ -22,6 +22,7 @@ let conn = null;
 let note = null;
 let peerObj = {};
 let user_stream;
+let local_username;
 let ROOM_ID = getUrlParameter('rooms');
 let keyboardMode = getUrlParameter('keyboard');
 
@@ -235,7 +236,9 @@ export function sendOnlineNotes(pianoKey) {
 function randomUserImage() {
     let randomNumber = Math.floor(Math.random() * 25) + 1;
     let randomColor = Math.floor(Math.random() * 360);
-    let generateUsername = "Julien" + randomUserNumber()
+
+    local_username = localStorage.getItem("paino-username");
+    let generateUsername = local_username + randomUserNumber()
 
     $(".random-logo").attr("src", `images/icons/${randomNumber}.png`);
     // $(".random-logo").css("filter", `hue-rotate(${randomDegrees}deg) saturate(2)`);
