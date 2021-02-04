@@ -3,7 +3,8 @@
 @import url(main.css);
 @import url(webcam.css);
 @import url(piano.css);
-
+@import url(firstpage.css);
+@import url(qrcode.css);
 /*////////////////  COLORS  ///////////*/
 
 .bg-blue {
