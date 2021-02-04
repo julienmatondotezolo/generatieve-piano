@@ -8,13 +8,19 @@ let username;
 
 if (localStorage.getItem("paino-username")) {
     console.log('already a user');
-    setTimeout(() => {
+    if (window.location.href.includes('rooms')) {
         isAlreadyUser();
-    }, 1000);
+    } else {
+        setTimeout(() => {
+            isAlreadyUser();
+        }, 1000);
+    }
 } else {
     console.log("No user");
     initHello();
 }
+
+
 
 function initHello() {
     setTimeout(() => {
@@ -118,4 +124,5 @@ function isAlreadyUser() {
     } else {
         document.querySelector('.keyboard').setAttribute('data-mode', 'false');
     }
+
 }

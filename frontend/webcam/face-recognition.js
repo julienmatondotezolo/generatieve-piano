@@ -20,12 +20,7 @@ let noUserIcon = document.getElementById("noUserIcon");
 let trackedEmotionsArr = [];
 let boolean = true;
 
-Promise.all([
-    faceapi.nets.tinyFaceDetector.loadFromUri("./models"),
-    faceapi.nets.faceLandmark68Net.loadFromUri("./models"),
-    faceapi.nets.faceRecognitionNet.loadFromUri("./models"),
-    faceapi.nets.faceExpressionNet.loadFromUri("./models"),
-]).then(data => { startVideo(); });
+
 
 
 
@@ -40,7 +35,7 @@ function startVideo() {
         .then(stream => {
             window.localStream = stream;
             video.srcObject = stream;
-            //    audio.srcObject = stream;
+            // audio.srcObject = stream;
             faceApi();
         })
         .catch((err) => {
@@ -68,6 +63,41 @@ function openAndCloseCamera() {
             video.setAttribute('class', 'displayNone');
             noUserIcon.removeAttribute('class', 'displayNone');
             $('.emotion-txt').text(`Your webcam is not open `).css('color', 'grey');
+
+        } else { // Active the webcam
+            navigator.mediaDevices.getUserMedia({ // Code to reopen the webcam
+                    audio: false,
+                    video: true
+                })
+                .then(stream => {
+                    window.localStream = stream;
+                    video.srcObject = stream;
+                    //audio.srcObject = stream; // For the audio
+                });
+
+            noUserIcon.setAttribute('class', 'displayNone');
+            video.removeAttribute('class', 'displayNone');
+            $('.emotion-txt').text(`Searching face...`).css('color', 'grey');
+            $("#video").attr('actived', "true");
+            $(".video").removeClass('icon-devices-desactivated'); // Remove the red background
+        }
+        boolean = !boolean;
+    });
+}
+
+
+
+function openAndCloseVideo() {
+    $(".micro").on('click', function() {
+        let micro = document.getElementById("micro");
+        if (boolean) { // Desactive the webcam
+            $("#video").attr('actived', "false");
+            $(".video").addClass('icon-devices-desactivated'); // Add red background to the button to mark it as "desactived"
+            video.srcObject.getTracks().forEach(function(track) { // Code to stop the webcam
+                track.stop();
+                track.src = "";
+            });
+
 
         } else { // Active the webcam
             navigator.mediaDevices.getUserMedia({ // Code to reopen the webcam
