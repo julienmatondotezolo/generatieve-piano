@@ -1,15 +1,41 @@
-const http = require('http').createServer();
+"use strict";
 
-const io = require('socket.io')(http, {
+const server = require('http').createServer();
+const io = require('socket.io')(server, {
     cors: {
-        origin: "*"
+        origin: "http://localhost:5500/",
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
+const PORT = process.env.PORT || 8080;
+
+let usersConnected = 1;
+let obj = {};
 io.on('connection', (socket) => {
+    console.log('Client connected');
+
     socket.on('join-room', (roomId, userObj) => {
-        console.log(`${userObj.username} joined ROOM: ${roomId}.`);
-        socket.join(roomId)
+        if (obj.hasOwnProperty([roomId])) {
+            obj[roomId] += 1;
+        } else {
+            obj[roomId] = usersConnected;
+        }
+
+        // console.log(Object.keys(obj));
+        console.log(obj[roomId]);
+        if (obj[roomId] < 3) {
+            // console.log(userObj);
+            socket.join(roomId)
+            console.log(`${userObj.username} joined ROOM: ${roomId}.`);
+
+        } else {
+            console.log("Room already full.")
+            socket.emit('room-error', "Room already full.")
+        }
+
+
         socket.to(roomId).broadcast.emit('user-connected', userObj)
 
         socket.on('message', (data) => {
@@ -23,25 +49,13 @@ io.on('connection', (socket) => {
         });
 
         socket.on('disconnect', () => {
+            console.log(`${userObj.username} disconnect from ROOM: ${roomId}.`);
             socket.to(roomId).broadcast.emit('user-disconnected', userObj)
+            obj[roomId] -= 1;
         })
     })
 });
 
-http.listen(8080, () => console.log('listening on http://localhost:8080'));
-
-
-/*/////////////   CLASSIC WEBSOCKETS   ////////////////*/
-
-// let CLIENTS = [];
-// const WebSocket = require('ws')
-// const wss = new WebSocket.Server({
-//     port: '8080'
-// })
-
-// wss.on('connection', socket => {
-//     socket.on('message', message => {
-//         let peerObj = JSON.parse(message)
-//         socket.send(`${peerObj.message}`);
-//     });
-// });
+server.listen(PORT, () => {
+    console.log(`App is running on port ${ PORT }`);
+});

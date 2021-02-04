@@ -214,9 +214,7 @@ function faceApi() {
         clearInterval(window.sendEmotionsInterval);
         clearInterval(window.scanningFace);
         console.log("ONLINE MODE");
-
     }
-
 }
 
 // Send array of object of emotions of the user to the backend. Then you receive an object of notes by the IA, depending the most common emotion of the user

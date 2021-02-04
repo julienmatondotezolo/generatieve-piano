@@ -40,7 +40,7 @@ export function playAINotes(keyData, notesArr) {
         Tone.loaded().then(() => {
             sampler.triggerAttackRelease([`${key.letter + key.number}`], 3);
         });
-    }, 500);
+    }, 250);
 
 
 }

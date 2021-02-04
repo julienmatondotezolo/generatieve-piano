@@ -278,12 +278,12 @@ export async function autoplayNotes(noteSeq, keyboardColor) {
 
             newKeyData = keyData ? matchKey.attr('data-note') : 'w75';
             let element = keyData ? $(`.key[data-note='${notes.pitch}']`) : $(".key[data-note='75']");
-            addColorToKey(matchKey, newKeyboardColor, true, 500);
+            addColorToKey(matchKey, newKeyboardColor, true, 250);
             height = calculateHeight(counter * 10, counter * 10);
             createNote(element, keyData, height);
 
 
-        }, 500);
+        }, 250);
         await playAINotes(newKeyData, noteSeq.notes);
     }
 
