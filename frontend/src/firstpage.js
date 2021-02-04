@@ -4,7 +4,7 @@ let username;
 
 if (localStorage.getItem("username") !== undefined) {
     console.log('already a user');
-  //  window.location.href = "index.html";
+  // window.location.href = "index.html";
   }
   
     setTimeout(() => {
@@ -99,8 +99,3 @@ enterNameToWebcam();
 let showEnterName = () => {
     document.getElementById('enter-name-container').style.display = 'flex';
 }
-
-
-
-
-
