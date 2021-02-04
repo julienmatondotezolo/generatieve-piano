@@ -8,6 +8,10 @@ import {
     exitNormalMode,
 } from '../webcam/face-recognition.js';
 
+import {
+    generateQrCode
+} from './qrCode.js';
+
 /*/////////////   VARIABLES   ////////////////*/
 
 let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -88,8 +92,8 @@ function createRoom(){
 
     peer.on('open', (id) => {
         let newUrl = document.location.href + "?rooms=" + id + "&keyboard=online";
-        window.location = newUrl
-
+        generateQrCode(newUrl);
+        //window.location = newUrl
         $(".online-duet").attr("data-connect", "pending").removeClass("bg-green").addClass("bg-red").text("joining...").css("color", "#fff")
     })
 }
