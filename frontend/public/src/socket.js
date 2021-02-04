@@ -10,7 +10,7 @@ import {
 
 /*/////////////   VARIABLES   ////////////////*/
 
-let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+let getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 let peer = null;
 let peerId = null;
 let socket;

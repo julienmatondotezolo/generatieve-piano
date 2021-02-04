@@ -10,7 +10,7 @@ import {
 
 /*/////////////   VARIABLES   ////////////////*/
 
-let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+let getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 let peer = null;
 let peerId = null;
 let socket;
@@ -230,7 +230,8 @@ export function sendOnlineNotes(pianoKey) {
 function randomUserImage() {
     let randomNumber = Math.floor(Math.random() * 25) + 1;
     let randomColor = Math.floor(Math.random() * 360);
-    let generateUsername = "Julien" + randomUserNumber()
+    let username = localStorage.getItem("paino-username")
+    let generateUsername = username + randomUserNumber()
 
     $(".random-logo").attr("src", `images/icons/${randomNumber}.png`);
     // $(".random-logo").css("filter", `hue-rotate(${randomDegrees}deg) saturate(2)`);

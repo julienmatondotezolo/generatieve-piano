@@ -166,6 +166,10 @@ aside.info {
 
 @media screen and (max-width: 850px) {
     aside.info {
+        top: 20px;
+    }
+
+    aside.info {
         flex-direction: row-reverse;
     }
 
@@ -183,10 +187,15 @@ aside.info {
 
     .options {
         justify-content: space-between;
-        top: calc(100% - 200px);
+        top: calc(100% - 250px);
         width: calc(100% - 20px);
         box-sizing: border-box;
         padding: 10px;
+    }
+
+    .icon-devices {
+        height: 30px;
+        width: 30px;
     }
 
     .room {
@@ -194,6 +203,7 @@ aside.info {
     }
 
     #piano {
+        height: 150px !important;
         overflow-y: scroll;
     }
 
