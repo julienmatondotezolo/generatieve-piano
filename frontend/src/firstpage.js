@@ -28,7 +28,6 @@ let enterNameToWebcam = () => {
             hideEnterName();
             showFaceRecoDisclaimer();
         }
-    }
 
     //////////////////////////// FUNCTION TO SHOW SAVE SHOW AND HIDE UNVALID USERNAME TEXT IF USER INPUT EMPTY ////////////////////////////
 
