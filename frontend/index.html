@@ -34,54 +34,72 @@
 </head>
 
 <body>
-
-    <header>
-        <div id="container"></div>
-    </header>
-
-    <main>
-        <div class="notes">
-            <!-- <div class="note-block"></div> -->
+    <div id="enterpage" class="hello">
+        <div id="welcome-container" class="container">
+            <img src="images/paino-logo.png">
+            <h1>Play, Enjoy, Make friends or <br> catch feelings with our A.I</h1>
         </div>
 
-        <div class="keyboard" data-mode="false">
-            <div id="piano">
-                <div class="keys">
-                    <div class="white-keys"></div>
-                    <div class="black-keys"></div>
+        <div id="enter-name-container" class="container">
+            <img src="images/paino-logo.png">
+            <h3>Enter your name to start</h3>
+            <input type="text" id="username-input"> <br>
+            <span id="unvalid-username">Please enter a valid username!</span>
+            <button id="start-button" class="btn bg-blue">start</button>
+        </div>
+
+        <div id="container-face-recognition" class="container">
+        </div>
+    </div>
+
+    <div id="page2" class="displayNone">
+        <header>
+            <div id="container"></div>
+        </header>
+
+        <main>
+            <div class="notes">
+                <!-- <div class="note-block"></div> -->
+            </div>
+
+            <div class="keyboard" data-mode="initialization">
+                <div id="piano">
+                    <div class="keys">
+                        <div class="white-keys"></div>
+                        <div class="black-keys"></div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <aside class="info">
-            <section class="room">
-                <article class="user-content" data-user="off">
-                    <img class="random-logo" src="images/icons/1.png" alt="">
-                    <p class="user">Guest pianist</p>
-                </article>
-            </section>
-            <figure class="info-btn">
-                <img src="images/icon-info.png" alt="Icon info">
-            </figure>
-        </aside>
+            <aside class="info">
+                <section class="room">
+                    <article class="user-content" data-user="off">
+                        <img class="random-logo" src="images/icons/1.png" alt="">
+                        <p class="user">Guest pianist</p>
+                    </article>
+                </section>
+                <figure class="info-btn">
+                    <img src="images/icon-info.png" alt="Icon info">
+                </figure>
+            </aside>
 
-        <div class="options">
-            <button class="btn ai-bot" data-bot="false">duet with A.I bot</button>
-            <figure class="settings">
-                <section class="icon-devices" data-usb="off">
-                    <img src="images/icon-metro-usb.png" alt="usb iicon images">
-                </section>
-                <section class="icon-devices" data-mic="off">
-                    <img src="images/icon-material-mic.png" alt="usb iicon images">
-                </section>
-                <section class="icon-devices" data-video="off">
-                    <img src="images/icon-video.png" alt="usb iicon images">
-                </section>
-            </figure>
-            <button class="btn online-duet bg-green" data-connect="false">join online duet</button>
-        </div>
-    </main>
-
+            <div class="options">
+                <button class="btn ai-bot" data-bot="false">duet with A.I bot</button>
+                <figure class="settings">
+                    <section class="icon-devices" data-usb="off">
+                        <img src="images/icon-metro-usb.png" alt="usb iicon images">
+                    </section>
+                    <section class="icon-devices" data-mic="off">
+                        <img src="images/icon-material-mic.png" alt="usb iicon images">
+                    </section>
+                    <section class="icon-devices video" data-video="off">
+                        <img src="images/icon-video.png" alt="usb iicon images">
+                    </section>
+                </figure>
+                <button class="btn online-duet bg-green" data-connect="false">join online duet</button>
+            </div>
+        </main>
+    </div>
 </body>
 
 </html>
