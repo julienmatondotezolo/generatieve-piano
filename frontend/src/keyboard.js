@@ -228,16 +228,24 @@ function addColorToKey(element, color, autoplay, endTime) {
 
 /*/////////////   GENERATE NOTES   ////////////////*/
 
-function createNote(element, note, height) {
+function createNote(element, note, height, color) {
     // sendUserNotes(note); If you uncomment this line, the bot will play with himself when you touch on minimum one piano key.
 
     keyboardColor = $('.keyboard').attr('data-color');
+
+    if(color) {
+        keyboardColor = color
+    }
+
+    let newKeyboardColor = keyboardColor ? keyboardColor : '#e6e6e6';
+
+
     let width = element.width();
     let positionLeft = element.offset().left;
     let keyHeight = height ? height : 5;
 
     $('.notes').append(`
-        <div class="note-block" data-note="${note}" style="left: ${positionLeft}px; height: ${keyHeight}0px; width: ${width}px; background-color: ${keyboardColor} !important"></div>
+        <div class="note-block" data-note="${note}" style="left: ${positionLeft}px; height: ${keyHeight}0px; width: ${width}px; background-color: ${newKeyboardColor} !important"></div>
     `);
 
     setTimeout(function() {
@@ -364,9 +372,21 @@ async function sendUserNotesToAI(notes) {
 
 /*/////////////   ONLINE MODE   ////////////////*/
 
-export function onlineMode(element, key) {
+export function onlineMode(element, key, color) {
     playNotes(key);
     keyboardColor = $('.keyboard').attr('data-color');
-    addColorToKey(element, keyboardColor, true, 1000);
-    createNote($(element), key);
+    addColorToKey(element, color, true, 1000);
+    createNote($(element), key, 5, color);
+}
+
+
+let width = $(window).width();
+
+if( width <= 850 ) {
+    console.log("Start mediaqueries");
+    $(".settings").clone().appendTo(".info");
+    $(".options .settings").hide();
+} else {
+    $(".info .settings").hide();
+    $(".options .settings").show();
 }

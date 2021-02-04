@@ -54,7 +54,11 @@ aside.info {
 .random-logo {
     float: left;
     margin-right: 1em;
-    height: 30px;
+    height: 20px;
+    width: 20px;
+    padding: 5px;
+    background: #f0037e;
+    border-radius: 30px;
 }
 
 .user {
@@ -158,4 +162,44 @@ aside.info {
 .icon-devices img {
     margin: auto;
     width: 40%;
+}
+
+@media screen and (max-width: 850px) {
+    aside.info {
+        flex-direction: row-reverse;
+    }
+
+    #video, #remote-video {
+        top: 40% !important;
+    }
+
+    .circle {
+        top: 40% !important;
+    }
+
+    .emotion-content {
+        top: calc(40% + 75px) !important;
+    }
+
+    .options {
+        justify-content: space-between;
+        top: calc(100% - 200px);
+        width: calc(100% - 20px);
+        box-sizing: border-box;
+        padding: 10px;
+    }
+
+    .room {
+        display: none;
+    }
+
+    #piano {
+        overflow-y: scroll;
+    }
+
+    #piano .keys {
+        left: -69% !important;
+        width: 350% !important;
+        height: 100% !important;
+    }
 }
