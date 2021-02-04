@@ -7,12 +7,14 @@ import {
 let username;
 
 if (localStorage.getItem("paino-username")) {
-    console.log('already a user');
-    setTimeout(() => {
+    if (window.location.href.includes('rooms')) {
         isAlreadyUser();
-    }, 1000);
+    } else {
+        setTimeout(() => {
+            isAlreadyUser();
+        }, 5000);
+    }
 } else {
-    console.log("No user");
     initHello();
 }
 
@@ -96,7 +98,6 @@ function initHello() {
     //////////////////////////// FUNCTION TO HIDE WELCOME TEXT ////////////////////////////
 
     let hideWelcomeText = () => {
-        console.log("ici");
         document.getElementById('welcome-container').style.display = 'none';
     };
 
@@ -107,9 +108,7 @@ function initHello() {
     };
 }
 
-
 function isAlreadyUser() {
-
     document.getElementById('enterpage').style.display = 'none';
     document.getElementById('page2').removeAttribute('class', 'displayNone')
     document.querySelector('.keyboard').removeAttribute('data-mode', 'initialization');

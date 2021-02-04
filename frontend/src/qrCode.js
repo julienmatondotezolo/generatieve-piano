@@ -1,47 +1,42 @@
 // FUNCTION TO GENERATE QR CODE AND APPEND TO DOM //
 
-export let generateQrCode =  (newUrl) => {
-    
-    // FUNCTION TO GET URL //
+export let generateQrCode = (newUrl) => {
 
-    console.log(newUrl);
+    // FUNCTION TO GENERATE URL //
 
-   let imageSource = `http://api.qrserver.com/v1/create-qr-code/?data=${newUrl}&size=200x200`;
+    let imageSource = `http://api.qrserver.com/v1/create-qr-code/?data=${newUrl}&size=200x200`;
 
-            let div = document.createElement("div");
-            div.id = 'pop-up';
-            let popupContainer = document.getElementById("popup-container");
-            popupContainer.appendChild(div);
-            
-            let popup = document.getElementById('pop-up');
-            popup.style.backgroundColor = 'white';
-            popup.innerHTML = `
-            
-            <div id="img-container">
-                    <img src="./images/paino-logo.png" alt="" width="200" height="62.5">
+    $("#popup-container").append(`
+        <div id="img-container">
+            <img src="./images/paino-logo.png" alt="" width="200" height="62.5">
+        </div>
 
-                </div>
-                <div id="title-container">
-                    <p>Share the code to your friends by copying the link by using the QR-Code</p>
+        <div id="title-container">
+            <h3>Copy provided address and send it to the other person.</h3>
 
-                    <div id="input-container">
-                        <input type="text" id="input" value="${newUrl}">
-                    </div>
+            <div id="input-container">
+                <input type="text" id="input" value="${newUrl}">
+            </div>
+            <p>Or you can scan it on the other device:</p>
+            <img src="${imageSource}">
+        </div>
 
-                    <button id="copy-button">Copy to clipboard!</button>
-                    <p>Or you can scan it on the other device:</p>
-                    <img src="${imageSource}">
+        <div id="title-container">
+            <button id="copy-button" class="btn">Join room</button>
+        </div>
+    `);
 
-            `
-            copyText();
+    let input = document.getElementById('input');
+    input.select();
+    input.setSelectionRange(0, 99999); // for mobile device
+    document.execCommand("copy");
+    console.log('text copied!');
+
+    copyText(newUrl);
 };
 
-let copyText = () => {
+let copyText = (url) => {
     document.getElementById('copy-button').addEventListener('click', () => {
-        let input = document.getElementById('input');
-        input.select();
-        input.setSelectionRange(0, 99999); // for mobile device
-        document.execCommand("copy");
-        console.log('text copied!');
-     })
+        window.location = url
+    })
 }
