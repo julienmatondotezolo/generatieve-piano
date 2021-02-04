@@ -31,7 +31,7 @@ Promise.all([
 
 // Function to start the WebCam
 function startVideo() {
-    loader(true);
+    // loader(true);
     video = document.getElementById("video");
     navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -192,12 +192,12 @@ function faceApi() {
     if (checkMode === "false") { // Normal Mode
         window.sendEmotionsInterval = setInterval(async() => {
             console.log(trackedEmotionsArr);
-            //     clearInterval(scanningFace); // TO STOP THE INTERVAL
+                clearInterval(scanningFace); // TO STOP THE INTERVAL
             sendUserEmotionsToAI(trackedEmotionsArr).then(data => {
                 console.log(data); // == Data created by the AI, depending the emotions of the user (by the trackedEmotionsArr)
                 // Exported function from /keyboard.js. Call the function to automatically play the fetched data
                 if (data.length !== 0) {
-                    autoplayNotes(data.notesObject);
+                    // autoplayNotes(data.notesObject);
                 }
             }).catch(error => {
                 console.log("error", error);

@@ -1,5 +1,3 @@
-"use strict";
-
 const server = require('http').createServer();
 const io = require('socket.io')(server, {
     cors: {
@@ -15,28 +13,23 @@ let usersConnected = 1;
 let obj = {};
 io.on('connection', (socket) => {
     console.log('Client connected');
-
+  
     socket.on('join-room', (roomId, userObj) => {
-        if (obj.hasOwnProperty([roomId])) {
+        if(obj.hasOwnProperty([roomId])) {
             obj[roomId] += 1;
         } else {
             obj[roomId] = usersConnected;
         }
-
-        // console.log(Object.keys(obj));
-        console.log(obj[roomId]);
-        if (obj[roomId] < 3) {
-            // console.log(userObj);
+       
+        if(obj[roomId] < 3) {
+          // console.log(userObj);
             socket.join(roomId)
             console.log(`${userObj.username} joined ROOM: ${roomId}.`);
-
+            socket.to(roomId).broadcast.emit('user-connected', userObj)
         } else {
             console.log("Room already full.")
             socket.emit('room-error', "Room already full.")
         }
-
-
-        socket.to(roomId).broadcast.emit('user-connected', userObj)
 
         socket.on('message', (data) => {
             console.log(`${data.username} send: `, data.txt)

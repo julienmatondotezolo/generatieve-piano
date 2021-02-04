@@ -1,9 +1,14 @@
 @import url(reset.css);
+@import url(hello.css);
 @import url(main.css);
 @import url(webcam.css);
 @import url(piano.css);
 
 /*////////////////  COLORS  ///////////*/
+
+.bg-blue {
+    background-color: #42ddf2 !important;
+}
 
 .bg-green {
     background-color: #00FF76 !important;
