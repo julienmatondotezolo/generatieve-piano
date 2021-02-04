@@ -21,20 +21,15 @@ io.on('connection', (socket) => {
             obj[roomId] = usersConnected;
         }
        
-       // console.log(Object.keys(obj));
-      console.log(obj[roomId]);
         if(obj[roomId] < 3) {
           // console.log(userObj);
             socket.join(roomId)
             console.log(`${userObj.username} joined ROOM: ${roomId}.`);
-            
+            socket.to(roomId).broadcast.emit('user-connected', userObj)
         } else {
             console.log("Room already full.")
             socket.emit('room-error', "Room already full.")
         }
-        
-
-        socket.to(roomId).broadcast.emit('user-connected', userObj)
 
         socket.on('message', (data) => {
             console.log(`${data.username} send: `, data.txt)

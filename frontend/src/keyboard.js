@@ -378,3 +378,15 @@ export function onlineMode(element, key, color) {
     addColorToKey(element, color, true, 1000);
     createNote($(element), key, 5, color);
 }
+
+
+let width = $(window).width();
+
+if( width <= 850 ) {
+    console.log("Start mediaqueries");
+    $(".settings").clone().appendTo(".info");
+    $(".options .settings").hide();
+} else {
+    $(".info .settings").hide();
+    $(".options .settings").show();
+}
