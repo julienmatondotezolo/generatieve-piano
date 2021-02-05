@@ -45,7 +45,7 @@ export function onlineDuet(id) {
 
 /*/////////////   LOCAL USER name & VIDEO STREAM   ////////////////*/
 
-export function setName(data) {
+function setName(data) {
     if (data.username) {
         $('.room').append(`
             <article class="user-content" data-user="${data.peer_id}">

@@ -3,7 +3,6 @@
 import {
     onlineDuet,
     exitOnlineDuet,
-    setName
 } from './socket.js';
 
 import {
@@ -39,6 +38,25 @@ $(".online-duet").click(function(e) {
     toggleModes(".online-duet", ".ai-bot")
     $(`.user-content[data-user=${botObj.peer_id}]`).remove()
 });
+
+/*/////////////   TOGGLE BETWEEN MODES   ////////////////*/
+
+function setName(data) {
+    if (data.username) {
+        $('.room').append(`
+            <article class="user-content" data-user="${data.peer_id}">
+                <img class="random-logo" src="${data.src}" alt=""">
+                <p class="user">${data.username}</p>
+            </article>
+        `);
+
+        $('.local-video .emotion-txt').text(peerObj.username)
+        $(".remote-video .emotion-txt").text(data.username)
+
+        $(`.user-content:last-child .user`).css("color", "#bd23fe")
+        $('.user-content:last-child .random-logo').css("background", "#bd23fe")
+    }
+}
 
 /*/////////////   TOGGLE BETWEEN MODES   ////////////////*/
 
