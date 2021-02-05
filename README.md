@@ -1,7 +1,7 @@
 # Pa.ino
 <h3>Play, Enjoy, Make friends or catch feelings for our A.I.</h3>
 
-<img src="https://play-paino.web.app/images/paino-logo.png" alt="drawing" width="300" style="background: #202020; padding: 0 2em"/>
+<img src="https://firebasestorage.googleapis.com/v0/b/play-paino.appspot.com/o/paino-images.jpg?alt=media&token=f802e76f-edfa-4449-b5a5-52e95a2093ce" alt="drawing" width="300" style="background: #202020; padding: 0 2em"/>
 </br>
 
 [Pa.i.no](https://play-paino.web.app/) is an web app where you'll be able to not only play solo but also with an amazing 
