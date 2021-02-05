@@ -155,13 +155,6 @@ function joinOnlineDuet(ROOM_ID) {
             leaveRoom(userObj)
             console.log(`${userObj.username} disconnected.`)
         })
-    
-        $(".icon-devices").click(function (e) { 
-            e.preventDefault();
-            let txt = prompt("Send message", "")
-            peerObj.txt = txt
-            socket.emit('message', peerObj)
-        });
 
         $(".ai-bot").data('clicked', false).removeClass("bg-green").attr("data-bot", false).prop('disabled', true).css("background", "#7e7e7e");
         $(".online-duet").attr("data-connect", "true").removeClass("bg-green").addClass("bg-red").text("exit online duet").css("color", "#fff")
